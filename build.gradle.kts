@@ -1,8 +1,8 @@
 ﻿plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("org.jlleitschuh.gradle.ktlint")
+    alias(libs.plugins.jlleitschuh.ktlint)
     id("maven-publish")
     id("signing")
 }
@@ -88,8 +88,11 @@ dependencies {
 
     // Google Maps SDK
     implementation(libs.play.services.maps)
-    debugImplementation(project(":mapconductor-core"))
-    releaseImplementation("com.mapconductor:core:$libraryVersion")
+    if (findProject(":mapconductor-core") != null) {
+        implementation(project(":mapconductor-core"))
+    } else {
+        implementation("com.mapconductor:core:$libraryVersion")
+    }
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

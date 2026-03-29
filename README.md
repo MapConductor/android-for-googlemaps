@@ -130,10 +130,12 @@ fun InfoBubbleExample() {
 
     GoogleMapView(...) {
         Marker(markerState)
-        InfoBubble(
-            marker = it,
-        ) {
-            Text("Hello, world!")
+        selectedMarker?.let {
+            InfoBubble(
+                marker = it,
+            ) {
+                Text("Hello, world!")
+            }
         }
     }
 }
@@ -175,6 +177,7 @@ fun PolylineExample() {
     val polylineState = remember { PolylineState(
             points = airports,
             strokeColor = Color.Blue.copy(alpha = 0.5f),
+            geodesic = true,
         ) }
 
     GoogleMapView(...) {

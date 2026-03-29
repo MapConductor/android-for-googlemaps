@@ -21,12 +21,12 @@ dependencyResolutionManagement {
             name = "GithubPackages"
             url = uri("https://maven.pkg.github.com/mapconductor/android-for-googlemaps")
             credentials {
-                username = System.getenv("GPR_USER")
-                password = System.getenv("GPR_TOKEN")
+                username = System.getenv("GPR_USER") ?: ""
+                password = System.getenv("GPR_TOKEN") ?: ""
             }
-            content { includeGroup("com.mapconductor") }
         }
     }
 }
 
 rootProject.name = "mapconductor-for-googlemaps"
+include(":sample-app")
