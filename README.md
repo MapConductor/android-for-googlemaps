@@ -71,8 +71,8 @@ fun MapView(modifier: Modifier = Modifier) {
 fun MapExample() {
     val initCameraPosition = MapCameraPosition(
         position = GeoPoint(
-            latitude = 35.6762,
-            longitude = 139.6503
+            latitude = 37.422198,
+            longitude = -122.085377,
         ),
         zoom = 17.0,
         tilt = 60.0,
