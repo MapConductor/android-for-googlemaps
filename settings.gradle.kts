@@ -28,5 +28,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "mapconductor-for-googlemaps"
+rootProject.name = "android-for-googlemaps"
 include(":sample-app")

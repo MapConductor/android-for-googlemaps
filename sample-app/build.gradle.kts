@@ -59,7 +59,7 @@ secrets {
 }
 
 dependencies {
-    implementation(findProject(":mapconductor-for-googlemaps") ?: project(":"))
+    implementation(findProject(":android-for-googlemaps") ?: project(":"))
     implementation(libs.play.services.maps)
 
     implementation(libs.androidx.activity.compose)
