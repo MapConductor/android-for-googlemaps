@@ -1,12 +1,11 @@
-Of course! Here is the high-quality SDK documentation for the provided Kotlin code snippet.
-
----
-
 # GoogleMapDesign
 
-The `GoogleMapDesign` sealed class represents the various base map tile types available in the Google Maps SDK. It provides a type-safe way to manage and use Google's predefined map type constants.
+The `GoogleMapDesign` sealed class represents the various base map tile types available in the
+Google Maps SDK. It provides a type-safe way to manage and use Google's predefined map type
+constants.
 
-This class implements the `GoogleMapDesignType` interface, which is a type alias for `MapDesignTypeInterface<Int>`.
+This class implements the `GoogleMapDesignType` interface, which is a type alias for
+`MapDesignTypeInterface<Int>`.
 
 ```kotlin
 sealed class GoogleMapDesign(
@@ -16,15 +15,14 @@ sealed class GoogleMapDesign(
 
 ## Map Design Objects
 
-The `GoogleMapDesign` class contains singleton objects that correspond to the map types defined in `com.google.android.gms.maps.GoogleMap`.
+The `GoogleMapDesign` class contains singleton objects that correspond to the map types defined in
+`com.google.android.gms.maps.GoogleMap`.
 
-| Object      | Google Maps Constant    | Description                                                              |
-| :---------- | :---------------------- | :----------------------------------------------------------------------- |
-| `Normal`    | `MAP_TYPE_NORMAL`       | Typical road map with streets, labels, and some points of interest.      |
-| `Satellite` | `MAP_TYPE_SATELLITE`    | Satellite imagery of the Earth without map labels.                       |
-| `Hybrid`    | `MAP_TYPE_HYBRID`       | A combination of satellite imagery and the normal map layer (roads, labels). |
-| `Terrain`   | `MAP_TYPE_TERRAIN`      | Topographic map showing elevation and land contours.                      |
-| `None`      | `MAP_TYPE_NONE`         | No base map tiles. Useful for displaying custom tile overlays exclusively. |
+- Description: Typical road map with streets, labels, and some points of interest.
+- Description: Satellite imagery of the Earth without map labels.
+- Description: A combination of satellite imagery and the normal map layer (roads, labels).
+- Description: Topographic map showing elevation and land contours.
+- Description: No base map tiles. Useful for displaying custom tile overlays exclusively.
 
 ---
 
@@ -42,13 +40,13 @@ fun getValue(): Int
 
 #### Description
 
-This method returns the integer ID associated with a `GoogleMapDesign` instance. This ID corresponds directly to one of the `MAP_TYPE_*` constants from the Google Maps SDK.
+This method returns the integer ID associated with a `GoogleMapDesign` instance. This ID corresponds
+directly to one of the `MAP_TYPE_*` constants from the Google Maps SDK.
 
 #### Returns
 
-| Type  | Description                               |
-| :---- | :---------------------------------------- |
-| `Int` | The integer constant for the map design type. |
+- Type: ``Int``
+- Description: The integer constant for the map design type.
 
 #### Example
 
@@ -66,7 +64,8 @@ println(satelliteTypeId == GoogleMap.MAP_TYPE_SATELLITE) // true
 
 ## Companion Object Functions
 
-The companion object provides factory methods for creating `GoogleMapDesign` instances from integer IDs.
+The companion object provides factory methods for creating `GoogleMapDesign` instances from integer
+IDs.
 
 ### Create()
 
@@ -80,19 +79,20 @@ fun Create(id: Int): GoogleMapDesign
 
 #### Description
 
-This factory method looks up the appropriate `GoogleMapDesign` object based on the provided integer `id`. If the `id` does not match any of the known map types, it defaults to `GoogleMapDesign.None`.
+This factory method looks up the appropriate `GoogleMapDesign` object based on the provided integer
+`id`. If the `id` does not match any of the known map types, it defaults to `GoogleMapDesign.None`.
 
 #### Parameters
 
-| Parameter | Type  | Description                                                              |
-| :-------- | :---- | :----------------------------------------------------------------------- |
-| `id`      | `Int` | The integer ID of the map type (e.g., `GoogleMap.MAP_TYPE_NORMAL`). |
+- ``id``
+    - Type: ``Int``
+    - Description: The integer ID of the map type (e.g., `GoogleMap.MAP_TYPE_NORMAL`).
 
 #### Returns
 
-| Type              | Description                                                                    |
-| :---------------- | :----------------------------------------------------------------------------- |
-| `GoogleMapDesign` | The corresponding `GoogleMapDesign` object, or `GoogleMapDesign.None` if the ID is not recognized. |
+- Type: ``GoogleMapDesign``
+- Description: The corresponding `GoogleMapDesign` object, or `GoogleMapDesign.None` if the ID is
+  not recognized.
 
 #### Example
 
@@ -114,7 +114,8 @@ println(unknownDesign is GoogleMapDesign.None) // true
 
 ### toMapDesignType()
 
-Creates an instance that conforms to the `GoogleMapDesignType` interface from a given integer map type ID.
+Creates an instance that conforms to the `GoogleMapDesignType` interface from a given integer map
+type ID.
 
 #### Signature
 
@@ -124,19 +125,21 @@ fun toMapDesignType(id: Int): GoogleMapDesignType
 
 #### Description
 
-This function is similar to `Create()`, but it returns the result as the `GoogleMapDesignType` interface. This is useful for maintaining abstraction in your code. It defaults to `GoogleMapDesign.None` for unrecognized IDs.
+This function is similar to `Create()`, but it returns the result as the `GoogleMapDesignType`
+interface. This is useful for maintaining abstraction in your code. It defaults to
+`GoogleMapDesign.None` for unrecognized IDs.
 
 #### Parameters
 
-| Parameter | Type  | Description                                                              |
-| :-------- | :---- | :----------------------------------------------------------------------- |
-| `id`      | `Int` | The integer ID of the map type (e.g., `GoogleMap.MAP_TYPE_HYBRID`). |
+- ``id``
+    - Type: ``Int``
+    - Description: The integer ID of the map type (e.g., `GoogleMap.MAP_TYPE_HYBRID`).
 
 #### Returns
 
-| Type                  | Description                                                                                             |
-| :-------------------- | :------------------------------------------------------------------------------------------------------ |
-| `GoogleMapDesignType` | An object implementing the `GoogleMapDesignType` interface, or `GoogleMapDesign.None` if the ID is not recognized. |
+- Type: ``GoogleMapDesignType``
+- Description: An object implementing the `GoogleMapDesignType` interface, or `GoogleMapDesign.None`
+  if the ID is not recognized.
 
 #### Example
 
@@ -154,7 +157,8 @@ val mapId = designType.getValue() // Returns GoogleMap.MAP_TYPE_HYBRID
 
 # GoogleMapDesignType
 
-A type alias for `MapDesignTypeInterface<Int>`, representing a generic interface for a map design type where the underlying value is an `Int`.
+A type alias for `MapDesignTypeInterface<Int>`, representing a generic interface for a map design
+type where the underlying value is an `Int`.
 
 #### Signature
 
@@ -164,4 +168,6 @@ typealias GoogleMapDesignType = MapDesignTypeInterface<Int>
 
 #### Description
 
-This type alias provides a clear and specific name for the map design interface used within the context of Google Maps, enhancing code readability. All `GoogleMapDesign` objects conform to this interface.
+This type alias provides a clear and specific name for the map design interface used within the
+context of Google Maps, enhancing code readability. All `GoogleMapDesign` objects conform to this
+interface.

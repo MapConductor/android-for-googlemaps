@@ -1,13 +1,12 @@
-Of course! Here is the high-quality SDK documentation for the provided `GoogleMapViewController` class.
-
----
-
 # GoogleMapViewController
 
-The `GoogleMapViewController` is the primary controller for managing and interacting with a `GoogleMap` instance. It serves as the main bridge between the `MapConductor` core logic and the Google Maps SDK for Android.
+The `GoogleMapViewController` is the primary controller for managing and interacting with a
+`GoogleMap` instance. It serves as the main bridge between the `MapConductor` core logic and the
+Google Maps SDK for Android.
 
 This class is responsible for:
-- Managing the lifecycle and rendering of map overlays, including markers, polylines, polygons, circles, ground images, and raster layers.
+- Managing the lifecycle and rendering of map overlays, including markers, polylines, polygons,
+  circles, ground images, and raster layers.
 - Handling user interactions such as map clicks and marker drags.
 - Controlling camera movements, both immediate and animated.
 - Listening to and broadcasting map state changes, like camera position and map load status.
@@ -26,27 +25,48 @@ class GoogleMapViewController(
 
 ## Constructor
 
-Initializes a new instance of the `GoogleMapViewController`. This typically occurs during the setup of your map view.
+Initializes a new instance of the `GoogleMapViewController`. This typically occurs during the setup
+of your map view.
 
 ### Parameters
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `holder` | `GoogleMapViewHolder` | The view holder containing the `GoogleMap` and `MapView` instances. |
-| `markerController` | `GoogleMapMarkerController` | The controller responsible for managing markers. |
-| `polylineController` | `GoogleMapPolylineController` | The controller responsible for managing polylines. |
-| `polygonController` | `GoogleMapPolygonController` | The controller responsible for managing polygons. |
-| `groundImageController` | `GoogleMapGroundImageController` | The controller responsible for managing ground images. |
-| `circleController` | `GoogleMapCircleController` | The controller responsible for managing circles. |
-| `rasterLayerController` | `GoogleMapRasterLayerController` | The controller responsible for managing raster tile layers. |
-| `coroutine` | `CoroutineScope` | The coroutine scope for main thread operations. Defaults to `CoroutineScope(Dispatchers.Main)`. |
-| `backCoroutine` | `CoroutineScope` | The coroutine scope for background thread operations. Defaults to `CoroutineScope(Dispatchers.Default)`. |
+- ``holder``
+    - Type: ``GoogleMapViewHolder``
+    - Description: The view holder containing the `GoogleMap` and `MapView` instances.
+- ``markerController``
+    - Type: ``GoogleMapMarkerController``
+    - Description: The controller responsible for managing markers.
+- ``polylineController``
+    - Type: ``GoogleMapPolylineController``
+    - Description: The controller responsible for managing polylines.
+- ``polygonController``
+    - Type: ``GoogleMapPolygonController``
+    - Description: The controller responsible for managing polygons.
+- ``groundImageController``
+    - Type: ``GoogleMapGroundImageController``
+    - Description: The controller responsible for managing ground images.
+- ``circleController``
+    - Type: ``GoogleMapCircleController``
+    - Description: The controller responsible for managing circles.
+- ``rasterLayerController``
+    - Type: ``GoogleMapRasterLayerController``
+    - Description: The controller responsible for managing raster tile layers.
+- ``coroutine``
+    - Type: ``CoroutineScope``
+- Description: The coroutine scope for main thread operations. Defaults to
+      `CoroutineScope(Dispatchers.Main)`.
+- ``backCoroutine``
+    - Type: ``CoroutineScope``
+- Description: The coroutine scope for background thread operations. Defaults to
+      `CoroutineScope(Dispatchers.Default)`.
 
 ## Properties
 
 ### mapLoadedState
 
-A `StateFlow` that emits the loading status of the map. It emits `true` once the map has been fully loaded and is ready for interaction. You can collect this flow to perform actions after the map is ready.
+A `StateFlow` that emits the loading status of the map. It emits `true` once the map has been fully
+loaded and is ready for interaction. You can collect this flow to perform actions after the map is
+ready.
 
 **Signature**
 ```kotlin
@@ -78,13 +98,14 @@ override fun moveCamera(position: MapCameraPosition)
 
 **Parameters**
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `position` | `MapCameraPosition` | The target camera position, including location, zoom, tilt, and bearing. |
+- ``position``
+    - Type: ``MapCameraPosition``
+    - Description: The target camera position, including location, zoom, tilt, and bearing.
 
 ### animateCamera
 
-Animates the camera's movement from its current position to a new specified position over a given duration.
+Animates the camera's movement from its current position to a new specified position over a given
+duration.
 
 **Signature**
 ```kotlin
@@ -93,10 +114,12 @@ override fun animateCamera(position: MapCameraPosition, duration: Long)
 
 **Parameters**
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `position` | `MapCameraPosition` | The target camera position to animate to. |
-| `duration` | `Long` | The duration of the animation in milliseconds. |
+- ``position``
+    - Type: ``MapCameraPosition``
+    - Description: The target camera position to animate to.
+- ``duration``
+    - Type: ``Long``
+    - Description: The duration of the animation in milliseconds.
 
 ## Overlay Management
 
@@ -120,9 +143,9 @@ override suspend fun compositionMarkers(data: List<MarkerState>)
 
 **Parameters**
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `data` | `List<MarkerState>` | A list of `MarkerState` objects to be rendered on the map. |
+- ``data``
+    - Type: ``List<MarkerState>``
+    - Description: A list of `MarkerState` objects to be rendered on the map.
 
 ### updateMarker
 
@@ -135,9 +158,9 @@ override suspend fun updateMarker(state: MarkerState)
 
 **Parameters**
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `state` | `MarkerState` | The updated state for the marker. The marker is identified by `state.id`. |
+- ``state``
+    - Type: ``MarkerState``
+    - Description: The updated state for the marker. The marker is identified by `state.id`.
 
 ### hasMarker
 
@@ -150,21 +173,24 @@ override fun hasMarker(state: MarkerState): Boolean
 
 **Parameters**
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `state` | `MarkerState` | The state of the marker to check for. The check is based on `state.id`. |
+- ``state``
+    - Type: ``MarkerState``
+    - Description: The state of the marker to check for. The check is based on `state.id`.
 
 **Returns**
 
 `Boolean` - `true` if the marker exists, `false` otherwise.
 
 ---
-*Note: The `composition`, `update`, and `has` methods for `Circles`, `Polygons`, `Polylines`, `GroundImages`, and `RasterLayers` follow the same pattern as the `Marker` methods shown above.*
+*Note: The `composition`, `update`, and `has` methods for `Circles`, `Polygons`, `Polylines`,
+`GroundImages`, and `RasterLayers` follow the same pattern as the `Marker` methods shown above.*
 ---
 
 ## Event Listeners (Deprecated)
 
-The following methods for setting global event listeners are deprecated. It is recommended to set event handlers directly on the individual `State` objects (e.g., `MarkerState.onClick`, `CircleState.onClick`).
+The following methods for setting global event listeners are deprecated. It is recommended to set
+event handlers directly on the individual `State` objects (e.g., `MarkerState.onClick`,
+`CircleState.onClick`).
 
 ### setOnMarkerClickListener
 
@@ -176,7 +202,8 @@ The following methods for setting global event listeners are deprecated. It is r
 override fun setOnMarkerClickListener(listener: OnMarkerEventHandler?)
 ```
 
-**Recommendation**: Assign a lambda to the `onClick` property of the `MarkerState` object when creating it.
+**Recommendation**: Assign a lambda to the `onClick` property of the `MarkerState` object when
+creating it.
 
 **Example (Recommended)**
 ```kotlin
@@ -287,13 +314,15 @@ override fun setMapDesignType(value: GoogleMapDesignType)
 
 **Parameters**
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `value` | `GoogleMapDesignType` | The desired map design, such as `GoogleMapDesign.Normal` or `GoogleMapDesign.Satellite`. |
+- ``value``
+    - Type: ``GoogleMapDesignType``
+- Description: The desired map design, such as `GoogleMapDesign.Normal` or
+      `GoogleMapDesign.Satellite`.
 
 ### setMapDesignTypeChangeListener
 
-Registers a listener that is invoked whenever the map's design type changes. The listener is also immediately called with the current map design type upon registration.
+Registers a listener that is invoked whenever the map's design type changes. The listener is also
+immediately called with the current map design type upon registration.
 
 **Signature**
 ```kotlin
@@ -302,9 +331,9 @@ override fun setMapDesignTypeChangeListener(listener: GoogleMapDesignTypeChangeH
 
 **Parameters**
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `listener` | `GoogleMapDesignTypeChangeHandler` | A lambda or function that will be called with the new `GoogleMapDesignType`. |
+- ``listener``
+    - Type: ``GoogleMapDesignTypeChangeHandler``
+    - Description: A lambda or function that will be called with the new `GoogleMapDesignType`.
 
 ## Advanced Marker Rendering
 
@@ -321,9 +350,9 @@ fun createMarkerRenderer(
 
 **Parameters**
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `strategy` | `MarkerRenderingStrategyInterface<GoogleMapActualMarker>` | The custom strategy for rendering markers. |
+- ``strategy``
+    - Type: ``MarkerRenderingStrategyInterface<GoogleMapActualMarker>``
+    - Description: The custom strategy for rendering markers.
 
 **Returns**
 
@@ -343,10 +372,12 @@ fun createMarkerEventController(
 
 **Parameters**
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `controller` | `StrategyMarkerController<GoogleMapActualMarker>` | The strategy-based controller for the markers. |
-| `renderer` | `MarkerOverlayRendererInterface<GoogleMapActualMarker>` | The renderer associated with the markers. |
+- ``controller``
+    - Type: ``StrategyMarkerController<GoogleMapActualMarker>``
+    - Description: The strategy-based controller for the markers.
+- ``renderer``
+    - Type: ``MarkerOverlayRendererInterface<GoogleMapActualMarker>``
+    - Description: The renderer associated with the markers.
 
 **Returns**
 
@@ -354,7 +385,8 @@ fun createMarkerEventController(
 
 ### registerMarkerEventController
 
-Registers a custom marker event controller to handle marker interactions. This allows for extending or overriding the default marker event handling.
+Registers a custom marker event controller to handle marker interactions. This allows for extending
+or overriding the default marker event handling.
 
 **Signature**
 ```kotlin
@@ -363,6 +395,6 @@ fun registerMarkerEventController(controller: MarkerEventControllerInterface<Goo
 
 **Parameters**
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `controller` | `MarkerEventControllerInterface<GoogleMapActualMarker>` | The custom event controller to register. |
+- ``controller``
+    - Type: ``MarkerEventControllerInterface<GoogleMapActualMarker>``
+    - Description: The custom event controller to register.

@@ -1,20 +1,18 @@
-Of course! Here is the high-quality SDK documentation for the provided code snippet.
-
----
-
-### `GoogleMapViewHolderInterface`
+# `GoogleMapViewHolderInterface`
 
 A type alias for `MapViewHolderInterface` that is specialized for the Google Maps SDK.
 
-#### Signature
+## Signature
 ```kotlin
 typealias GoogleMapViewHolderInterface = MapViewHolderInterface<MapView, GoogleMap>
 ```
 
-#### Description
-This type alias simplifies the declaration of view holders that work with Google Maps. It pre-defines the generic types for `MapViewHolderInterface` to be `MapView` (the view component) and `GoogleMap` (the map controller object).
+## Description
+This type alias simplifies the declaration of view holders that work with Google Maps. It
+pre-defines the generic types for `MapViewHolderInterface` to be `MapView` (the view component) and
+`GoogleMap` (the map controller object).
 
-#### Example
+## Example
 Using this alias makes class definitions cleaner and more readable.
 
 ```kotlin
@@ -31,19 +29,22 @@ class MyMapViewHolder : GoogleMapViewHolderInterface {
 
 ---
 
-### `GoogleMapViewControllerStore`
+# `GoogleMapViewControllerStore`
 
 A singleton object that provides a static holder for a `GoogleMapViewController` instance.
 
-#### Signature
+## Signature
 ```kotlin
 object GoogleMapViewControllerStore : StaticHolder<GoogleMapViewController>()
 ```
 
-#### Description
-`GoogleMapViewControllerStore` serves as a centralized, globally accessible container for a single `GoogleMapViewController` instance. This is useful for persisting the controller across configuration changes (like screen rotations) or sharing it between different components of an application without passing it through intent extras or constructor parameters.
+## Description
+`GoogleMapViewControllerStore` serves as a centralized, globally accessible container for a single
+`GoogleMapViewController` instance. This is useful for persisting the controller across
+configuration changes (like screen rotations) or sharing it between different components of an
+application without passing it through intent extras or constructor parameters.
 
-#### Example
+## Example
 ```kotlin
 // Create and store a map view controller instance
 val myController = GoogleMapViewController(context)
@@ -59,29 +60,31 @@ if (storedController != null) {
 
 ---
 
-### `findActivity()`
+# `findActivity()`
 
-An internal extension function on `Context` that finds the hosting `Activity` from a `Context` instance.
+An internal extension function on `Context` that finds the hosting `Activity` from a `Context`
+instance.
 
-#### Signature
+## Signature
 ```kotlin
 internal fun Context.findActivity(): Activity?
 ```
 
-#### Description
-This utility function traverses the `ContextWrapper` chain to locate the base `Activity`. It's useful when you have a `Context` (e.g., from a `View`) and need a reference to the `Activity` that hosts it, which is often required for dialogs, permissions, or starting new activities.
+## Description
+This utility function traverses the `ContextWrapper` chain to locate the base `Activity`. It's
+useful when you have a `Context` (e.g., from a `View`) and need a reference to the `Activity` that
+hosts it, which is often required for dialogs, permissions, or starting new activities.
 
-#### Receiver
-| Parameter | Type      | Description                                  |
-| :-------- | :-------- | :------------------------------------------- |
-| `this`    | `Context` | The context from which to find the Activity. |
+## Receiver
+- ``this``
+    - Type: ``Context``
+    - Description: The context from which to find the Activity.
 
-#### Returns
-| Type      | Description                                                                 |
-| :-------- | :-------------------------------------------------------------------------- |
-| `Activity?` | The `Activity` instance if one is found in the context chain; otherwise, `null`. |
+## Returns
+- Type: ``Activity?``
+- Description: The `Activity` instance if one is found in the context chain; otherwise, `null`.
 
-#### Example
+## Example
 ```kotlin
 // In a custom view or any class with access to a Context
 fun showDialog(context: Context) {

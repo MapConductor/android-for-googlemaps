@@ -4,9 +4,14 @@ A utility class for converting between Google Maps zoom levels and physical alti
 
 ## Description
 
-The `ZoomAltitudeConverter` class provides a bridge between the abstract, screen-pixel-based zoom levels used by Google Maps and a physical altitude value (in meters) used by MapConductor. This conversion is essential for creating a unified camera control system across different map providers.
+The `ZoomAltitudeConverter` class provides a bridge between the abstract, screen-pixel-based zoom
+levels used by Google Maps and a physical altitude value (in meters) used by MapConductor. This
+conversion is essential for creating a unified camera control system across different map providers.
 
-The conversion is not a simple linear mapping; it is a dynamic calculation that takes into account the camera's geographical latitude and its tilt angle. This ensures that the perceived distance from the map surface remains consistent, accounting for the Earth's curvature (approximated by latitude) and perspective distortion (caused by tilt).
+The conversion is not a simple linear mapping; it is a dynamic calculation that takes into account
+the camera's geographical latitude and its tilt angle. This ensures that the perceived distance from
+the map surface remains consistent, accounting for the Earth's curvature (approximated by latitude)
+and perspective distortion (caused by tilt).
 
 This class inherits from `AbstractZoomAltitudeConverter`.
 
@@ -24,9 +29,10 @@ Creates a new instance of `ZoomAltitudeConverter`.
 
 #### Parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `zoom0Altitude` | `Double` | The reference altitude in meters corresponding to zoom level 0 at the equator. This value is optional and defaults to `DEFAULT_ZOOM0_ALTITUDE`. |
+- ``zoom0Altitude``
+    - Type: ``Double``
+- Description: The reference altitude in meters corresponding to zoom level 0 at the equator. This
+      value is optional and defaults to `DEFAULT_ZOOM0_ALTITUDE`.
 
 ---
 
@@ -48,21 +54,27 @@ override fun zoomLevelToAltitude(
 
 #### Description
 
-This method calculates the physical altitude of the camera based on a given Google Maps zoom level. The calculation is adjusted based on the map's center latitude and the camera's tilt angle to provide a more accurate physical representation of the camera's height above the ground. Input values are clamped to ensure they fall within a valid, practical range.
+This method calculates the physical altitude of the camera based on a given Google Maps zoom level.
+The calculation is adjusted based on the map's center latitude and the camera's tilt angle to
+provide a more accurate physical representation of the camera's height above the ground. Input
+values are clamped to ensure they fall within a valid, practical range.
 
 #### Parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `zoomLevel` | `Double` | The Google Maps zoom level to convert. |
-| `latitude` | `Double` | The current latitude of the map's center, in degrees. |
-| `tilt` | `Double` | The current camera tilt angle, in degrees (e.g., 0 for a top-down view). |
+- ``zoomLevel``
+    - Type: ``Double``
+    - Description: The Google Maps zoom level to convert.
+- ``latitude``
+    - Type: ``Double``
+    - Description: The current latitude of the map's center, in degrees.
+- ``tilt``
+    - Type: ``Double``
+    - Description: The current camera tilt angle, in degrees (e.g., 0 for a top-down view).
 
 #### Returns
 
-| Type | Description |
-|------|-------------|
-| `Double` | The calculated altitude in meters, clamped within a valid range. |
+- Type: ``Double``
+- Description: The calculated altitude in meters, clamped within a valid range.
 
 ---
 
@@ -82,27 +94,34 @@ override fun altitudeToZoomLevel(
 
 #### Description
 
-This method performs the inverse operation of `zoomLevelToAltitude`. It calculates the appropriate Google Maps zoom level that corresponds to a given physical altitude in meters. The calculation also considers the map's latitude and camera tilt to ensure accuracy. Input values are clamped to ensure they fall within a valid, practical range.
+This method performs the inverse operation of `zoomLevelToAltitude`. It calculates the appropriate
+Google Maps zoom level that corresponds to a given physical altitude in meters. The calculation also
+considers the map's latitude and camera tilt to ensure accuracy. Input values are clamped to ensure
+they fall within a valid, practical range.
 
 #### Parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `altitude` | `Double` | The camera's altitude in meters to convert. |
-| `latitude` | `Double` | The current latitude of the map's center, in degrees. |
-| `tilt` | `Double` | The current camera tilt angle, in degrees. |
+- ``altitude``
+    - Type: ``Double``
+    - Description: The camera's altitude in meters to convert.
+- ``latitude``
+    - Type: ``Double``
+    - Description: The current latitude of the map's center, in degrees.
+- ``tilt``
+    - Type: ``Double``
+    - Description: The current camera tilt angle, in degrees.
 
 #### Returns
 
-| Type | Description |
-|------|-------------|
-| `Double` | The calculated Google Maps zoom level, clamped within a valid range. |
+- Type: ``Double``
+- Description: The calculated Google Maps zoom level, clamped within a valid range.
 
 ---
 
 ## Example
 
-The following example demonstrates how to create an instance of `ZoomAltitudeConverter` and use its methods for conversion.
+The following example demonstrates how to create an instance of `ZoomAltitudeConverter` and use its
+methods for conversion.
 
 ```kotlin
 import com.mapconductor.googlemaps.zoom.ZoomAltitudeConverter

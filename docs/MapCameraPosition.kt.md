@@ -1,30 +1,32 @@
-Of course! Here is the high-quality SDK documentation for the provided code snippet.
+This document provides details on a set of Kotlin extension functions designed to facilitate
+conversion between the platform-agnostic `MapCameraPosition` and the Google Maps specific
+`CameraPosition`. These utilities are essential for interoperability within the MapConductor
+framework when using the Google Maps provider.
 
----
+# `toCameraPosition`
 
-This document provides details on a set of Kotlin extension functions designed to facilitate conversion between the platform-agnostic `MapCameraPosition` and the Google Maps specific `CameraPosition`. These utilities are essential for interoperability within the MapConductor framework when using the Google Maps provider.
-
-## `toCameraPosition`
-
-### Signature
+## Signature
 
 ```kotlin
 fun MapCameraPosition.toCameraPosition(): CameraPosition
 ```
 
-### Description
+## Description
 
-Converts a platform-agnostic `MapCameraPosition` object into a Google Maps `CameraPosition` object. This is useful when you need to apply a camera state defined in the core library to an actual Google Map view.
+Converts a platform-agnostic `MapCameraPosition` object into a Google Maps `CameraPosition` object.
+This is useful when you need to apply a camera state defined in the core library to an actual Google
+Map view.
 
-The function maps the `position`, `zoom`, `tilt`, and `bearing` from the `MapCameraPosition` to the corresponding fields in the `CameraPosition.Builder`.
+The function maps the `position`, `zoom`, `tilt`, and `bearing` from the `MapCameraPosition` to the
+corresponding fields in the `CameraPosition.Builder`.
 
-### Returns
+## Returns
 
-| Type | Description |
-| :--- | :--- |
-| `CameraPosition` | A new `CameraPosition` instance configured with the properties of the source `MapCameraPosition`. |
+- Type: ``CameraPosition``
+- Description: A new `CameraPosition` instance configured with the properties of the source
+  `MapCameraPosition`.
 
-### Example
+## Example
 
 ```kotlin
 import com.mapconductor.core.features.GeoPoint
@@ -52,33 +54,35 @@ println("Bearing: ${googleCameraPosition.bearing}") // Outputs: Bearing: 45.0
 
 ---
 
-## `MapCameraPosition.from`
+# `MapCameraPosition.from`
 
-### Signature
+## Signature
 
 ```kotlin
 fun MapCameraPosition.Companion.from(position: MapCameraPositionInterface): MapCameraPosition
 ```
 
-### Description
+## Description
 
-A factory function that creates a concrete `MapCameraPosition` instance from any object that implements the `MapCameraPositionInterface`.
+A factory function that creates a concrete `MapCameraPosition` instance from any object that
+implements the `MapCameraPositionInterface`.
 
-If the provided `position` is already a `MapCameraPosition`, it is returned directly. Otherwise, a new `MapCameraPosition` is constructed by copying the properties from the source interface. This ensures type safety and provides a consistent object to work with.
+If the provided `position` is already a `MapCameraPosition`, it is returned directly. Otherwise, a
+new `MapCameraPosition` is constructed by copying the properties from the source interface. This
+ensures type safety and provides a consistent object to work with.
 
-### Parameters
+## Parameters
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `position` | `MapCameraPositionInterface` | The source camera position object to convert from. |
+- ``position``
+    - Type: ``MapCameraPositionInterface``
+    - Description: The source camera position object to convert from.
 
-### Returns
+## Returns
 
-| Type | Description |
-| :--- | :--- |
-| `MapCameraPosition` | A concrete `MapCameraPosition` instance. |
+- Type: ``MapCameraPosition``
+- Description: A concrete `MapCameraPosition` instance.
 
-### Example
+## Example
 
 ```kotlin
 import com.mapconductor.core.features.GeoPoint
@@ -106,33 +110,39 @@ println(mapCameraPosition.zoom)              // Outputs: 10.0
 
 ---
 
-## `toMapCameraPosition`
+# `toMapCameraPosition`
 
-### Signature
+## Signature
 
 ```kotlin
 fun CameraPosition.toMapCameraPosition(paddings: MapPaddingsInterface = MapPaddings.Zeros): MapCameraPosition
 ```
 
-### Description
+## Description
 
-Converts a Google Maps `CameraPosition` object into a platform-agnostic `MapCameraPosition` object. This is typically used when capturing the current state of the map view to be used in the core, platform-independent logic.
+Converts a Google Maps `CameraPosition` object into a platform-agnostic `MapCameraPosition` object.
+This is typically used when capturing the current state of the map view to be used in the core,
+platform-independent logic.
 
-This function performs a key calculation: it converts the Google Maps `zoom` level into an `altitude` value for the `GeoPoint` in the resulting `MapCameraPosition`. The conversion takes into account the zoom level, latitude, and tilt. The `visibleRegion` property of the returned object is set to `null`.
+This function performs a key calculation: it converts the Google Maps `zoom` level into an
+`altitude` value for the `GeoPoint` in the resulting `MapCameraPosition`. The conversion takes into
+account the zoom level, latitude, and tilt. The `visibleRegion` property of the returned object is
+set to `null`.
 
-### Parameters
+## Parameters
 
-| Parameter | Type | Default Value | Description |
-| :--- | :--- | :--- | :--- |
-| `paddings` | `MapPaddingsInterface` | `MapPaddings.Zeros` | Optional map paddings to associate with the resulting `MapCameraPosition`. |
+- ``paddings``
+    - Type: ``MapPaddingsInterface``
+    - Default: ``MapPaddings.Zeros``
+    - Description: Optional map paddings to associate with the resulting `MapCameraPosition`.
 
-### Returns
+## Returns
 
-| Type | Description |
-| :--- | :--- |
-| `MapCameraPosition` | A new `MapCameraPosition` instance representing the state of the source `CameraPosition`. |
+- Type: ``MapCameraPosition``
+- Description: A new `MapCameraPosition` instance representing the state of the source
+  `CameraPosition`.
 
-### Example
+## Example
 
 ```kotlin
 import com.google.android.gms.maps.model.CameraPosition

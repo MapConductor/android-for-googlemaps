@@ -1,12 +1,13 @@
-Of course! Here is the high-quality SDK documentation for the provided code snippet.
-
 # GoogleMapViewControllerInterface
 
 ## Description
 
-The `GoogleMapViewControllerInterface` serves as the primary controller for a Google Map view. It provides a comprehensive API for interacting with the map, consolidating functionalities for managing various map objects and controlling the map's visual appearance.
+The `GoogleMapViewControllerInterface` serves as the primary controller for a Google Map view. It
+provides a comprehensive API for interacting with the map, consolidating functionalities for
+managing various map objects and controlling the map's visual appearance.
 
-This interface aggregates capabilities from several other interfaces, making it a central point for managing:
+This interface aggregates capabilities from several other interfaces, making it a central point for
+managing:
 - Markers (`MarkerCapableInterface`)
 - Polygons (`PolygonCapableInterface`)
 - Polylines (`PolylineCapableInterface`)
@@ -14,7 +15,8 @@ This interface aggregates capabilities from several other interfaces, making it 
 - Ground Images (`GroundImageCapableInterface`)
 - Raster Layers (`RasterLayerCapableInterface`)
 
-In addition to these object management capabilities, it provides specific methods for controlling the Google Map's design type (e.g., standard, satellite, hybrid).
+In addition to these object management capabilities, it provides specific methods for controlling
+the Google Map's design type (e.g., standard, satellite, hybrid).
 
 ## Methods
 
@@ -29,15 +31,16 @@ fun setMapDesignType(value: GoogleMapDesignType)
 
 **Parameters**
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `value` | `GoogleMapDesignType` | The new design type to apply to the map. |
+- ``value``
+    - Type: ``GoogleMapDesignType``
+    - Description: The new design type to apply to the map.
 
 <br/>
 
 ### setMapDesignTypeChangeListener
 
-Registers a listener that is invoked whenever the map's design type changes. This allows you to react to style changes, for example, by updating UI elements.
+Registers a listener that is invoked whenever the map's design type changes. This allows you to
+react to style changes, for example, by updating UI elements.
 
 **Signature**
 ```kotlin
@@ -46,9 +49,10 @@ fun setMapDesignTypeChangeListener(listener: GoogleMapDesignTypeChangeHandler)
 
 **Parameters**
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `listener` | `GoogleMapDesignTypeChangeHandler` | A callback function that will be executed with the new `GoogleMapDesignType` when the map style changes. |
+- ``listener``
+    - Type: ``GoogleMapDesignTypeChangeHandler``
+- Description: A callback function that will be executed with the new `GoogleMapDesignType` when the
+      map style changes.
 
 ## Type Aliases
 
@@ -68,7 +72,8 @@ This is a lambda or function that accepts a single parameter:
 
 ## Example
 
-The following example demonstrates how to set a listener for map design changes and then trigger it by changing the map's design type.
+The following example demonstrates how to set a listener for map design changes and then trigger it
+by changing the map's design type.
 
 ```kotlin
 // Assume 'mapController' is an available instance of GoogleMapViewControllerInterface

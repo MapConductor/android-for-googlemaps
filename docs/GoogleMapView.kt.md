@@ -1,12 +1,13 @@
-Of course! Here is a high-quality SDK document for the `GoogleMapView` composable function, formatted in Markdown.
-
----
-
 # GoogleMapView
 
-`GoogleMapView` is a Jetpack Compose composable that displays a Google Map. It provides a declarative way to manage the map's state, handle user interactions, and draw overlays such as markers, polylines, and polygons. The component is lifecycle-aware and integrates seamlessly with the Compose UI framework.
+`GoogleMapView` is a Jetpack Compose composable that displays a Google Map. It provides a
+declarative way to manage the map's state, handle user interactions, and draw overlays such as
+markers, polylines, and polygons. The component is lifecycle-aware and integrates seamlessly with
+the Compose UI framework.
 
-It offers two overloads: a comprehensive version with callbacks for all map and overlay events, and a simplified version for use cases that don't require detailed marker, polyline, or polygon event handling.
+It offers two overloads: a comprehensive version with callbacks for all map and overlay events, and
+a simplified version for use cases that don't require detailed marker, polyline, or polygon event
+handling.
 
 ### Signature
 
@@ -55,38 +56,89 @@ fun GoogleMapView(
 
 ### Description
 
-This composable function renders a Google Map view and manages its lifecycle. It serves as the root container for all map-related UI, including overlays and controls. You can interact with the map and listen to events through various callback parameters. Map overlays like markers and shapes are added declaratively within the `content` lambda.
+This composable function renders a Google Map view and manages its lifecycle. It serves as the root
+container for all map-related UI, including overlays and controls. You can interact with the map and
+listen to events through various callback parameters. Map overlays like markers and shapes are added
+declaratively within the `content` lambda.
 
 ### Parameters
 
 This section describes the parameters for the comprehensive `GoogleMapView` function.
 
-| Parameter | Type | Description |
-|---|---|---|
-| `state` | `GoogleMapViewState` | **Required.** Manages the map's state, including camera position and map design type. Use `rememberGoogleMapViewState()` to create and remember an instance. |
-| `modifier` | `Modifier` | An optional `Modifier` to be applied to the map container. |
-| `markerTiling` | `MarkerTilingOptions?` | Optional configuration for marker tiling (clustering). If `null`, default options are used. |
-| `sdkInitialize` | `(suspend (Context) -> Boolean)?` | An optional asynchronous lambda to initialize the Google Maps SDK. It should return `true` on success. If not provided, a default initialization is assumed. |
-| `onMapLoaded` | `OnMapLoadedHandler?` | A callback invoked once the map has finished loading and is ready for interaction. |
-| `onMapClick` | `OnMapEventHandler?` | A callback invoked when the user clicks on the map. Returns the `GeoPoint` of the click location. |
-| `onCameraMoveStart` | `OnCameraMoveHandler?` | A callback invoked when the map camera starts moving. Provides the current `MapCameraPositionInterface`. |
-| `onCameraMove` | `OnCameraMoveHandler?` | A callback invoked repeatedly while the map camera is moving. Provides the current `MapCameraPositionInterface`. |
-| `onCameraMoveEnd` | `OnCameraMoveHandler?` | A callback invoked when the map camera finishes moving. Provides the final `MapCameraPositionInterface`. |
-| `onMarkerClick` | `OnMarkerEventHandler?` | A callback invoked when a marker is clicked. Return `true` to indicate the event has been consumed. |
-| `onMarkerDragStart` | `OnMarkerEventHandler?` | A callback invoked when the user starts dragging a marker. |
-| `onMarkerDrag` | `OnMarkerEventHandler?` | A callback invoked repeatedly while a marker is being dragged. |
-| `onMarkerDragEnd` | `OnMarkerEventHandler?` | A callback invoked when the user finishes dragging a marker. |
-| `onMarkerAnimateStart`| `OnMarkerEventHandler?` | A callback invoked when a marker animation begins. |
-| `onMarkerAnimateEnd` | `OnMarkerEventHandler?` | A callback invoked when a marker animation ends. |
-| `onCircleClick` | `OnCircleEventHandler?` | A callback invoked when a circle overlay is clicked. |
-| `onPolylineClick` | `OnPolylineEventHandler?` | A callback invoked when a polyline is clicked. |
-| `onPolygonClick` | `OnPolygonEventHandler?` | A callback invoked when a polygon is clicked. |
-| `onGroundImageClick`| `OnGroundImageEventHandler?` | A callback invoked when a ground image overlay is clicked. |
-| `content` | `@Composable GoogleMapViewScope.() -> Unit` | A composable lambda within the `GoogleMapViewScope` where you can declaratively add map overlays like `Marker`, `Polyline`, `Polygon`, etc. |
+- ``state``
+    - Type: ``GoogleMapViewState``
+- Description: **Required.** Manages the map's state, including camera position and map design type.
+      Use `rememberGoogleMapViewState()` to create and remember an instance.
+- ``modifier``
+    - Type: ``Modifier``
+    - Description: An optional `Modifier` to be applied to the map container.
+- ``markerTiling``
+    - Type: ``MarkerTilingOptions?``
+- Description: Optional configuration for marker tiling (clustering). If `null`, default options are
+      used.
+- ``sdkInitialize``
+    - Type: ``(suspend (Context) -> Boolean)?``
+- Description: An optional asynchronous lambda to initialize the Google Maps SDK. It should return
+      `true` on success. If not provided, a default initialization is assumed.
+- ``onMapLoaded``
+    - Type: ``OnMapLoadedHandler?``
+- Description: A callback invoked once the map has finished loading and is ready for interaction.
+- ``onMapClick``
+    - Type: ``OnMapEventHandler?``
+- Description: A callback invoked when the user clicks on the map. Returns the `GeoPoint` of the
+      click location.
+- ``onCameraMoveStart``
+    - Type: ``OnCameraMoveHandler?``
+- Description: A callback invoked when the map camera starts moving. Provides the current
+      `MapCameraPositionInterface`.
+- ``onCameraMove``
+    - Type: ``OnCameraMoveHandler?``
+- Description: A callback invoked repeatedly while the map camera is moving. Provides the current
+      `MapCameraPositionInterface`.
+- ``onCameraMoveEnd``
+    - Type: ``OnCameraMoveHandler?``
+- Description: A callback invoked when the map camera finishes moving. Provides the final
+      `MapCameraPositionInterface`.
+- ``onMarkerClick``
+    - Type: ``OnMarkerEventHandler?``
+- Description: A callback invoked when a marker is clicked. Return `true` to indicate the event has
+      been consumed.
+- ``onMarkerDragStart``
+    - Type: ``OnMarkerEventHandler?``
+    - Description: A callback invoked when the user starts dragging a marker.
+- ``onMarkerDrag``
+    - Type: ``OnMarkerEventHandler?``
+    - Description: A callback invoked repeatedly while a marker is being dragged.
+- ``onMarkerDragEnd``
+    - Type: ``OnMarkerEventHandler?``
+    - Description: A callback invoked when the user finishes dragging a marker.
+- ``onMarkerAnimateStart``
+    - Type: ``OnMarkerEventHandler?``
+    - Description: A callback invoked when a marker animation begins.
+- ``onMarkerAnimateEnd``
+    - Type: ``OnMarkerEventHandler?``
+    - Description: A callback invoked when a marker animation ends.
+- ``onCircleClick``
+    - Type: ``OnCircleEventHandler?``
+    - Description: A callback invoked when a circle overlay is clicked.
+- ``onPolylineClick``
+    - Type: ``OnPolylineEventHandler?``
+    - Description: A callback invoked when a polyline is clicked.
+- ``onPolygonClick``
+    - Type: ``OnPolygonEventHandler?``
+    - Description: A callback invoked when a polygon is clicked.
+- ``onGroundImageClick``
+    - Type: ``OnGroundImageEventHandler?``
+    - Description: A callback invoked when a ground image overlay is clicked.
+- ``content``
+    - Type: ``@Composable GoogleMapViewScope.() -> Unit``
+- Description: A composable lambda within the `GoogleMapViewScope` where you can declaratively add
+      map overlays like `Marker`, `Polyline`, `Polygon`, etc.
 
 ### Returns
 
-This is a `@Composable` function and does not have a return value. It emits the Google Map view into the composition.
+This is a `@Composable` function and does not have a return value. It emits the Google Map view into
+the composition.
 
 ### Example
 

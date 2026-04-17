@@ -1,6 +1,10 @@
 # GoogleMapGroundImageOverlayRenderer
 
-The `GoogleMapGroundImageOverlayRenderer` is a concrete implementation of `AbstractGroundImageOverlayRenderer` designed for the Google Maps SDK. It manages the lifecycle of ground image overlays on a `GoogleMap` instance, including their creation, removal, and property updates. This class translates abstract `GroundImageState` objects into tangible `GroundOverlay` objects on the map.
+The `GoogleMapGroundImageOverlayRenderer` is a concrete implementation of
+`AbstractGroundImageOverlayRenderer` designed for the Google Maps SDK. It manages the lifecycle of
+ground image overlays on a `GoogleMap` instance, including their creation, removal, and property
+updates. This class translates abstract `GroundImageState` objects into tangible `GroundOverlay`
+objects on the map.
 
 `GoogleMapActualGroundImage` is a type alias for the Google Maps SDK's `GroundOverlay`.
 
@@ -15,10 +19,13 @@ class GoogleMapGroundImageOverlayRenderer(
 
 ## Parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `holder` | `GoogleMapViewHolder` | The view holder containing the `GoogleMap` instance where overlays will be rendered. |
-| `coroutine` | `CoroutineScope` | The coroutine scope for executing asynchronous operations. Defaults to `CoroutineScope(Dispatchers.Main)`. |
+- ``holder``
+    - Type: ``GoogleMapViewHolder``
+- Description: The view holder containing the `GoogleMap` instance where overlays will be rendered.
+- ``coroutine``
+    - Type: ``CoroutineScope``
+- Description: The coroutine scope for executing asynchronous operations. Defaults to
+      `CoroutineScope(Dispatchers.Main)`.
 
 ---
 
@@ -26,7 +33,8 @@ class GoogleMapGroundImageOverlayRenderer(
 
 ### createGroundImage
 
-Asynchronously creates and adds a new ground overlay to the map based on the provided state. It configures the overlay's image, bounds, and opacity.
+Asynchronously creates and adds a new ground overlay to the map based on the provided state. It
+configures the overlay's image, bounds, and opacity.
 
 #### Signature
 
@@ -36,15 +44,16 @@ override suspend fun createGroundImage(state: GroundImageState): GoogleMapActual
 
 #### Parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `state` | `GroundImageState` | An object containing the desired properties for the new ground overlay, such as the image, geographic bounds, and opacity. |
+- ``state``
+    - Type: ``GroundImageState``
+- Description: An object containing the desired properties for the new ground overlay, such as the
+      image, geographic bounds, and opacity.
 
 #### Returns
 
-| Type | Description |
-|------|-------------|
-| `GoogleMapActualGroundImage?` | The newly created `GroundOverlay` instance if successful, or `null` if the creation fails (e.g., due to invalid bounds). |
+- Type: ``GoogleMapActualGroundImage?``
+- Description: The newly created `GroundOverlay` instance if successful, or `null` if the creation
+  fails (e.g., due to invalid bounds).
 
 ---
 
@@ -60,9 +69,9 @@ override suspend fun removeGroundImage(entity: GroundImageEntityInterface<Google
 
 #### Parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `entity` | `GroundImageEntityInterface<GoogleMapActualGroundImage>` | The entity wrapper containing the `GroundOverlay` instance to be removed. |
+- ``entity``
+    - Type: ``GroundImageEntityInterface<GoogleMapActualGroundImage>``
+    - Description: The entity wrapper containing the `GroundOverlay` instance to be removed.
 
 #### Returns
 
@@ -72,7 +81,9 @@ This method does not return a value.
 
 ### updateGroundImageProperties
 
-Asynchronously updates the properties of an existing ground overlay. It efficiently compares the previous and current states and applies only the changed properties (bounds, image, or opacity) to the `GroundOverlay` on the map.
+Asynchronously updates the properties of an existing ground overlay. It efficiently compares the
+previous and current states and applies only the changed properties (bounds, image, or opacity) to
+the `GroundOverlay` on the map.
 
 #### Signature
 
@@ -86,17 +97,21 @@ override suspend fun updateGroundImageProperties(
 
 #### Parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `groundImage` | `GoogleMapActualGroundImage` | The actual `GroundOverlay` object on the map to be updated. |
-| `current` | `GroundImageEntityInterface<GoogleMapActualGroundImage>` | The entity representing the new, desired state of the ground overlay. |
-| `prev` | `GroundImageEntityInterface<GoogleMapActualGroundImage>` | The entity representing the previous state of the ground overlay, used for comparison. |
+- ``groundImage``
+    - Type: ``GoogleMapActualGroundImage``
+    - Description: The actual `GroundOverlay` object on the map to be updated.
+- ``current``
+    - Type: ``GroundImageEntityInterface<GoogleMapActualGroundImage>``
+    - Description: The entity representing the new, desired state of the ground overlay.
+- ``prev``
+    - Type: ``GroundImageEntityInterface<GoogleMapActualGroundImage>``
+- Description: The entity representing the previous state of the ground overlay, used for
+      comparison.
 
 #### Returns
 
-| Type | Description |
-|------|-------------|
-| `GoogleMapActualGroundImage?` | The updated `GroundOverlay` instance. |
+- Type: ``GoogleMapActualGroundImage?``
+- Description: The updated `GroundOverlay` instance.
 
 ---
 

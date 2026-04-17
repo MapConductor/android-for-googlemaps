@@ -11,20 +11,29 @@ class GoogleMapGroundImageController(
 
 ### Description
 
-The `GoogleMapGroundImageController` is a specialized controller responsible for managing and displaying ground image overlays on a Google Map instance. It acts as a bridge between the generic `GroundImageController` logic and the platform-specific rendering provided by `GoogleMapGroundImageOverlayRenderer`.
+The `GoogleMapGroundImageController` is a specialized controller responsible for managing and
+displaying ground image overlays on a Google Map instance. It acts as a bridge between the generic
+`GroundImageController` logic and the platform-specific rendering provided by
+`GoogleMapGroundImageOverlayRenderer`.
 
-This controller handles the entire lifecycle of ground images—including adding, updating, and removing them from the map—by coordinating the `GroundImageManager` and the `renderer`.
+This controller handles the entire lifecycle of ground images—including adding, updating, and
+removing them from the map—by coordinating the `GroundImageManager` and the `renderer`.
 
 ### Parameters
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `groundImageManager` | `GroundImageManagerInterface<GoogleMapActualGroundImage>` | (Optional) The manager responsible for handling the state and lifecycle of ground images. Defaults to a new `GroundImageManager()` instance. |
-| `renderer` | `GoogleMapGroundImageOverlayRenderer` | The renderer responsible for drawing and managing the ground image overlays on the `GoogleMap` object. |
+- ``groundImageManager``
+    - Type: ``GroundImageManagerInterface<GoogleMapActualGroundImage>``
+- Description: (Optional) The manager responsible for handling the state and lifecycle of ground
+      images. Defaults to a new `GroundImageManager()` instance.
+- ``renderer``
+    - Type: ``GoogleMapGroundImageOverlayRenderer``
+- Description: The renderer responsible for drawing and managing the ground image overlays on the
+      `GoogleMap` object.
 
 ### Example
 
-The following example demonstrates how to initialize the `GoogleMapGroundImageController` and use it to add a ground image overlay to a map.
+The following example demonstrates how to initialize the `GoogleMapGroundImageController` and use it
+to add a ground image overlay to a map.
 
 ```kotlin
 import com.google.android.gms.maps.GoogleMap

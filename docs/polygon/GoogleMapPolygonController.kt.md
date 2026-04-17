@@ -11,16 +11,24 @@ class GoogleMapPolygonController(
 
 ### Description
 
-The `GoogleMapPolygonController` is a specialized controller responsible for managing and rendering polygon overlays on a Google Map. It extends the generic `PolygonController` to provide a concrete implementation tailored for the Google Maps platform.
+The `GoogleMapPolygonController` is a specialized controller responsible for managing and rendering
+polygon overlays on a Google Map. It extends the generic `PolygonController` to provide a concrete
+implementation tailored for the Google Maps platform.
 
-This class acts as a bridge, connecting the abstract polygon data management logic (handled by `polygonManager`) with the platform-specific rendering logic (handled by `renderer`). It orchestrates the process of adding, updating, and removing polygons from the map view.
+This class acts as a bridge, connecting the abstract polygon data management logic (handled by
+`polygonManager`) with the platform-specific rendering logic (handled by `renderer`). It
+orchestrates the process of adding, updating, and removing polygons from the map view.
 
 ### Parameters
 
-| Parameter | Type | Description | Optional |
-| :--- | :--- | :--- | :--- |
-| `polygonManager` | `PolygonManagerInterface<GoogleMapActualPolygon>` | The manager responsible for handling the lifecycle and state of polygon data. It defaults to a new `PolygonManager` instance. | Yes |
-| `renderer` | `GoogleMapPolygonOverlayRenderer` | The renderer responsible for drawing and updating the polygon visuals on the Google Map instance. | No |
+- ``polygonManager``
+    - Type: ``PolygonManagerInterface<GoogleMapActualPolygon>``
+- Description: The manager responsible for handling the lifecycle and state of polygon data. It
+      defaults to a new `PolygonManager` instance.
+- ``renderer``
+    - Type: ``GoogleMapPolygonOverlayRenderer``
+- Description: The renderer responsible for drawing and updating the polygon visuals on the Google
+      Map instance.
 
 ### Example
 

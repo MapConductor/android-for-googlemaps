@@ -1,14 +1,15 @@
-Of course! Here is the high-quality SDK documentation for the provided Kotlin code snippet.
-
 # Google Maps Type Conversions
 
-This document provides details on the extension functions used for converting between MapConductor Core and Google Maps data types. These utilities facilitate seamless interoperability between the two libraries.
+This document provides details on the extension functions used for converting between MapConductor
+Core and Google Maps data types. These utilities facilitate seamless interoperability between the
+two libraries.
 
 ---
 
 ## `toLatLngBounds()`
 
-Converts a `GeoRectBounds` object from the MapConductor Core library into a `LatLngBounds` object for the Google Maps SDK.
+Converts a `GeoRectBounds` object from the MapConductor Core library into a `LatLngBounds` object
+for the Google Maps SDK.
 
 ### Signature
 
@@ -18,17 +19,21 @@ fun GeoRectBounds.toLatLngBounds(): LatLngBounds?
 
 ### Description
 
-This extension function transforms a `GeoRectBounds` instance into its equivalent `LatLngBounds` representation. The conversion relies on the `southWest` and `northEast` corners of the `GeoRectBounds`. If either of these corners is `null`, the function will return `null` to prevent potential runtime errors.
+This extension function transforms a `GeoRectBounds` instance into its equivalent `LatLngBounds`
+representation. The conversion relies on the `southWest` and `northEast` corners of the
+`GeoRectBounds`. If either of these corners is `null`, the function will return `null` to prevent
+potential runtime errors.
 
 ### Parameters
 
-| Parameter | Type              | Description                               |
-|-----------|-------------------|-------------------------------------------|
-| `this`    | `GeoRectBounds`   | The `GeoRectBounds` instance to convert.  |
+- ``this``
+    - Type: ``GeoRectBounds``
+    - Description: The `GeoRectBounds` instance to convert.
 
 ### Returns
 
-A `LatLngBounds` object that represents the same geographical area, or `null` if the source `GeoRectBounds` has a `null` `southWest` or `northEast` property.
+A `LatLngBounds` object that represents the same geographical area, or `null` if the source
+`GeoRectBounds` has a `null` `southWest` or `northEast` property.
 
 ### Example
 
@@ -58,7 +63,8 @@ if (latLngBounds != null) {
 
 ## `toGeoRectBounds()`
 
-Converts a `LatLngBounds` object from the Google Maps SDK into a `GeoRectBounds` object for the MapConductor Core library.
+Converts a `LatLngBounds` object from the Google Maps SDK into a `GeoRectBounds` object for the
+MapConductor Core library.
 
 ### Signature
 
@@ -68,13 +74,16 @@ fun LatLngBounds.toGeoRectBounds(): GeoRectBounds
 
 ### Description
 
-This extension function transforms a Google Maps `LatLngBounds` instance into its equivalent `GeoRectBounds` representation. It maps the `southwest` and `northeast` properties of the `LatLngBounds` to create a new `GeoRectBounds` object. This conversion is non-nullable and always returns a valid `GeoRectBounds` instance.
+This extension function transforms a Google Maps `LatLngBounds` instance into its equivalent
+`GeoRectBounds` representation. It maps the `southwest` and `northeast` properties of the
+`LatLngBounds` to create a new `GeoRectBounds` object. This conversion is non-nullable and always
+returns a valid `GeoRectBounds` instance.
 
 ### Parameters
 
-| Parameter | Type              | Description                               |
-|-----------|-------------------|-------------------------------------------|
-| `this`    | `LatLngBounds`    | The `LatLngBounds` instance to convert.   |
+- ``this``
+    - Type: ``LatLngBounds``
+    - Description: The `LatLngBounds` instance to convert.
 
 ### Returns
 

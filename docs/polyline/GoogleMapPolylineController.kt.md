@@ -1,7 +1,3 @@
-Of course! Here is the high-quality SDK documentation for the provided code snippet.
-
-***
-
 # GoogleMapPolylineController
 
 ### Signature
@@ -13,20 +9,31 @@ class GoogleMapPolylineController(
 ```
 
 ### Description
-The `GoogleMapPolylineController` is the primary controller for managing and rendering polylines on a Google Map. It serves as the main entry point for all polyline-related operations within the Google Maps implementation of the MapConductor framework.
+The `GoogleMapPolylineController` is the primary controller for managing and rendering polylines on
+a Google Map. It serves as the main entry point for all polyline-related operations within the
+Google Maps implementation of the MapConductor framework.
 
-This class orchestrates the core logic from a `PolylineManager` and the visual representation from a `GoogleMapPolylineOverlayRenderer`. It extends the base `PolylineController` to provide a concrete implementation tailored specifically for the Google Maps SDK, handling the lifecycle and drawing of `GoogleMapActualPolyline` objects.
+This class orchestrates the core logic from a `PolylineManager` and the visual representation from a
+`GoogleMapPolylineOverlayRenderer`. It extends the base `PolylineController` to provide a concrete
+implementation tailored specifically for the Google Maps SDK, handling the lifecycle and drawing of
+`GoogleMapActualPolyline` objects.
 
 ### Parameters
 The constructor accepts the following parameters:
 
-| Parameter | Type | Description |
-|---|---|---|
-| `polylineManager` | `PolylineManagerInterface<GoogleMapActualPolyline>` | The manager responsible for the lifecycle and state of polyline data. It handles adding, removing, and updating polylines. **Optional**: If not provided, a default `PolylineManager` instance is created. |
-| `renderer` | `GoogleMapPolylineOverlayRenderer` | The platform-specific renderer that draws the polylines onto the `GoogleMap` instance. This parameter is **required**. |
+- ``polylineManager``
+    - Type: ``PolylineManagerInterface<GoogleMapActualPolyline>``
+- Description: The manager responsible for the lifecycle and state of polyline data. It handles
+      adding, removing, and updating polylines. **Optional**: If not provided, a default
+      `PolylineManager` instance is created.
+- ``renderer``
+    - Type: ``GoogleMapPolylineOverlayRenderer``
+- Description: The platform-specific renderer that draws the polylines onto the `GoogleMap`
+      instance. This parameter is **required**.
 
 ### Example
-The following example demonstrates how to initialize the `GoogleMapPolylineController` to manage polylines on a `GoogleMap` instance.
+The following example demonstrates how to initialize the `GoogleMapPolylineController` to manage
+polylines on a `GoogleMap` instance.
 
 ```kotlin
 import android.content.Context
@@ -47,6 +54,6 @@ val polylineController = GoogleMapPolylineController(renderer = polylineRenderer
 
 // Now you can use the polylineController to add, remove, and manage polylines.
 // For example, to add a new polyline:
-// val newPolyline = Polyline(...) 
+// val newPolyline = Polyline(...)
 // polylineController.add(listOf(newPolyline))
 ```

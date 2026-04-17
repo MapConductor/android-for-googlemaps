@@ -1,7 +1,3 @@
-Excellent! Here is the high-quality SDK documentation for the provided Kotlin code snippet.
-
-***
-
 # GoogleMapCircleOverlayRenderer
 
 ## Class Signature
@@ -15,9 +11,14 @@ class GoogleMapCircleOverlayRenderer(
 
 ## Description
 
-The `GoogleMapCircleOverlayRenderer` is responsible for rendering, updating, and removing circle overlays on a Google Map.
+The `GoogleMapCircleOverlayRenderer` is responsible for rendering, updating, and removing circle
+overlays on a Google Map.
 
-This renderer implements circle drawing by creating `Polygon` objects rather than using the native `Circle` object from the Google Maps SDK. This approach allows for more precise control and consistent visual behavior, especially for geodesic circles and stroke width rendering. The radius is adjusted internally to account for the stroke width, ensuring the outer edge of the circle's stroke aligns with the specified radius.
+This renderer implements circle drawing by creating `Polygon` objects rather than using the native
+`Circle` object from the Google Maps SDK. This approach allows for more precise control and
+consistent visual behavior, especially for geodesic circles and stroke width rendering. The radius
+is adjusted internally to account for the stroke width, ensuring the outer edge of the circle's
+stroke aligns with the specified radius.
 
 All map operations are executed on the main thread via the provided `CoroutineScope`.
 
@@ -25,7 +26,7 @@ All map operations are executed on the main thread via the provided `CoroutineSc
 
 ```kotlin
 GoogleMapCircleOverlayRenderer(
-    holder: GoogleMapViewHolder, 
+    holder: GoogleMapViewHolder,
     coroutine: CoroutineScope = CoroutineScope(Dispatchers.Main)
 )
 ```
@@ -34,10 +35,14 @@ Initializes a new instance of the `GoogleMapCircleOverlayRenderer`.
 
 #### Parameters
 
-| Parameter   | Type                | Description                                                                                             |
-| :---------- | :------------------ | :------------------------------------------------------------------------------------------------------ |
-| `holder`    | `GoogleMapViewHolder` | The view holder that contains the `GoogleMap` instance on which the circles will be rendered.           |
-| `coroutine` | `CoroutineScope`    | The coroutine scope used to execute map operations. Defaults to `CoroutineScope(Dispatchers.Main)`. |
+- ``holder``
+    - Type: ``GoogleMapViewHolder``
+- Description: The view holder that contains the `GoogleMap` instance on which the circles will be
+      rendered.
+- ``coroutine``
+    - Type: ``CoroutineScope``
+- Description: The coroutine scope used to execute map operations. Defaults to
+      `CoroutineScope(Dispatchers.Main)`.
 
 ---
 
@@ -53,19 +58,22 @@ override suspend fun createCircle(state: CircleState): GoogleMapActualCircle?
 
 #### Description
 
-Creates and draws a new circle on the map based on the provided state. This method generates a polygon representation of the circle, configures its visual properties (colors, stroke, etc.), and adds it to the map.
+Creates and draws a new circle on the map based on the provided state. This method generates a
+polygon representation of the circle, configures its visual properties (colors, stroke, etc.), and
+adds it to the map.
 
 #### Parameters
 
-| Parameter | Type          | Description                                                                                             |
-| :-------- | :------------ | :------------------------------------------------------------------------------------------------------ |
-| `state`   | `CircleState` | An object containing all configuration details for the circle, such as center, radius, colors, and style. |
+- ``state``
+    - Type: ``CircleState``
+- Description: An object containing all configuration details for the circle, such as center,
+      radius, colors, and style.
 
 #### Returns
 
-| Type                    | Description                                                                                             |
-| :---------------------- | :------------------------------------------------------------------------------------------------------ |
-| `GoogleMapActualCircle?` | The created `Polygon` object (aliased as `GoogleMapActualCircle`) that represents the circle, or `null` if creation fails. |
+- Type: ``GoogleMapActualCircle?``
+- Description: The created `Polygon` object (aliased as `GoogleMapActualCircle`) that represents the
+  circle, or `null` if creation fails.
 
 ---
 
@@ -83,9 +91,9 @@ Removes a specified circle polygon from the map.
 
 #### Parameters
 
-| Parameter | Type                                          | Description                                                              |
-| :-------- | :-------------------------------------------- | :----------------------------------------------------------------------- |
-| `entity`  | `CircleEntityInterface<GoogleMapActualCircle>` | The entity wrapper that contains the circle polygon instance to be removed. |
+- ``entity``
+    - Type: ``CircleEntityInterface<GoogleMapActualCircle>``
+    - Description: The entity wrapper that contains the circle polygon instance to be removed.
 
 ---
 
@@ -103,29 +111,38 @@ override suspend fun updateCircleProperties(
 
 #### Description
 
-Updates the properties of an existing circle polygon on the map. This method performs an efficient update by comparing the `current` and `prev` states and only applying the properties that have changed.
+Updates the properties of an existing circle polygon on the map. This method performs an efficient
+update by comparing the `current` and `prev` states and only applying the properties that have
+changed.
 
-If the center, radius, geodesic, or stroke width properties have changed, the polygon's points are regenerated to reflect the new geometry. Otherwise, only the visual properties (e.g., colors, z-index) are updated.
+If the center, radius, geodesic, or stroke width properties have changed, the polygon's points are
+regenerated to reflect the new geometry. Otherwise, only the visual properties (e.g., colors,
+z-index) are updated.
 
 #### Parameters
 
-| Parameter | Type                                          | Description                                                                                             |
-| :-------- | :-------------------------------------------- | :------------------------------------------------------------------------------------------------------ |
-| `circle`  | `GoogleMapActualCircle`                       | The actual `Polygon` object on the map that needs to be updated.                                        |
-| `current` | `CircleEntityInterface<GoogleMapActualCircle>` | The entity wrapper containing the new, updated state for the circle.                                    |
-| `prev`    | `CircleEntityInterface<GoogleMapActualCircle>` | The entity wrapper containing the previous state of the circle, used for diffing to determine what changed. |
+- ``circle``
+    - Type: ``GoogleMapActualCircle``
+    - Description: The actual `Polygon` object on the map that needs to be updated.
+- ``current``
+    - Type: ``CircleEntityInterface<GoogleMapActualCircle>``
+    - Description: The entity wrapper containing the new, updated state for the circle.
+- ``prev``
+    - Type: ``CircleEntityInterface<GoogleMapActualCircle>``
+- Description: The entity wrapper containing the previous state of the circle, used for diffing to
+      determine what changed.
 
 #### Returns
 
-| Type                    | Description                               |
-| :---------------------- | :---------------------------------------- |
-| `GoogleMapActualCircle?` | The updated `Polygon` object.             |
+- Type: ``GoogleMapActualCircle?``
+- Description: The updated `Polygon` object.
 
 ---
 
 ## Example
 
-Here is a conceptual example of how to use `GoogleMapCircleOverlayRenderer` to draw a circle on a map.
+Here is a conceptual example of how to use `GoogleMapCircleOverlayRenderer` to draw a circle on a
+map.
 
 ```kotlin
 import androidx.compose.ui.graphics.Color

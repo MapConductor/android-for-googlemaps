@@ -1,20 +1,24 @@
-Of course! Here is the high-quality SDK documentation for the provided code snippet.
-
-***
-
 # Google Maps Utilities
 
-This document outlines a collection of internal utility classes and objects used for optimizing polyline rendering on Google Maps. These helpers manage adaptive interpolation calculations and caching to balance performance and visual quality.
+This document outlines a collection of internal utility classes and objects used for optimizing
+polyline rendering on Google Maps. These helpers manage adaptive interpolation calculations and
+caching to balance performance and visual quality.
 
 ## `AdaptiveInterpolation`
 
-A utility object that provides functions for calculating parameters needed for adaptive polyline interpolation. Adaptive interpolation adjusts the density of points in a polyline based on the map's zoom level, ensuring that lines look smooth without using an excessive number of vertices, which helps optimize rendering performance.
+A utility object that provides functions for calculating parameters needed for adaptive polyline
+interpolation. Adaptive interpolation adjusts the density of points in a polyline based on the map's
+zoom level, ensuring that lines look smooth without using an excessive number of vertices, which
+helps optimize rendering performance.
 
 ---
 
 ### `maxSegmentLengthMeters`
 
-Calculates the maximum length for a polyline segment in meters. This length is adaptive, based on the current map zoom level and latitude. The calculation aims to maintain a consistent visual segment length on the screen, breaking down long polylines into smaller, visually appropriate segments. The result is clamped to predefined minimum and maximum values to ensure sensibility.
+Calculates the maximum length for a polyline segment in meters. This length is adaptive, based on
+the current map zoom level and latitude. The calculation aims to maintain a consistent visual
+segment length on the screen, breaking down long polylines into smaller, visually appropriate
+segments. The result is clamped to predefined minimum and maximum values to ensure sensibility.
 
 #### Signature
 
@@ -27,26 +31,32 @@ fun maxSegmentLengthMeters(
 
 #### Description
 
-This function determines the ideal segment length by calculating the meters-per-pixel ratio at a given latitude and zoom level. It then multiplies this by a target pixel length (`TARGET_SEGMENT_PIXELS`) to find the desired segment length in meters.
+This function determines the ideal segment length by calculating the meters-per-pixel ratio at a
+given latitude and zoom level. It then multiplies this by a target pixel length
+(`TARGET_SEGMENT_PIXELS`) to find the desired segment length in meters.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `zoom` | `Float` | The current zoom level of the map. |
-| `latitude` | `Double` | The latitude for which the calculation is being performed. The meters-per-pixel ratio changes with latitude. |
+- ``zoom``
+    - Type: ``Float``
+    - Description: The current zoom level of the map.
+- ``latitude``
+    - Type: ``Double``
+- Description: The latitude for which the calculation is being performed. The meters-per-pixel ratio
+      changes with latitude.
 
 #### Returns
 
-| Type | Description |
-| :--- | :--- |
-| `Double` | The calculated maximum segment length in meters, clamped between 50.0 and 100,000.0. |
+- Type: ``Double``
+- Description: The calculated maximum segment length in meters, clamped between 50.0 and 100,000.0.
 
 ---
 
 ### `pointsHash`
 
-Generates a stable 64-bit hash for a list of geographic points. This function is designed to be resilient to minor floating-point inaccuracies by first quantizing the latitude and longitude values.
+Generates a stable 64-bit hash for a list of geographic points. This function is designed to be
+resilient to minor floating-point inaccuracies by first quantizing the latitude and longitude
+values.
 
 #### Signature
 
@@ -56,19 +66,22 @@ fun pointsHash(points: List<GeoPointInterface>): Long
 
 #### Description
 
-This function uses the 64-bit FNV-1a hashing algorithm. It iterates over each point, quantizes its coordinates to an integer representation, and incorporates them into the hash. The total number of points is also factored into the final hash value, ensuring that lists with different lengths but similar starting points produce unique hashes. This is primarily used for creating reliable cache keys.
+This function uses the 64-bit FNV-1a hashing algorithm. It iterates over each point, quantizes its
+coordinates to an integer representation, and incorporates them into the hash. The total number of
+points is also factored into the final hash value, ensuring that lists with different lengths but
+similar starting points produce unique hashes. This is primarily used for creating reliable cache
+keys.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `points` | `List<GeoPointInterface>` | The list of geographic points to hash. |
+- ``points``
+    - Type: ``List<GeoPointInterface>``
+    - Description: The list of geographic points to hash.
 
 #### Returns
 
-| Type | Description |
-| :--- | :--- |
-| `Long` | A 64-bit FNV-1a hash of the input points. |
+- Type: ``Long``
+- Description: A 64-bit FNV-1a hash of the input points.
 
 ---
 
@@ -87,24 +100,29 @@ fun cacheKey(
 
 #### Description
 
-This function combines the hash of an original polyline with the interpolation segment length used to process it. This ensures that if either the source points or the interpolation detail (segment length) changes, a new cache key is generated, preventing cache collisions.
+This function combines the hash of an original polyline with the interpolation segment length used
+to process it. This ensures that if either the source points or the interpolation detail (segment
+length) changes, a new cache key is generated, preventing cache collisions.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `pointsHash` | `Long` | The hash of the original list of points, typically from `pointsHash()`. |
-| `maxSegmentLengthMeters` | `Double` | The segment length used for interpolation, typically from `maxSegmentLengthMeters()`. |
+- ``pointsHash``
+    - Type: ``Long``
+    - Description: The hash of the original list of points, typically from `pointsHash()`.
+- ``maxSegmentLengthMeters``
+    - Type: ``Double``
+- Description: The segment length used for interpolation, typically from `maxSegmentLengthMeters()`.
 
 #### Returns
 
-| Type | Description |
-| :--- | :--- |
-| `String` | A unique string suitable for use as a cache key. |
+- Type: ``String``
+- Description: A unique string suitable for use as a cache key.
 
 ## `LatLngInterpolationCache`
 
-An internal class that provides a memory cache for storing the results of polyline interpolations (which are lists of `LatLng`). It is a wrapper around Android's `LruCache`, implementing a "Least Recently Used" eviction policy.
+An internal class that provides a memory cache for storing the results of polyline interpolations
+(which are lists of `LatLng`). It is a wrapper around Android's `LruCache`, implementing a "Least
+Recently Used" eviction policy.
 
 #### Signature
 
@@ -114,13 +132,15 @@ internal class LatLngInterpolationCache(maxEntries: Int)
 
 #### Description
 
-When the cache reaches its maximum configured size, it automatically discards the least recently accessed items to make room for new ones. This is useful for storing computationally expensive interpolation results that are likely to be reused.
+When the cache reaches its maximum configured size, it automatically discards the least recently
+accessed items to make room for new ones. This is useful for storing computationally expensive
+interpolation results that are likely to be reused.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `maxEntries` | `Int` | The maximum number of entries the cache can hold before items are evicted. |
+- ``maxEntries``
+    - Type: ``Int``
+    - Description: The maximum number of entries the cache can hold before items are evicted.
 
 ---
 
@@ -136,15 +156,14 @@ fun get(key: String): List<LatLng>?
 
 #### Parameters
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `key` | `String` | The key associated with the cached data. |
+- ``key``
+    - Type: ``String``
+    - Description: The key associated with the cached data.
 
 #### Returns
 
-| Type | Description |
-| :--- | :--- |
-| `List<LatLng>?` | The cached list of `LatLng` points if the key is found, otherwise `null`. |
+- Type: ``List<LatLng>?``
+- Description: The cached list of `LatLng` points if the key is found, otherwise `null`.
 
 ---
 
@@ -163,10 +182,12 @@ fun put(
 
 #### Parameters
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `key` | `String` | The key to store the data under. |
-| `value` | `List<LatLng>` | The list of `LatLng` points to cache. |
+- ``key``
+    - Type: ``String``
+    - Description: The key to store the data under.
+- ``value``
+    - Type: ``List<LatLng>``
+    - Description: The list of `LatLng` points to cache.
 
 #### Returns
 
@@ -176,7 +197,8 @@ This method does not return a value.
 
 ### Example
 
-The following example demonstrates the typical workflow for using `AdaptiveInterpolation` and `LatLngInterpolationCache` together.
+The following example demonstrates the typical workflow for using `AdaptiveInterpolation` and
+`LatLngInterpolationCache` together.
 
 ```kotlin
 import com.google.android.gms.maps.model.LatLng

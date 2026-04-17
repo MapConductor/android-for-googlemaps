@@ -1,10 +1,14 @@
 # SDK Documentation
 
-This document provides a detailed overview of the Marker Event Controllers for Google Maps, including an interface and its implementations. These components are responsible for managing and dispatching marker-related events.
+This document provides a detailed overview of the Marker Event Controllers for Google Maps,
+including an interface and its implementations. These components are responsible for managing and
+dispatching marker-related events.
 
 ## `GoogleMapMarkerEventControllerInterface`
 
-An interface that defines the contract for controlling and handling events related to Google Map markers. It extends the core `MarkerEventControllerInterface` and provides methods to set event listeners and programmatically dispatch events.
+An interface that defines the contract for controlling and handling events related to Google Map
+markers. It extends the core `MarkerEventControllerInterface` and provides methods to set event
+listeners and programmatically dispatch events.
 
 ---
 
@@ -20,19 +24,21 @@ fun getEntity(id: String): MarkerEntityInterface<GoogleMapActualMarker>?
 
 #### Description
 
-This function allows you to fetch a specific `MarkerEntityInterface` instance from the controller's internal manager using its ID. This is useful when you need to interact with a specific marker that is already on the map.
+This function allows you to fetch a specific `MarkerEntityInterface` instance from the controller's
+internal manager using its ID. This is useful when you need to interact with a specific marker that
+is already on the map.
 
 #### Parameters
 
-| Parameter | Type   | Description                               |
-| :-------- | :----- | :---------------------------------------- |
-| `id`      | String | The unique identifier of the marker entity. |
+- ``id``
+    - Type: `String`
+    - Description: The unique identifier of the marker entity.
 
 #### Returns
 
-| Type                                              | Description                                                    |
-| :------------------------------------------------ | :------------------------------------------------------------- |
-| `MarkerEntityInterface<GoogleMapActualMarker>?` | The corresponding marker entity, or `null` if no marker with the specified `id` is found. |
+- Type: ``MarkerEntityInterface<GoogleMapActualMarker>?``
+- Description: The corresponding marker entity, or `null` if no marker with the specified `id` is
+  found.
 
 ---
 
@@ -48,13 +54,14 @@ fun dispatchClick(state: MarkerState)
 
 #### Description
 
-This function manually triggers the `onMarkerClick` event handler, if one is set. It simulates a user clicking on a marker.
+This function manually triggers the `onMarkerClick` event handler, if one is set. It simulates a
+user clicking on a marker.
 
 #### Parameters
 
-| Parameter | Type          | Description                                                |
-| :-------- | :------------ | :--------------------------------------------------------- |
-| `state`   | `MarkerState` | The state of the marker at the time the event is dispatched. |
+- ``state``
+    - Type: ``MarkerState``
+    - Description: The state of the marker at the time the event is dispatched.
 
 ---
 
@@ -70,13 +77,14 @@ fun dispatchDragStart(state: MarkerState)
 
 #### Description
 
-This function manually triggers the `onMarkerDragStart` event handler, simulating the start of a drag operation on a marker.
+This function manually triggers the `onMarkerDragStart` event handler, simulating the start of a
+drag operation on a marker.
 
 #### Parameters
 
-| Parameter | Type          | Description                                                |
-| :-------- | :------------ | :--------------------------------------------------------- |
-| `state`   | `MarkerState` | The state of the marker at the time the event is dispatched. |
+- ``state``
+    - Type: ``MarkerState``
+    - Description: The state of the marker at the time the event is dispatched.
 
 ---
 
@@ -92,13 +100,14 @@ fun dispatchDrag(state: MarkerState)
 
 #### Description
 
-This function manually triggers the `onMarkerDrag` event handler, simulating an ongoing drag operation.
+This function manually triggers the `onMarkerDrag` event handler, simulating an ongoing drag
+operation.
 
 #### Parameters
 
-| Parameter | Type          | Description                                                |
-| :-------- | :------------ | :--------------------------------------------------------- |
-| `state`   | `MarkerState` | The state of the marker at the time the event is dispatched. |
+- ``state``
+    - Type: ``MarkerState``
+    - Description: The state of the marker at the time the event is dispatched.
 
 ---
 
@@ -114,13 +123,14 @@ fun dispatchDragEnd(state: MarkerState)
 
 #### Description
 
-This function manually triggers the `onMarkerDragEnd` event handler, simulating the completion of a drag operation.
+This function manually triggers the `onMarkerDragEnd` event handler, simulating the completion of a
+drag operation.
 
 #### Parameters
 
-| Parameter | Type          | Description                                                |
-| :-------- | :------------ | :--------------------------------------------------------- |
-| `state`   | `MarkerState` | The state of the marker at the time the event is dispatched. |
+- ``state``
+    - Type: ``MarkerState``
+    - Description: The state of the marker at the time the event is dispatched.
 
 ---
 
@@ -136,9 +146,10 @@ fun setClickListener(listener: OnMarkerEventHandler?)
 
 #### Parameters
 
-| Parameter  | Type                   | Description                                                                                             |
-| :--------- | :--------------------- | :------------------------------------------------------------------------------------------------------ |
-| `listener` | `OnMarkerEventHandler?` | The handler to be invoked on a marker click. The handler receives a `MarkerState` object. Pass `null` to remove the current listener. |
+- ``listener``
+    - Type: ``OnMarkerEventHandler?``
+- Description: The handler to be invoked on a marker click. The handler receives a `MarkerState`
+      object. Pass `null` to remove the current listener.
 
 ---
 
@@ -154,9 +165,10 @@ fun setDragStartListener(listener: OnMarkerEventHandler?)
 
 #### Parameters
 
-| Parameter  | Type                   | Description                                                                                             |
-| :--------- | :--------------------- | :------------------------------------------------------------------------------------------------------ |
-| `listener` | `OnMarkerEventHandler?` | The handler to be invoked when a marker drag starts. The handler receives a `MarkerState` object. Pass `null` to remove the current listener. |
+- ``listener``
+    - Type: ``OnMarkerEventHandler?``
+- Description: The handler to be invoked when a marker drag starts. The handler receives a
+      `MarkerState` object. Pass `null` to remove the current listener.
 
 ---
 
@@ -172,9 +184,10 @@ fun setDragListener(listener: OnMarkerEventHandler?)
 
 #### Parameters
 
-| Parameter  | Type                   | Description                                                                                             |
-| :--------- | :--------------------- | :------------------------------------------------------------------------------------------------------ |
-| `listener` | `OnMarkerEventHandler?` | The handler to be invoked during a marker drag. The handler receives a `MarkerState` object. Pass `null` to remove the current listener. |
+- ``listener``
+    - Type: ``OnMarkerEventHandler?``
+- Description: The handler to be invoked during a marker drag. The handler receives a `MarkerState`
+      object. Pass `null` to remove the current listener.
 
 ---
 
@@ -190,9 +203,10 @@ fun setDragEndListener(listener: OnMarkerEventHandler?)
 
 #### Parameters
 
-| Parameter  | Type                   | Description                                                                                             |
-| :--------- | :--------------------- | :------------------------------------------------------------------------------------------------------ |
-| `listener` | `OnMarkerEventHandler?` | The handler to be invoked when a marker drag ends. The handler receives a `MarkerState` object. Pass `null` to remove the current listener. |
+- ``listener``
+    - Type: ``OnMarkerEventHandler?``
+- Description: The handler to be invoked when a marker drag ends. The handler receives a
+      `MarkerState` object. Pass `null` to remove the current listener.
 
 ---
 
@@ -208,9 +222,10 @@ fun setAnimateStartListener(listener: OnMarkerEventHandler?)
 
 #### Parameters
 
-| Parameter  | Type                   | Description                                                                                             |
-| :--------- | :--------------------- | :------------------------------------------------------------------------------------------------------ |
-| `listener` | `OnMarkerEventHandler?` | The handler to be invoked when a marker animation starts. The handler receives a `MarkerState` object. Pass `null` to remove the current listener. |
+- ``listener``
+    - Type: ``OnMarkerEventHandler?``
+- Description: The handler to be invoked when a marker animation starts. The handler receives a
+      `MarkerState` object. Pass `null` to remove the current listener.
 
 ---
 
@@ -226,15 +241,18 @@ fun setAnimateEndListener(listener: OnMarkerEventHandler?)
 
 #### Parameters
 
-| Parameter  | Type                   | Description                                                                                             |
-| :--------- | :--------------------- | :------------------------------------------------------------------------------------------------------ |
-| `listener` | `OnMarkerEventHandler?` | The handler to be invoked when a marker animation ends. The handler receives a `MarkerState` object. Pass `null` to remove the current listener. |
+- ``listener``
+    - Type: ``OnMarkerEventHandler?``
+- Description: The handler to be invoked when a marker animation ends. The handler receives a
+      `MarkerState` object. Pass `null` to remove the current listener.
 
 <br>
 
 ## `DefaultGoogleMapMarkerEventController`
 
-A default implementation of `GoogleMapMarkerEventControllerInterface`. It delegates all event handling and listener management calls to an underlying `GoogleMapMarkerController` instance. This class provides a straightforward way to connect marker events to the main marker controller.
+A default implementation of `GoogleMapMarkerEventControllerInterface`. It delegates all event
+handling and listener management calls to an underlying `GoogleMapMarkerController` instance. This
+class provides a straightforward way to connect marker events to the main marker controller.
 
 ### Constructor
 
@@ -248,15 +266,18 @@ DefaultGoogleMapMarkerEventController(
 
 #### Parameters
 
-| Parameter    | Type                        | Description                                                              |
-| :----------- | :-------------------------- | :----------------------------------------------------------------------- |
-| `controller` | `GoogleMapMarkerController` | The main marker controller that will manage the markers and their events. |
+- ``controller``
+    - Type: ``GoogleMapMarkerController``
+    - Description: The main marker controller that will manage the markers and their events.
 
 <br>
 
 ## `StrategyGoogleMapMarkerEventController`
 
-An implementation of `GoogleMapMarkerEventControllerInterface` that uses a `StrategyMarkerController`. This class is designed to work within a strategy pattern, where the logic for handling marker events is encapsulated in a separate strategy controller. It delegates all method calls to the provided `StrategyMarkerController`.
+An implementation of `GoogleMapMarkerEventControllerInterface` that uses a
+`StrategyMarkerController`. This class is designed to work within a strategy pattern, where the
+logic for handling marker events is encapsulated in a separate strategy controller. It delegates all
+method calls to the provided `StrategyMarkerController`.
 
 ### Constructor
 
@@ -270,6 +291,6 @@ StrategyGoogleMapMarkerEventController(
 
 #### Parameters
 
-| Parameter    | Type                                                | Description                                                        |
-| :----------- | :-------------------------------------------------- | :----------------------------------------------------------------- |
-| `controller` | `StrategyMarkerController<GoogleMapActualMarker>` | The strategy controller responsible for implementing the event logic. |
+- ``controller``
+    - Type: ``StrategyMarkerController<GoogleMapActualMarker>``
+    - Description: The strategy controller responsible for implementing the event logic.
