@@ -93,8 +93,6 @@ dependencies {
     // BOMと同じバージョンを明示することで解決
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.common.java8)
-    implementation("com.esri:arcgis-maps-kotlin-toolkit-geoview-compose:${libs.versions.arcgisMapsKotlin.get()}")
-    implementation("com.esri:arcgis-maps-kotlin-toolkit-authentication:${libs.versions.arcgisMapsKotlin.get()}")
 
     // Google Maps SDK
     implementation(libs.play.services.maps)
