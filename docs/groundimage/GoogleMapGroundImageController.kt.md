@@ -1,6 +1,6 @@
 # GoogleMapGroundImageController
 
-### Signature
+## Signature
 
 ```kotlin
 class GoogleMapGroundImageController(
@@ -9,7 +9,7 @@ class GoogleMapGroundImageController(
 ) : GroundImageController<GoogleMapActualGroundImage>(groundImageManager, renderer)
 ```
 
-### Description
+## Description
 
 The `GoogleMapGroundImageController` is a specialized controller responsible for managing and
 displaying ground image overlays on a Google Map instance. It acts as a bridge between the generic
@@ -19,7 +19,7 @@ displaying ground image overlays on a Google Map instance. It acts as a bridge b
 This controller handles the entire lifecycle of ground images—including adding, updating, and
 removing them from the map—by coordinating the `GroundImageManager` and the `renderer`.
 
-### Parameters
+## Parameters
 
 - `groundImageManager`
     - Type: `GroundImageManagerInterface<GoogleMapActualGroundImage>`
@@ -30,7 +30,7 @@ removing them from the map—by coordinating the `GroundImageManager` and the `r
     - Description: The renderer responsible for drawing and managing the ground image overlays on the
       `GoogleMap` object.
 
-### Example
+## Example
 
 The following example demonstrates how to initialize the `GoogleMapGroundImageController` and use it
 to add a ground image overlay to a map.

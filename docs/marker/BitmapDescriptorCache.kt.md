@@ -18,20 +18,20 @@ existing instance corresponding to the bitmap's hash code. If a cached instance 
 returned immediately. Otherwise, a new `BitmapDescriptor` is created, stored in the cache, and then
 returned.
 
-#### Signature
+### Signature
 ```kotlin
 fun fromBitmap(bitmap: Bitmap): BitmapDescriptor
 ```
 
-#### Parameters
+### Parameters
 - `bitmap`
     - Type: `Bitmap`
     - Description: The `Bitmap` object to convert into a `BitmapDescriptor`.
 
-#### Returns
+### Returns
 `BitmapDescriptor` - The cached or newly created `BitmapDescriptor` instance.
 
-#### Example
+### Example
 ```kotlin
 // Assume 'myCustomBitmap' is a valid Bitmap object
 val descriptor1 = BitmapDescriptorCache.fromBitmap(myCustomBitmap)
@@ -51,17 +51,17 @@ googleMap.addMarker(
 
 ---
 
-### clearCache
+## clearCache
 
 Removes all entries from the `BitmapDescriptor` cache. This can be useful in low-memory situations
 or when you need to ensure that all descriptors are recreated on their next request.
 
-#### Signature
+### Signature
 ```kotlin
 fun clearCache()
 ```
 
-#### Example
+### Example
 ```kotlin
 // Clear all cached BitmapDescriptors to free up memory.
 BitmapDescriptorCache.clearCache()
@@ -69,20 +69,20 @@ BitmapDescriptorCache.clearCache()
 
 ---
 
-### getCacheSize
+## getCacheSize
 
 Returns the current number of `BitmapDescriptor` instances stored in the cache. This method is
 primarily intended for debugging and monitoring purposes.
 
-#### Signature
+### Signature
 ```kotlin
 fun getCacheSize(): Int
 ```
 
-#### Returns
+### Returns
 `Int` - The total number of items currently in the cache.
 
-#### Example
+### Example
 ```kotlin
 // Get the number of items in the cache
 val currentCacheSize = BitmapDescriptorCache.getCacheSize()

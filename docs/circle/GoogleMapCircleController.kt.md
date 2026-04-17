@@ -1,6 +1,6 @@
 # GoogleMapCircleController
 
-### Signature
+## Signature
 
 ```kotlin
 class GoogleMapCircleController(
@@ -9,7 +9,7 @@ class GoogleMapCircleController(
 ) : CircleController<GoogleMapActualCircle>(circleManager, renderer)
 ```
 
-### Description
+## Description
 
 The `GoogleMapCircleController` is a specialized controller responsible for managing and rendering
 circle overlays on a Google Map. It acts as a bridge between the abstract circle management logic
@@ -22,7 +22,7 @@ ensuring that the visual representation of circles on the map stays in sync with
 model. When circles are added, updated, or removed via the controller, it delegates the state
 management to the `circleManager` and triggers the `renderer` to apply the changes to the map view.
 
-### Parameters
+## Parameters
 
 This documentation describes the parameters for the `GoogleMapCircleController` constructor.
 
@@ -36,7 +36,7 @@ This documentation describes the parameters for the `GoogleMapCircleController` 
     - Default: `*None*`
     - Description: The platform-specific renderer that draws the circles onto the Google Map view.
 
-### Example
+## Example
 
 The following example demonstrates how to initialize and use the `GoogleMapCircleController` within
 a typical Android application that uses Google Maps. This code would typically reside in your

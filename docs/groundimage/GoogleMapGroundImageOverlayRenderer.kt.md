@@ -36,20 +36,20 @@ class GoogleMapGroundImageOverlayRenderer(
 Asynchronously creates and adds a new ground overlay to the map based on the provided state. It
 configures the overlay's image, bounds, and opacity.
 
-#### Signature
+### Signature
 
 ```kotlin
 override suspend fun createGroundImage(state: GroundImageState): GoogleMapActualGroundImage?
 ```
 
-#### Parameters
+### Parameters
 
 - `state`
     - Type: `GroundImageState`
     - Description: An object containing the desired properties for the new ground overlay, such as the
       image, geographic bounds, and opacity.
 
-#### Returns
+### Returns
 
 - Type: `GoogleMapActualGroundImage?`
 - Description: The newly created `GroundOverlay` instance if successful, or `null` if the creation

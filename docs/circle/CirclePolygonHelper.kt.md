@@ -1,6 +1,4 @@
-# SDK Documentation
-
-## `CirclePolygonHelper`
+# `CirclePolygonHelper`
 
 A helper object for generating polygon vertices that approximate a circle on a map. This is useful
 for drawing circular shapes using polygon-based map APIs, such as Google Maps Polygons.
@@ -13,11 +11,11 @@ The helper supports two types of circle calculations:
 
 ---
 
-### `generateCirclePoints`
+## `generateCirclePoints`
 
 Generates a list of `LatLng` points that form the vertices of a polygon approximating a circle.
 
-#### Signature
+### Signature
 
 ```kotlin
 fun generateCirclePoints(
@@ -27,14 +25,14 @@ fun generateCirclePoints(
 ): List<LatLng>
 ```
 
-#### Description
+### Description
 
 This function calculates a series of geographical coordinates (`LatLng` points) that, when
 connected, form a polygon that approximates a circle. You can specify the center, radius, and
 whether the circle should be calculated as a true geodesic circle or a simpler non-geodesic
 projection. The resulting list of points is ready to be used with map APIs to draw a polygon.
 
-#### Parameters
+### Parameters
 
 - `center`
     - Type: `LatLng`
@@ -49,13 +47,13 @@ projection. The resulting list of points is ready to be used with map APIs to dr
       a non-geodesic circle using a simpler planar projection. Suitable for small radii where the
       Earth's curvature is negligible.
 
-#### Returns
+### Returns
 
 - Type: `List<LatLng>`
 - Description: A list of `LatLng` points representing the vertices of the polygon that approximates
   the circle. The polygon is formed by connecting these points in order.
 
-#### Example
+### Example
 
 The following example demonstrates how to generate points for both a geodesic and a non-geodesic
 circle.

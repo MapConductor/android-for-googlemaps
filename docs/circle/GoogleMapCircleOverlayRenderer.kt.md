@@ -22,7 +22,7 @@ stroke aligns with the specified radius.
 
 All map operations are executed on the main thread via the provided `CoroutineScope`.
 
-### Constructor
+## Constructor
 
 ```kotlin
 GoogleMapCircleOverlayRenderer(
@@ -33,7 +33,7 @@ GoogleMapCircleOverlayRenderer(
 
 Initializes a new instance of the `GoogleMapCircleOverlayRenderer`.
 
-#### Parameters
+### Parameters
 
 - `holder`
     - Type: `GoogleMapViewHolder`

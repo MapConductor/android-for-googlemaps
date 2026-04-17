@@ -1,10 +1,8 @@
-# SDK Documentation
-
 This document provides a detailed overview of the Marker Event Controllers for Google Maps,
 including an interface and its implementations. These components are responsible for managing and
 dispatching marker-related events.
 
-## `GoogleMapMarkerEventControllerInterface`
+# `GoogleMapMarkerEventControllerInterface`
 
 An interface that defines the contract for controlling and handling events related to Google Map
 markers. It extends the core `MarkerEventControllerInterface` and provides methods to set event
@@ -12,29 +10,29 @@ listeners and programmatically dispatch events.
 
 ---
 
-### `getEntity`
+## `getEntity`
 
 Retrieves a marker entity by its unique identifier.
 
-#### Signature
+### Signature
 
 ```kotlin
 fun getEntity(id: String): MarkerEntityInterface<GoogleMapActualMarker>?
 ```
 
-#### Description
+### Description
 
 This function allows you to fetch a specific `MarkerEntityInterface` instance from the controller's
 internal manager using its ID. This is useful when you need to interact with a specific marker that
 is already on the map.
 
-#### Parameters
+### Parameters
 
 - `id`
     - Type: `String`
     - Description: The unique identifier of the marker entity.
 
-#### Returns
+### Returns
 
 - Type: `MarkerEntityInterface<GoogleMapActualMarker>?`
 - Description: The corresponding marker entity, or `null` if no marker with the specified `id` is
@@ -42,22 +40,22 @@ is already on the map.
 
 ---
 
-### `dispatchClick`
+## `dispatchClick`
 
 Programmatically dispatches a click event for a marker.
 
-#### Signature
+### Signature
 
 ```kotlin
 fun dispatchClick(state: MarkerState)
 ```
 
-#### Description
+### Description
 
 This function manually triggers the `onMarkerClick` event handler, if one is set. It simulates a
 user clicking on a marker.
 
-#### Parameters
+### Parameters
 
 - `state`
     - Type: `MarkerState`
@@ -65,22 +63,22 @@ user clicking on a marker.
 
 ---
 
-### `dispatchDragStart`
+## `dispatchDragStart`
 
 Programmatically dispatches a drag start event for a marker.
 
-#### Signature
+### Signature
 
 ```kotlin
 fun dispatchDragStart(state: MarkerState)
 ```
 
-#### Description
+### Description
 
 This function manually triggers the `onMarkerDragStart` event handler, simulating the start of a
 drag operation on a marker.
 
-#### Parameters
+### Parameters
 
 - `state`
     - Type: `MarkerState`
@@ -88,22 +86,22 @@ drag operation on a marker.
 
 ---
 
-### `dispatchDrag`
+## `dispatchDrag`
 
 Programmatically dispatches a drag event for a marker.
 
-#### Signature
+### Signature
 
 ```kotlin
 fun dispatchDrag(state: MarkerState)
 ```
 
-#### Description
+### Description
 
 This function manually triggers the `onMarkerDrag` event handler, simulating an ongoing drag
 operation.
 
-#### Parameters
+### Parameters
 
 - `state`
     - Type: `MarkerState`
@@ -111,22 +109,22 @@ operation.
 
 ---
 
-### `dispatchDragEnd`
+## `dispatchDragEnd`
 
 Programmatically dispatches a drag end event for a marker.
 
-#### Signature
+### Signature
 
 ```kotlin
 fun dispatchDragEnd(state: MarkerState)
 ```
 
-#### Description
+### Description
 
 This function manually triggers the `onMarkerDragEnd` event handler, simulating the completion of a
 drag operation.
 
-#### Parameters
+### Parameters
 
 - `state`
     - Type: `MarkerState`
@@ -134,17 +132,17 @@ drag operation.
 
 ---
 
-### `setClickListener`
+## `setClickListener`
 
 Sets or clears the event handler for marker click events.
 
-#### Signature
+### Signature
 
 ```kotlin
 fun setClickListener(listener: OnMarkerEventHandler?)
 ```
 
-#### Parameters
+### Parameters
 
 - `listener`
     - Type: `OnMarkerEventHandler?`
@@ -153,17 +151,17 @@ fun setClickListener(listener: OnMarkerEventHandler?)
 
 ---
 
-### `setDragStartListener`
+## `setDragStartListener`
 
 Sets or clears the event handler for marker drag start events.
 
-#### Signature
+### Signature
 
 ```kotlin
 fun setDragStartListener(listener: OnMarkerEventHandler?)
 ```
 
-#### Parameters
+### Parameters
 
 - `listener`
     - Type: `OnMarkerEventHandler?`
@@ -172,17 +170,17 @@ fun setDragStartListener(listener: OnMarkerEventHandler?)
 
 ---
 
-### `setDragListener`
+## `setDragListener`
 
 Sets or clears the event handler for marker drag events.
 
-#### Signature
+### Signature
 
 ```kotlin
 fun setDragListener(listener: OnMarkerEventHandler?)
 ```
 
-#### Parameters
+### Parameters
 
 - `listener`
     - Type: `OnMarkerEventHandler?`
@@ -191,17 +189,17 @@ fun setDragListener(listener: OnMarkerEventHandler?)
 
 ---
 
-### `setDragEndListener`
+## `setDragEndListener`
 
 Sets or clears the event handler for marker drag end events.
 
-#### Signature
+### Signature
 
 ```kotlin
 fun setDragEndListener(listener: OnMarkerEventHandler?)
 ```
 
-#### Parameters
+### Parameters
 
 - `listener`
     - Type: `OnMarkerEventHandler?`
@@ -210,17 +208,17 @@ fun setDragEndListener(listener: OnMarkerEventHandler?)
 
 ---
 
-### `setAnimateStartListener`
+## `setAnimateStartListener`
 
 Sets or clears the event handler for marker animation start events.
 
-#### Signature
+### Signature
 
 ```kotlin
 fun setAnimateStartListener(listener: OnMarkerEventHandler?)
 ```
 
-#### Parameters
+### Parameters
 
 - `listener`
     - Type: `OnMarkerEventHandler?`
@@ -229,17 +227,17 @@ fun setAnimateStartListener(listener: OnMarkerEventHandler?)
 
 ---
 
-### `setAnimateEndListener`
+## `setAnimateEndListener`
 
 Sets or clears the event handler for marker animation end events.
 
-#### Signature
+### Signature
 
 ```kotlin
 fun setAnimateEndListener(listener: OnMarkerEventHandler?)
 ```
 
-#### Parameters
+### Parameters
 
 - `listener`
     - Type: `OnMarkerEventHandler?`
@@ -254,9 +252,9 @@ A default implementation of `GoogleMapMarkerEventControllerInterface`. It delega
 handling and listener management calls to an underlying `GoogleMapMarkerController` instance. This
 class provides a straightforward way to connect marker events to the main marker controller.
 
-### Constructor
+## Constructor
 
-#### Signature
+### Signature
 
 ```kotlin
 DefaultGoogleMapMarkerEventController(
@@ -264,7 +262,7 @@ DefaultGoogleMapMarkerEventController(
 )
 ```
 
-#### Parameters
+### Parameters
 
 - `controller`
     - Type: `GoogleMapMarkerController`
