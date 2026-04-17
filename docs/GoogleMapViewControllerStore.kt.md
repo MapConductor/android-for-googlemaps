@@ -46,15 +46,14 @@ application without passing it through intent extras or constructor parameters.
 
 ## Example
 ```kotlin
-// Create and store a map view controller instance
-val myController = GoogleMapViewController(context)
-GoogleMapViewControllerStore.instance = myController
+// Store a controller instance (created during map setup)
+// GoogleMapViewControllerStore.put(stateId, myController)
 
 // Retrieve the stored instance from another part of the app
-val storedController = GoogleMapViewControllerStore.instance
+val storedController = GoogleMapViewControllerStore.get(stateId)
 if (storedController != null) {
-    // Use the controller
-    storedController.setZoom(15.0)
+    // Use the controller to move the camera
+    storedController.moveCamera(MapCameraPosition.Default)
 }
 ```
 
@@ -76,12 +75,12 @@ useful when you have a `Context` (e.g., from a `View`) and need a reference to t
 hosts it, which is often required for dialogs, permissions, or starting new activities.
 
 ## Receiver
-- ``this``
-    - Type: ``Context``
+- `this`
+    - Type: `Context`
     - Description: The context from which to find the Activity.
 
 ## Returns
-- Type: ``Activity?``
+- Type: `Activity?`
 - Description: The `Activity` instance if one is found in the context chain; otherwise, `null`.
 
 ## Example

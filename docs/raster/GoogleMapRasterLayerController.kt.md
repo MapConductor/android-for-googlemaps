@@ -25,13 +25,13 @@ raster data sources (such as XYZ, WMS, or WMTS) on a Google Map.
 
 This class is instantiated through its primary constructor.
 
-- ``rasterLayerManager``
-    - Type: ``RasterLayerManagerInterface<TileOverlay>``
-- Description: An optional manager for the collection of raster layers. It handles the lifecycle and
+- `rasterLayerManager`
+    - Type: `RasterLayerManagerInterface<TileOverlay>`
+    - Description: An optional manager for the collection of raster layers. It handles the lifecycle and
       state of each layer. If not provided, a default `RasterLayerManager` instance is created.
-- ``renderer``
-    - Type: ``GoogleMapRasterLayerOverlayRenderer``
-- Description: A required renderer that handles the creation and display of `TileOverlay` objects on
+- `renderer`
+    - Type: `GoogleMapRasterLayerOverlayRenderer`
+    - Description: A required renderer that handles the creation and display of `TileOverlay` objects on
       the associated Google Map. This object bridges the controller's logic with the map view.
 
 ## Returns

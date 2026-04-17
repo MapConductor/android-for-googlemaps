@@ -30,12 +30,12 @@ Initializes a new instance of the `GoogleMapPolylineOverlayRenderer`.
 
 ### Parameters
 
-- ``holder``
-    - Type: ``GoogleMapViewHolder``
+- `holder`
+    - Type: `GoogleMapViewHolder`
     - Description: The view holder that provides access to the native `GoogleMap` instance.
-- ``coroutine``
-    - Type: ``CoroutineScope``
-- Description: The coroutine scope used to execute map operations, typically on the main thread.
+- `coroutine`
+    - Type: `CoroutineScope`
+    - Description: The coroutine scope used to execute map operations, typically on the main thread.
       Defaults to `Dispatchers.Main`.
 
 ## Public Methods
@@ -57,8 +57,8 @@ levels. The new polyline's tag is set to the `state.id` for identification.
 
 #### Parameters
 
-- ``state``
-    - Type: ``PolylineState``
+- `state`
+    - Type: `PolylineState`
     - Description: The state object containing all the properties for the new polyline.
 
 #### Returns
@@ -89,14 +89,14 @@ necessary updates. This prevents unnecessary redraws and improves performance.
 
 #### Parameters
 
-- ``polyline``
-    - Type: ``GoogleMapActualPolyline``
+- `polyline`
+    - Type: `GoogleMapActualPolyline`
     - Description: The native `Polyline` object on the map that needs to be updated.
-- ``current``
-    - Type: ``PolylineEntityInterface<GoogleMapActualPolyline>``
+- `current`
+    - Type: `PolylineEntityInterface<GoogleMapActualPolyline>`
     - Description: The entity representing the current, updated state of the polyline.
-- ``prev``
-    - Type: ``PolylineEntityInterface<GoogleMapActualPolyline>``
+- `prev`
+    - Type: `PolylineEntityInterface<GoogleMapActualPolyline>`
     - Description: The entity representing the previous state of the polyline, used for comparison.
 
 #### Returns
@@ -119,9 +119,9 @@ Asynchronously removes a specified polyline from the map.
 
 #### Parameters
 
-- ``entity``
-    - Type: ``PolylineEntityInterface<GoogleMapActualPolyline>``
-- Description: The polyline entity to be removed. The underlying `Polyline` is accessed from this
+- `entity`
+    - Type: `PolylineEntityInterface<GoogleMapActualPolyline>`
+    - Description: The polyline entity to be removed. The underlying `Polyline` is accessed from this
       entity.
 
 #### Returns

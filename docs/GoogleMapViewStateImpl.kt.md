@@ -26,18 +26,18 @@ custom `GoogleMapViewSaver` to automatically save and restore the essential map 
 create one instance of this state per map view in your UI.
 
 ### Parameters
-- ``mapDesign``
-    - Type: ``GoogleMapDesign``
-    - Default: ``GoogleMapDesign.Normal``
+- `mapDesign`
+    - Type: `GoogleMapDesign`
+    - Default: `GoogleMapDesign.Normal`
     - Description: The initial visual style of the map (e.g., Normal, Satellite, Terrain).
-- ``cameraPosition``
-    - Type: ``MapCameraPositionInterface``
-    - Default: ``MapCameraPosition.Default``
-- Description: The initial position and configuration of the map's camera, including location, zoom,
+- `cameraPosition`
+    - Type: `MapCameraPositionInterface`
+    - Default: `MapCameraPosition.Default`
+    - Description: The initial position and configuration of the map's camera, including location, zoom,
       tilt, and bearing.
 
 ### Returns
-- Type: ``GoogleMapViewState``
+- Type: `GoogleMapViewState`
 - Description: A stable `GoogleMapViewState` object that can be passed to a `GoogleMapView`
   composable and used to programmatically control the map.
 
@@ -86,21 +86,21 @@ and managed by the `rememberGoogleMapViewState` function. You can use this objec
 current camera position or programmatically update the map's camera and design.
 
 ### Properties
-- ``id``
-    - Type: ``String``
+- `id`
+    - Type: `String`
     - Description: A unique, read-only identifier for the map state instance.
-- ``cameraPosition``
-    - Type: ``MapCameraPosition``
-- Description: A read-only property representing the current camera position, including target
+- `cameraPosition`
+    - Type: `MapCameraPosition`
+    - Description: A read-only property representing the current camera position, including target
       coordinates, zoom, tilt, and bearing. This value is updated automatically as the user
       interacts with the map.
-- ``padding``
-    - Type: ``StateFlow<MapPaddings>``
-- Description: A `StateFlow` that emits the current padding applied to the map. This is useful for
+- `padding`
+    - Type: `StateFlow<MapPaddings>`
+    - Description: A `StateFlow` that emits the current padding applied to the map. This is useful for
       ensuring UI elements don't obscure map controls or content.
-- ``mapDesignType``
-    - Type: ``GoogleMapDesignType``
-- Description: A mutable property to get or set the current map design. Setting this property will
+- `mapDesignType`
+    - Type: `GoogleMapDesignType`
+    - Description: A mutable property to get or set the current map design. Setting this property will
       dynamically update the map's visual style.
 
 ### Methods
@@ -120,12 +120,12 @@ fun moveCameraTo(
 )
 ```
 ##### Parameters
-- ``position``
-    - Type: ``GeoPoint``
-- Description: The target geographical coordinates (latitude and longitude) to center the map on.
-- ``durationMillis``
-    - Type: ``Long?``
-- Description: The duration of the camera animation in milliseconds. If `null` or `0`, the camera
+- `position`
+    - Type: `GeoPoint`
+    - Description: The target geographical coordinates (latitude and longitude) to center the map on.
+- `durationMillis`
+    - Type: `Long?`
+    - Description: The duration of the camera animation in milliseconds. If `null` or `0`, the camera
       moves instantly.
 
 **Overload 2: Move to a `MapCameraPosition`**
@@ -141,12 +141,12 @@ fun moveCameraTo(
 )
 ```
 ##### Parameters
-- ``cameraPosition``
-    - Type: ``MapCameraPosition``
+- `cameraPosition`
+    - Type: `MapCameraPosition`
     - Description: The complete target camera configuration.
-- ``durationMillis``
-    - Type: ``Long?``
-- Description: The duration of the camera animation in milliseconds. If `null` or `0`, the camera
+- `durationMillis`
+    - Type: `Long?`
+    - Description: The duration of the camera animation in milliseconds. If `null` or `0`, the camera
       moves instantly.
 
 ##### Example

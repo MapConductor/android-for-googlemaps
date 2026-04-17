@@ -16,14 +16,15 @@ the upper layers of the application.
 The table below lists each type alias, the Google Maps SDK class it maps to, and a brief description
 of its purpose.
 
-- Description: An alias for a map marker object used to indicate a single location on the map.
-- Description: An alias for a circle shape. It uses a `Polygon` implementation to support
-  geodesic-correct circles, which the standard `Circle` object does not.
-- Description: An alias for a polyline object, which represents a series of connected line segments
-  on the map.
-- Description: An alias for a polygon object, which represents an enclosed, fillable area on the
-  map.
-- Description: An alias for a ground overlay, which is an image that is fixed to a specific
-  geographical location on the map.
-- Description: An alias for a tile overlay, used for adding a custom set of raster images (tiles) on
-  top of the base map.
+- `GoogleMapActualMarker` (`Marker`) — An alias for a map marker object used to indicate a single
+  location on the map.
+- `GoogleMapActualCircle` (`Polygon`) — An alias for a circle shape. It uses a `Polygon`
+  implementation to support geodesic-correct circles, which the standard `Circle` object does not.
+- `GoogleMapActualPolyline` (`Polyline`) — An alias for a polyline object, which represents a
+  series of connected line segments on the map.
+- `GoogleMapActualPolygon` (`Polygon`) — An alias for a polygon object, which represents an
+  enclosed, fillable area on the map.
+- `GoogleMapActualGroundImage` (`GroundOverlay`) — An alias for a ground overlay, which is an image
+  that is fixed to a specific geographical location on the map.
+- `GoogleMapActualRasterLayer` (`TileOverlay`) — An alias for a tile overlay, used for adding a
+  custom set of raster images (tiles) on top of the base map.

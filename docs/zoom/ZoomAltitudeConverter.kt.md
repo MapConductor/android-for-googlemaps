@@ -29,9 +29,9 @@ Creates a new instance of `ZoomAltitudeConverter`.
 
 #### Parameters
 
-- ``zoom0Altitude``
-    - Type: ``Double``
-- Description: The reference altitude in meters corresponding to zoom level 0 at the equator. This
+- `zoom0Altitude`
+    - Type: `Double`
+    - Description: The reference altitude in meters corresponding to zoom level 0 at the equator. This
       value is optional and defaults to `DEFAULT_ZOOM0_ALTITUDE`.
 
 ---
@@ -61,19 +61,19 @@ values are clamped to ensure they fall within a valid, practical range.
 
 #### Parameters
 
-- ``zoomLevel``
-    - Type: ``Double``
+- `zoomLevel`
+    - Type: `Double`
     - Description: The Google Maps zoom level to convert.
-- ``latitude``
-    - Type: ``Double``
+- `latitude`
+    - Type: `Double`
     - Description: The current latitude of the map's center, in degrees.
-- ``tilt``
-    - Type: ``Double``
+- `tilt`
+    - Type: `Double`
     - Description: The current camera tilt angle, in degrees (e.g., 0 for a top-down view).
 
 #### Returns
 
-- Type: ``Double``
+- Type: `Double`
 - Description: The calculated altitude in meters, clamped within a valid range.
 
 ---
@@ -101,19 +101,19 @@ they fall within a valid, practical range.
 
 #### Parameters
 
-- ``altitude``
-    - Type: ``Double``
+- `altitude`
+    - Type: `Double`
     - Description: The camera's altitude in meters to convert.
-- ``latitude``
-    - Type: ``Double``
+- `latitude`
+    - Type: `Double`
     - Description: The current latitude of the map's center, in degrees.
-- ``tilt``
-    - Type: ``Double``
+- `tilt`
+    - Type: `Double`
     - Description: The current camera tilt angle, in degrees.
 
 #### Returns
 
-- Type: ``Double``
+- Type: `Double`
 - Description: The calculated Google Maps zoom level, clamped within a valid range.
 
 ---

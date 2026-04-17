@@ -21,13 +21,13 @@ orchestrates the process of adding, updating, and removing polygons from the map
 
 ### Parameters
 
-- ``polygonManager``
-    - Type: ``PolygonManagerInterface<GoogleMapActualPolygon>``
-- Description: The manager responsible for handling the lifecycle and state of polygon data. It
+- `polygonManager`
+    - Type: `PolygonManagerInterface<GoogleMapActualPolygon>`
+    - Description: The manager responsible for handling the lifecycle and state of polygon data. It
       defaults to a new `PolygonManager` instance.
-- ``renderer``
-    - Type: ``GoogleMapPolygonOverlayRenderer``
-- Description: The renderer responsible for drawing and updating the polygon visuals on the Google
+- `renderer`
+    - Type: `GoogleMapPolygonOverlayRenderer`
+    - Description: The renderer responsible for drawing and updating the polygon visuals on the Google
       Map instance.
 
 ### Example

@@ -31,8 +31,8 @@ fun setMapDesignType(value: GoogleMapDesignType)
 
 **Parameters**
 
-- ``value``
-    - Type: ``GoogleMapDesignType``
+- `value`
+    - Type: `GoogleMapDesignType`
     - Description: The new design type to apply to the map.
 
 <br/>
@@ -49,9 +49,9 @@ fun setMapDesignTypeChangeListener(listener: GoogleMapDesignTypeChangeHandler)
 
 **Parameters**
 
-- ``listener``
-    - Type: ``GoogleMapDesignTypeChangeHandler``
-- Description: A callback function that will be executed with the new `GoogleMapDesignType` when the
+- `listener`
+    - Type: `GoogleMapDesignTypeChangeHandler`
+    - Description: A callback function that will be executed with the new `GoogleMapDesignType` when the
       map style changes.
 
 ## Type Aliases
@@ -86,12 +86,12 @@ mapController.setMapDesignTypeChangeListener { newDesignType ->
     // You can update other UI components or trigger logic based on the new style.
 }
 
-// 2. Change the map's design type to SATELLITE.
+// 2. Change the map's design type to Satellite.
 // This action will invoke the listener defined above.
-println("Attempting to set map design to SATELLITE...")
-mapController.setMapDesignType(GoogleMapDesignType.SATELLITE)
+println("Attempting to set map design to Satellite...")
+mapController.setMapDesignType(GoogleMapDesign.Satellite)
 
 // Expected console output:
-// Attempting to set map design to SATELLITE...
-// Map design type has been updated to: SATELLITE
+// Attempting to set map design to Satellite...
+// Map design type has been updated to: Satellite
 ```

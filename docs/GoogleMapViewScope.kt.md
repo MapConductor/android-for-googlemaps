@@ -18,27 +18,16 @@ layer, such as Street View.
 
 ## Example
 
-The `GoogleMapViewScope` is provided as the receiver (`this`) within the map setup block. You can
-call common methods from the parent `MapViewScope` as well as Google-specific methods defined in
-this class.
+`GoogleMapViewScope` is provided as the receiver within the `content` lambda of `GoogleMapView`.
+Overlay composables and Google-specific extensions are called within this scope.
 
 ```kotlin
-// Assume 'mapFragment' is a Fragment containing the map
-mapFragment.getMapAsync {
-    // 'this' is an instance of GoogleMapViewScope
-
-    // Example of calling a common function from the parent MapViewScope
-    setCameraPosition(
-        latitude = 35.681236,
-        longitude = 139.767125,
-        zoom = 15.0
-    )
-
-    // Example of calling a hypothetical Google Maps-specific function
-    // that would be defined in this class.
-    launchStreetView(
-        latitude = 35.681236,
-        longitude = 139.767125
-    )
+GoogleMapView(
+    state = mapState,
+    modifier = Modifier.fillMaxSize(),
+) {
+    // 'this' is GoogleMapViewScope
+    // Add overlays using composables from MapViewScope or Google-specific extensions here.
+    Marker(state = MarkerState(id = "marker-1", position = GeoPoint(35.681236, 139.767125)))
 }
 ```

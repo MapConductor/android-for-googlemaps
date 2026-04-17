@@ -27,13 +27,13 @@ Creates a new instance of the `GoogleMapMarkerRenderer`.
 
 ### Parameters
 
-- ``holder``
-    - Type: ``GoogleMapViewHolder``
-- Description: The view holder that contains the `GoogleMap` instance where markers will be
+- `holder`
+    - Type: `GoogleMapViewHolder`
+    - Description: The view holder that contains the `GoogleMap` instance where markers will be
       rendered.
-- ``coroutine``
-    - Type: ``CoroutineScope``
-- Description: (Optional) The coroutine scope used to execute map operations. Defaults to
+- `coroutine`
+    - Type: `CoroutineScope`
+    - Description: (Optional) The coroutine scope used to execute map operations. Defaults to
       `CoroutineScope(Dispatchers.Main)`.
 
 ---
@@ -57,11 +57,11 @@ Asynchronously updates the geographical position of a single, existing marker on
 
 #### Parameters
 
-- ``markerEntity``
-    - Type: ``MarkerEntityInterface<GoogleMapActualMarker>``
+- `markerEntity`
+    - Type: `MarkerEntityInterface<GoogleMapActualMarker>`
     - Description: The marker entity whose position is being updated.
-- ``position``
-    - Type: ``GeoPoint``
+- `position`
+    - Type: `GeoPoint`
     - Description: The new geographical coordinates for the marker.
 
 ---
@@ -84,14 +84,14 @@ anchor, etc.).
 
 #### Parameters
 
-- ``data``
-    - Type: ``List<MarkerOverlayRendererInterface.AddParamsInterface>``
-- Description: A list of parameter objects, each defining the properties for a new marker to be
+- `data`
+    - Type: `List<MarkerOverlayRendererInterface.AddParamsInterface>`
+    - Description: A list of parameter objects, each defining the properties for a new marker to be
       added.
 
 #### Returns
 
-- Type: ``List<GoogleMapActualMarker?>``
+- Type: `List<GoogleMapActualMarker?>`
 - Description: A list containing the newly created `Marker` objects. An element in the list will be
   `null` if the corresponding marker failed to be created.
 
@@ -113,8 +113,8 @@ Asynchronously removes a batch of markers from the map.
 
 #### Parameters
 
-- ``data``
-    - Type: ``List<MarkerEntityInterface<GoogleMapActualMarker>>``
+- `data`
+    - Type: `List<MarkerEntityInterface<GoogleMapActualMarker>>`
     - Description: A list of marker entities that should be removed from the map.
 
 ---
@@ -153,13 +153,13 @@ is null), it will be created and added.
 
 #### Parameters
 
-- ``data``
-    - Type: ``List<MarkerOverlayRendererInterface.ChangeParamsInterface<GoogleMapActualMarker>>``
-- Description: A list of change parameter objects. Each object contains the previous and current
+- `data`
+    - Type: `List<MarkerOverlayRendererInterface.ChangeParamsInterface<GoogleMapActualMarker>>`
+    - Description: A list of change parameter objects. Each object contains the previous and current
       state of a marker, enabling efficient updates.
 
 #### Returns
 
-- Type: ``List<Marker?>``
+- Type: `List<Marker?>`
 - Description: A list of the updated or newly created `Marker` instances. An element can be `null`
   if the marker update or creation failed.

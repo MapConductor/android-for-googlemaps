@@ -30,34 +30,34 @@ of your map view.
 
 ### Parameters
 
-- ``holder``
-    - Type: ``GoogleMapViewHolder``
+- `holder`
+    - Type: `GoogleMapViewHolder`
     - Description: The view holder containing the `GoogleMap` and `MapView` instances.
-- ``markerController``
-    - Type: ``GoogleMapMarkerController``
+- `markerController`
+    - Type: `GoogleMapMarkerController`
     - Description: The controller responsible for managing markers.
-- ``polylineController``
-    - Type: ``GoogleMapPolylineController``
+- `polylineController`
+    - Type: `GoogleMapPolylineController`
     - Description: The controller responsible for managing polylines.
-- ``polygonController``
-    - Type: ``GoogleMapPolygonController``
+- `polygonController`
+    - Type: `GoogleMapPolygonController`
     - Description: The controller responsible for managing polygons.
-- ``groundImageController``
-    - Type: ``GoogleMapGroundImageController``
+- `groundImageController`
+    - Type: `GoogleMapGroundImageController`
     - Description: The controller responsible for managing ground images.
-- ``circleController``
-    - Type: ``GoogleMapCircleController``
+- `circleController`
+    - Type: `GoogleMapCircleController`
     - Description: The controller responsible for managing circles.
-- ``rasterLayerController``
-    - Type: ``GoogleMapRasterLayerController``
+- `rasterLayerController`
+    - Type: `GoogleMapRasterLayerController`
     - Description: The controller responsible for managing raster tile layers.
-- ``coroutine``
-    - Type: ``CoroutineScope``
-- Description: The coroutine scope for main thread operations. Defaults to
+- `coroutine`
+    - Type: `CoroutineScope`
+    - Description: The coroutine scope for main thread operations. Defaults to
       `CoroutineScope(Dispatchers.Main)`.
-- ``backCoroutine``
-    - Type: ``CoroutineScope``
-- Description: The coroutine scope for background thread operations. Defaults to
+- `backCoroutine`
+    - Type: `CoroutineScope`
+    - Description: The coroutine scope for background thread operations. Defaults to
       `CoroutineScope(Dispatchers.Default)`.
 
 ## Properties
@@ -98,8 +98,8 @@ override fun moveCamera(position: MapCameraPosition)
 
 **Parameters**
 
-- ``position``
-    - Type: ``MapCameraPosition``
+- `position`
+    - Type: `MapCameraPosition`
     - Description: The target camera position, including location, zoom, tilt, and bearing.
 
 ### animateCamera
@@ -114,11 +114,11 @@ override fun animateCamera(position: MapCameraPosition, duration: Long)
 
 **Parameters**
 
-- ``position``
-    - Type: ``MapCameraPosition``
+- `position`
+    - Type: `MapCameraPosition`
     - Description: The target camera position to animate to.
-- ``duration``
-    - Type: ``Long``
+- `duration`
+    - Type: `Long`
     - Description: The duration of the animation in milliseconds.
 
 ## Overlay Management
@@ -143,8 +143,8 @@ override suspend fun compositionMarkers(data: List<MarkerState>)
 
 **Parameters**
 
-- ``data``
-    - Type: ``List<MarkerState>``
+- `data`
+    - Type: `List<MarkerState>`
     - Description: A list of `MarkerState` objects to be rendered on the map.
 
 ### updateMarker
@@ -158,8 +158,8 @@ override suspend fun updateMarker(state: MarkerState)
 
 **Parameters**
 
-- ``state``
-    - Type: ``MarkerState``
+- `state`
+    - Type: `MarkerState`
     - Description: The updated state for the marker. The marker is identified by `state.id`.
 
 ### hasMarker
@@ -173,8 +173,8 @@ override fun hasMarker(state: MarkerState): Boolean
 
 **Parameters**
 
-- ``state``
-    - Type: ``MarkerState``
+- `state`
+    - Type: `MarkerState`
     - Description: The state of the marker to check for. The check is based on `state.id`.
 
 **Returns**
@@ -314,9 +314,9 @@ override fun setMapDesignType(value: GoogleMapDesignType)
 
 **Parameters**
 
-- ``value``
-    - Type: ``GoogleMapDesignType``
-- Description: The desired map design, such as `GoogleMapDesign.Normal` or
+- `value`
+    - Type: `GoogleMapDesignType`
+    - Description: The desired map design, such as `GoogleMapDesign.Normal` or
       `GoogleMapDesign.Satellite`.
 
 ### setMapDesignTypeChangeListener
@@ -331,8 +331,8 @@ override fun setMapDesignTypeChangeListener(listener: GoogleMapDesignTypeChangeH
 
 **Parameters**
 
-- ``listener``
-    - Type: ``GoogleMapDesignTypeChangeHandler``
+- `listener`
+    - Type: `GoogleMapDesignTypeChangeHandler`
     - Description: A lambda or function that will be called with the new `GoogleMapDesignType`.
 
 ## Advanced Marker Rendering
@@ -350,8 +350,8 @@ fun createMarkerRenderer(
 
 **Parameters**
 
-- ``strategy``
-    - Type: ``MarkerRenderingStrategyInterface<GoogleMapActualMarker>``
+- `strategy`
+    - Type: `MarkerRenderingStrategyInterface<GoogleMapActualMarker>`
     - Description: The custom strategy for rendering markers.
 
 **Returns**
@@ -372,11 +372,11 @@ fun createMarkerEventController(
 
 **Parameters**
 
-- ``controller``
-    - Type: ``StrategyMarkerController<GoogleMapActualMarker>``
+- `controller`
+    - Type: `StrategyMarkerController<GoogleMapActualMarker>`
     - Description: The strategy-based controller for the markers.
-- ``renderer``
-    - Type: ``MarkerOverlayRendererInterface<GoogleMapActualMarker>``
+- `renderer`
+    - Type: `MarkerOverlayRendererInterface<GoogleMapActualMarker>`
     - Description: The renderer associated with the markers.
 
 **Returns**
@@ -395,6 +395,6 @@ fun registerMarkerEventController(controller: MarkerEventControllerInterface<Goo
 
 **Parameters**
 
-- ``controller``
-    - Type: ``MarkerEventControllerInterface<GoogleMapActualMarker>``
+- `controller`
+    - Type: `MarkerEventControllerInterface<GoogleMapActualMarker>`
     - Description: The custom event controller to register.

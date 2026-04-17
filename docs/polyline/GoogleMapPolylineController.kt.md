@@ -21,14 +21,14 @@ implementation tailored specifically for the Google Maps SDK, handling the lifec
 ### Parameters
 The constructor accepts the following parameters:
 
-- ``polylineManager``
-    - Type: ``PolylineManagerInterface<GoogleMapActualPolyline>``
-- Description: The manager responsible for the lifecycle and state of polyline data. It handles
+- `polylineManager`
+    - Type: `PolylineManagerInterface<GoogleMapActualPolyline>`
+    - Description: The manager responsible for the lifecycle and state of polyline data. It handles
       adding, removing, and updating polylines. **Optional**: If not provided, a default
       `PolylineManager` instance is created.
-- ``renderer``
-    - Type: ``GoogleMapPolylineOverlayRenderer``
-- Description: The platform-specific renderer that draws the polylines onto the `GoogleMap`
+- `renderer`
+    - Type: `GoogleMapPolylineOverlayRenderer`
+    - Description: The platform-specific renderer that draws the polylines onto the `GoogleMap`
       instance. This parameter is **required**.
 
 ### Example

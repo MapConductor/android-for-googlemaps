@@ -26,13 +26,13 @@ management to the `circleManager` and triggers the `renderer` to apply the chang
 
 This documentation describes the parameters for the `GoogleMapCircleController` constructor.
 
-- ``circleManager``
-    - Type: ``CircleManagerInterface<GoogleMapActualCircle>``
-    - Default: ``CircleManager()``
-- Description: The manager responsible for handling the lifecycle and state of circle data. It
+- `circleManager`
+    - Type: `CircleManagerInterface<GoogleMapActualCircle>`
+    - Default: `CircleManager()`
+    - Description: The manager responsible for handling the lifecycle and state of circle data. It
       tracks all the circles to be displayed.
-- ``renderer``
-    - Type: ``GoogleMapCircleOverlayRenderer``
+- `renderer`
+    - Type: `GoogleMapCircleOverlayRenderer`
     - Default: `*None*`
     - Description: The platform-specific renderer that draws the circles onto the Google Map view.
 

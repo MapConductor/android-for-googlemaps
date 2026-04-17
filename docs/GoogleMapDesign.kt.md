@@ -18,11 +18,11 @@ sealed class GoogleMapDesign(
 The `GoogleMapDesign` class contains singleton objects that correspond to the map types defined in
 `com.google.android.gms.maps.GoogleMap`.
 
-- Description: Typical road map with streets, labels, and some points of interest.
-- Description: Satellite imagery of the Earth without map labels.
-- Description: A combination of satellite imagery and the normal map layer (roads, labels).
-- Description: Topographic map showing elevation and land contours.
-- Description: No base map tiles. Useful for displaying custom tile overlays exclusively.
+- `Normal` — Typical road map with streets, labels, and some points of interest.
+- `Satellite` — Satellite imagery of the Earth without map labels.
+- `Hybrid` — A combination of satellite imagery and the normal map layer (roads, labels).
+- `Terrain` — Topographic map showing elevation and land contours.
+- `None` — No base map tiles. Useful for displaying custom tile overlays exclusively.
 
 ---
 
@@ -45,7 +45,7 @@ directly to one of the `MAP_TYPE_*` constants from the Google Maps SDK.
 
 #### Returns
 
-- Type: ``Int``
+- Type: `Int`
 - Description: The integer constant for the map design type.
 
 #### Example
@@ -84,13 +84,13 @@ This factory method looks up the appropriate `GoogleMapDesign` object based on t
 
 #### Parameters
 
-- ``id``
-    - Type: ``Int``
+- `id`
+    - Type: `Int`
     - Description: The integer ID of the map type (e.g., `GoogleMap.MAP_TYPE_NORMAL`).
 
 #### Returns
 
-- Type: ``GoogleMapDesign``
+- Type: `GoogleMapDesign`
 - Description: The corresponding `GoogleMapDesign` object, or `GoogleMapDesign.None` if the ID is
   not recognized.
 
@@ -131,13 +131,13 @@ interface. This is useful for maintaining abstraction in your code. It defaults 
 
 #### Parameters
 
-- ``id``
-    - Type: ``Int``
+- `id`
+    - Type: `Int`
     - Description: The integer ID of the map type (e.g., `GoogleMap.MAP_TYPE_HYBRID`).
 
 #### Returns
 
-- Type: ``GoogleMapDesignType``
+- Type: `GoogleMapDesignType`
 - Description: An object implementing the `GoogleMapDesignType` interface, or `GoogleMapDesign.None`
   if the ID is not recognized.
 

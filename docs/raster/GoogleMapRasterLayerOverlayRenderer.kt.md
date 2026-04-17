@@ -30,15 +30,15 @@ Creates a new instance of `GoogleMapRasterLayerOverlayRenderer`.
 
 ### Parameters
 
-- ``holder``
-    - Type: ``GoogleMapViewHolder``
+- `holder`
+    - Type: `GoogleMapViewHolder`
     - Description: The view holder that provides access to the `GoogleMap` and `MapView` instances.
-- ``okHttpClient``
-    - Type: ``OkHttpClient``
-- Description: The `OkHttpClient` instance to be used for all network requests to fetch tile images.
-- ``coroutine``
-    - Type: ``CoroutineScope``
-- Description: The coroutine scope used for executing asynchronous operations. Defaults to
+- `okHttpClient`
+    - Type: `OkHttpClient`
+    - Description: The `OkHttpClient` instance to be used for all network requests to fetch tile images.
+- `coroutine`
+    - Type: `CoroutineScope`
+    - Description: The coroutine scope used for executing asynchronous operations. Defaults to
       `CoroutineScope(Dispatchers.Main)`.
 
 ## Methods
@@ -67,9 +67,9 @@ will render a debug overlay on each tile.
 
 #### Parameters
 
-- ``data``
-    - Type: ``List<RasterLayerOverlayRendererInterface.AddParamsInterface>``
-- Description: A list of `AddParamsInterface` objects, where each object contains the
+- `data`
+    - Type: `List<RasterLayerOverlayRendererInterface.AddParamsInterface>`
+    - Description: A list of `AddParamsInterface` objects, where each object contains the
       `RasterLayerState` for a new layer.
 
 #### Returns
@@ -101,9 +101,9 @@ previous and next state of each layer.
 
 #### Parameters
 
-- ``data``
-    - Type: ``List<RasterLayerOverlayRendererInterface.ChangeParamsInterface<TileOverlay>>``
-- Description: A list of `ChangeParamsInterface` objects, each containing the previous
+- `data`
+    - Type: `List<RasterLayerOverlayRendererInterface.ChangeParamsInterface<TileOverlay>>`
+    - Description: A list of `ChangeParamsInterface` objects, each containing the previous
       `RasterLayerEntityInterface` and the new `RasterLayerState`.
 
 #### Returns
@@ -127,9 +127,9 @@ provided list will be detached from the `GoogleMap` instance.
 
 #### Parameters
 
-- ``data``
-    - Type: ``List<RasterLayerEntityInterface<TileOverlay>>``
-- Description: A list of `RasterLayerEntityInterface` objects representing the layers to be removed.
+- `data`
+    - Type: `List<RasterLayerEntityInterface<TileOverlay>>`
+    - Description: A list of `RasterLayerEntityInterface` objects representing the layers to be removed.
 
 #### Returns
 

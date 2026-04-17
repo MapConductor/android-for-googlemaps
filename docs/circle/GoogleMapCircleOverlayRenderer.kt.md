@@ -35,13 +35,13 @@ Initializes a new instance of the `GoogleMapCircleOverlayRenderer`.
 
 #### Parameters
 
-- ``holder``
-    - Type: ``GoogleMapViewHolder``
-- Description: The view holder that contains the `GoogleMap` instance on which the circles will be
+- `holder`
+    - Type: `GoogleMapViewHolder`
+    - Description: The view holder that contains the `GoogleMap` instance on which the circles will be
       rendered.
-- ``coroutine``
-    - Type: ``CoroutineScope``
-- Description: The coroutine scope used to execute map operations. Defaults to
+- `coroutine`
+    - Type: `CoroutineScope`
+    - Description: The coroutine scope used to execute map operations. Defaults to
       `CoroutineScope(Dispatchers.Main)`.
 
 ---
@@ -64,14 +64,14 @@ adds it to the map.
 
 #### Parameters
 
-- ``state``
-    - Type: ``CircleState``
-- Description: An object containing all configuration details for the circle, such as center,
+- `state`
+    - Type: `CircleState`
+    - Description: An object containing all configuration details for the circle, such as center,
       radius, colors, and style.
 
 #### Returns
 
-- Type: ``GoogleMapActualCircle?``
+- Type: `GoogleMapActualCircle?`
 - Description: The created `Polygon` object (aliased as `GoogleMapActualCircle`) that represents the
   circle, or `null` if creation fails.
 
@@ -91,8 +91,8 @@ Removes a specified circle polygon from the map.
 
 #### Parameters
 
-- ``entity``
-    - Type: ``CircleEntityInterface<GoogleMapActualCircle>``
+- `entity`
+    - Type: `CircleEntityInterface<GoogleMapActualCircle>`
     - Description: The entity wrapper that contains the circle polygon instance to be removed.
 
 ---
@@ -121,20 +121,20 @@ z-index) are updated.
 
 #### Parameters
 
-- ``circle``
-    - Type: ``GoogleMapActualCircle``
+- `circle`
+    - Type: `GoogleMapActualCircle`
     - Description: The actual `Polygon` object on the map that needs to be updated.
-- ``current``
-    - Type: ``CircleEntityInterface<GoogleMapActualCircle>``
+- `current`
+    - Type: `CircleEntityInterface<GoogleMapActualCircle>`
     - Description: The entity wrapper containing the new, updated state for the circle.
-- ``prev``
-    - Type: ``CircleEntityInterface<GoogleMapActualCircle>``
-- Description: The entity wrapper containing the previous state of the circle, used for diffing to
+- `prev`
+    - Type: `CircleEntityInterface<GoogleMapActualCircle>`
+    - Description: The entity wrapper containing the previous state of the circle, used for diffing to
       determine what changed.
 
 #### Returns
 
-- Type: ``GoogleMapActualCircle?``
+- Type: `GoogleMapActualCircle?`
 - Description: The updated `Polygon` object.
 
 ---

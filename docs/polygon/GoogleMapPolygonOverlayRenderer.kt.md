@@ -35,20 +35,20 @@ class GoogleMapPolygonOverlayRenderer(
 
 ### Parameters
 
-- ``holder``
-    - Type: ``GoogleMapViewHolder``
+- `holder`
+    - Type: `GoogleMapViewHolder`
     - Description: The view holder that provides access to the `GoogleMap` instance.
-- ``rasterLayerController``
-    - Type: ``GoogleMapRasterLayerController``
-- Description: The controller used to manage the raster tile layers required for rendering the fill
+- `rasterLayerController`
+    - Type: `GoogleMapRasterLayerController`
+    - Description: The controller used to manage the raster tile layers required for rendering the fill
       of polygons with holes.
-- ``tileServer``
-    - Type: ``LocalTileServer``
-- Description: **Optional**. The local tile server for serving the raster mask tiles. If not
+- `tileServer`
+    - Type: `LocalTileServer`
+    - Description: **Optional**. The local tile server for serving the raster mask tiles. If not
       provided, a default instance is used.
-- ``coroutine``
-    - Type: ``CoroutineScope``
-- Description: **Optional**. The coroutine scope for managing asynchronous rendering operations.
+- `coroutine`
+    - Type: `CoroutineScope`
+    - Description: **Optional**. The coroutine scope for managing asynchronous rendering operations.
       Defaults to `CoroutineScope(Dispatchers.Main)`.
 
 ## Functions
@@ -65,13 +65,13 @@ override suspend fun createPolygon(state: PolygonState): GoogleMapActualPolygon?
 ```
 
 **Parameters**
-- ``state``
-    - Type: ``PolygonState``
-- Description: An object defining all properties of the polygon, including points, holes, colors,
+- `state`
+    - Type: `PolygonState`
+    - Description: An object defining all properties of the polygon, including points, holes, colors,
       stroke width, and z-index.
 
 **Returns**
-- Type: ``GoogleMapActualPolygon?``
+- Type: `GoogleMapActualPolygon?`
 - Description: The created Google Maps `Polygon` object (`GoogleMapActualPolygon` is a type alias)
   or `null` if the polygon could not be added to the map.
 
@@ -92,18 +92,18 @@ override suspend fun updatePolygonProperties(
 ```
 
 **Parameters**
-- ``polygon``
-    - Type: ``GoogleMapActualPolygon``
+- `polygon`
+    - Type: `GoogleMapActualPolygon`
     - Description: The native Google Maps `Polygon` object to be updated.
-- ``current``
-    - Type: ``PolygonEntityInterface<GoogleMapActualPolygon>``
+- `current`
+    - Type: `PolygonEntityInterface<GoogleMapActualPolygon>`
     - Description: The entity representing the new, updated state of the polygon.
-- ``prev``
-    - Type: ``PolygonEntityInterface<GoogleMapActualPolygon>``
+- `prev`
+    - Type: `PolygonEntityInterface<GoogleMapActualPolygon>`
     - Description: The entity representing the previous state of the polygon, used for comparison.
 
 **Returns**
-- Type: ``GoogleMapActualPolygon?``
+- Type: `GoogleMapActualPolygon?`
 - Description: The updated `Polygon` object.
 
 ### removePolygon
@@ -117,8 +117,8 @@ override suspend fun removePolygon(entity: PolygonEntityInterface<GoogleMapActua
 ```
 
 **Parameters**
-- ``entity``
-    - Type: ``PolygonEntityInterface<GoogleMapActualPolygon>``
+- `entity`
+    - Type: `PolygonEntityInterface<GoogleMapActualPolygon>`
     - Description: The polygon entity to be removed.
 
 ## Example

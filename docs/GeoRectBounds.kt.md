@@ -26,8 +26,8 @@ potential runtime errors.
 
 ### Parameters
 
-- ``this``
-    - Type: ``GeoRectBounds``
+- `this`
+    - Type: `GeoRectBounds`
     - Description: The `GeoRectBounds` instance to convert.
 
 ### Returns
@@ -81,8 +81,8 @@ returns a valid `GeoRectBounds` instance.
 
 ### Parameters
 
-- ``this``
-    - Type: ``LatLngBounds``
+- `this`
+    - Type: `LatLngBounds`
     - Description: The `LatLngBounds` instance to convert.
 
 ### Returns

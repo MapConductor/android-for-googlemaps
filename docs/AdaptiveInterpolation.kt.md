@@ -37,17 +37,17 @@ given latitude and zoom level. It then multiplies this by a target pixel length
 
 #### Parameters
 
-- ``zoom``
-    - Type: ``Float``
+- `zoom`
+    - Type: `Float`
     - Description: The current zoom level of the map.
-- ``latitude``
-    - Type: ``Double``
-- Description: The latitude for which the calculation is being performed. The meters-per-pixel ratio
+- `latitude`
+    - Type: `Double`
+    - Description: The latitude for which the calculation is being performed. The meters-per-pixel ratio
       changes with latitude.
 
 #### Returns
 
-- Type: ``Double``
+- Type: `Double`
 - Description: The calculated maximum segment length in meters, clamped between 50.0 and 100,000.0.
 
 ---
@@ -74,13 +74,13 @@ keys.
 
 #### Parameters
 
-- ``points``
-    - Type: ``List<GeoPointInterface>``
+- `points`
+    - Type: `List<GeoPointInterface>`
     - Description: The list of geographic points to hash.
 
 #### Returns
 
-- Type: ``Long``
+- Type: `Long`
 - Description: A 64-bit FNV-1a hash of the input points.
 
 ---
@@ -106,16 +106,16 @@ length) changes, a new cache key is generated, preventing cache collisions.
 
 #### Parameters
 
-- ``pointsHash``
-    - Type: ``Long``
+- `pointsHash`
+    - Type: `Long`
     - Description: The hash of the original list of points, typically from `pointsHash()`.
-- ``maxSegmentLengthMeters``
-    - Type: ``Double``
-- Description: The segment length used for interpolation, typically from `maxSegmentLengthMeters()`.
+- `maxSegmentLengthMeters`
+    - Type: `Double`
+    - Description: The segment length used for interpolation, typically from `maxSegmentLengthMeters()`.
 
 #### Returns
 
-- Type: ``String``
+- Type: `String`
 - Description: A unique string suitable for use as a cache key.
 
 ## `LatLngInterpolationCache`
@@ -138,8 +138,8 @@ interpolation results that are likely to be reused.
 
 #### Parameters
 
-- ``maxEntries``
-    - Type: ``Int``
+- `maxEntries`
+    - Type: `Int`
     - Description: The maximum number of entries the cache can hold before items are evicted.
 
 ---
@@ -156,13 +156,13 @@ fun get(key: String): List<LatLng>?
 
 #### Parameters
 
-- ``key``
-    - Type: ``String``
+- `key`
+    - Type: `String`
     - Description: The key associated with the cached data.
 
 #### Returns
 
-- Type: ``List<LatLng>?``
+- Type: `List<LatLng>?`
 - Description: The cached list of `LatLng` points if the key is found, otherwise `null`.
 
 ---
@@ -182,11 +182,11 @@ fun put(
 
 #### Parameters
 
-- ``key``
-    - Type: ``String``
+- `key`
+    - Type: `String`
     - Description: The key to store the data under.
-- ``value``
-    - Type: ``List<LatLng>``
+- `value`
+    - Type: `List<LatLng>`
     - Description: The list of `LatLng` points to cache.
 
 #### Returns

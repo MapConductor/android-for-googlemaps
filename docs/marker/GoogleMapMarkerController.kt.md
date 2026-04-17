@@ -34,12 +34,12 @@ configuration.
 
 **Parameters**
 
-- ``holder``
-    - Type: ``GoogleMapViewHolder``
+- `holder`
+    - Type: `GoogleMapViewHolder`
     - Description: The view holder that contains the `GoogleMap` instance.
-- ``markerTiling``
-    - Type: ``MarkerTilingOptions``
-- Description: *(Optional)* Configuration for the marker tiling feature. Defaults to
+- `markerTiling`
+    - Type: `MarkerTilingOptions`
+    - Description: *(Optional)* Configuration for the marker tiling feature. Defaults to
       `MarkerTilingOptions.Default`.
 
 **Returns**
@@ -78,9 +78,9 @@ This method must be called before adding markers if tiling is enabled.
 
 **Parameters**
 
-- ``callback``
-    - Type: ``MarkerTileRasterLayerCallback?``
-- Description: The callback to be invoked for raster layer updates. Pass `null` to remove the
+- `callback`
+    - Type: `MarkerTileRasterLayerCallback?`
+    - Description: The callback to be invoked for raster layer updates. Pass `null` to remove the
       callback. See [MarkerTileRasterLayerCallback](#markertilerasterlayercallback) for details.
 
 **Example**
@@ -118,8 +118,8 @@ be rendered as part of a raster tile overlay for improved performance.
 
 **Parameters**
 
-- ``data``
-    - Type: ``List<MarkerState>``
+- `data`
+    - Type: `List<MarkerState>`
     - Description: A list of `MarkerState` objects, each defining a marker to add.
 
 **Example**
@@ -155,8 +155,8 @@ skipped to avoid unnecessary work.
 
 **Parameters**
 
-- ``state``
-    - Type: ``MarkerState``
+- `state`
+    - Type: `MarkerState`
     - Description: The new state for the marker, which is identified by its `id`.
 
 **Example**
@@ -216,11 +216,11 @@ on the screen density and the current map zoom level to provide a consistent use
 
 **Parameters**
 
-- ``position``
-    - Type: ``GeoPointInterface``
+- `position`
+    - Type: `GeoPointInterface`
     - Description: The geographic coordinates (latitude, longitude) to search around.
-- ``zoom``
-    - Type: ``Double``
+- `zoom`
+    - Type: `Double`
     - Description: The current zoom level of the map, used to calculate the search radius.
 
 **Returns**
@@ -264,8 +264,8 @@ internally stored `lastKnownZoom`.
 
 **Parameters**
 
-- ``position``
-    - Type: ``GeoPointInterface``
+- `position`
+    - Type: `GeoPointInterface`
     - Description: The geographic coordinates (latitude, longitude) to search around.
 
 **Returns**
@@ -290,8 +290,8 @@ crucial for the `find` operation and tiling logic.
 
 **Parameters**
 
-- ``mapCameraPosition``
-    - Type: ``MapCameraPosition``
+- `mapCameraPosition`
+    - Type: `MapCameraPosition`
     - Description: The new camera position of the map.
 
 **Example**
@@ -363,7 +363,7 @@ suspend fun onRasterLayerUpdate(state: RasterLayerState?)
 
 **Parameters**
 
-- ``state``
-    - Type: ``RasterLayerState?``
-- Description: The new state for the raster layer. If `null`, the layer should be removed.
+- `state`
+    - Type: `RasterLayerState?`
+    - Description: The new state for the raster layer. If `null`, the layer should be removed.
       Otherwise, the layer should be added or updated to this state.

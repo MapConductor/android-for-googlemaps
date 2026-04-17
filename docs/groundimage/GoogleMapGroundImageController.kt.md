@@ -21,13 +21,13 @@ removing them from the map—by coordinating the `GroundImageManager` and the `r
 
 ### Parameters
 
-- ``groundImageManager``
-    - Type: ``GroundImageManagerInterface<GoogleMapActualGroundImage>``
-- Description: (Optional) The manager responsible for handling the state and lifecycle of ground
+- `groundImageManager`
+    - Type: `GroundImageManagerInterface<GoogleMapActualGroundImage>`
+    - Description: (Optional) The manager responsible for handling the state and lifecycle of ground
       images. Defaults to a new `GroundImageManager()` instance.
-- ``renderer``
-    - Type: ``GoogleMapGroundImageOverlayRenderer``
-- Description: The renderer responsible for drawing and managing the ground image overlays on the
+- `renderer`
+    - Type: `GoogleMapGroundImageOverlayRenderer`
+    - Description: The renderer responsible for drawing and managing the ground image overlays on the
       `GoogleMap` object.
 
 ### Example

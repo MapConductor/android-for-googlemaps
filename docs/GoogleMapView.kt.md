@@ -65,74 +65,74 @@ declaratively within the `content` lambda.
 
 This section describes the parameters for the comprehensive `GoogleMapView` function.
 
-- ``state``
-    - Type: ``GoogleMapViewState``
-- Description: **Required.** Manages the map's state, including camera position and map design type.
+- `state`
+    - Type: `GoogleMapViewState`
+    - Description: **Required.** Manages the map's state, including camera position and map design type.
       Use `rememberGoogleMapViewState()` to create and remember an instance.
-- ``modifier``
-    - Type: ``Modifier``
+- `modifier`
+    - Type: `Modifier`
     - Description: An optional `Modifier` to be applied to the map container.
-- ``markerTiling``
-    - Type: ``MarkerTilingOptions?``
-- Description: Optional configuration for marker tiling (clustering). If `null`, default options are
+- `markerTiling`
+    - Type: `MarkerTilingOptions?`
+    - Description: Optional configuration for marker tiling (clustering). If `null`, default options are
       used.
-- ``sdkInitialize``
-    - Type: ``(suspend (Context) -> Boolean)?``
-- Description: An optional asynchronous lambda to initialize the Google Maps SDK. It should return
+- `sdkInitialize`
+    - Type: `(suspend (Context) -> Boolean)?`
+    - Description: An optional asynchronous lambda to initialize the Google Maps SDK. It should return
       `true` on success. If not provided, a default initialization is assumed.
-- ``onMapLoaded``
-    - Type: ``OnMapLoadedHandler?``
-- Description: A callback invoked once the map has finished loading and is ready for interaction.
-- ``onMapClick``
-    - Type: ``OnMapEventHandler?``
-- Description: A callback invoked when the user clicks on the map. Returns the `GeoPoint` of the
+- `onMapLoaded`
+    - Type: `OnMapLoadedHandler?`
+    - Description: A callback invoked once the map has finished loading and is ready for interaction.
+- `onMapClick`
+    - Type: `OnMapEventHandler?`
+    - Description: A callback invoked when the user clicks on the map. Returns the `GeoPoint` of the
       click location.
-- ``onCameraMoveStart``
-    - Type: ``OnCameraMoveHandler?``
-- Description: A callback invoked when the map camera starts moving. Provides the current
+- `onCameraMoveStart`
+    - Type: `OnCameraMoveHandler?`
+    - Description: A callback invoked when the map camera starts moving. Provides the current
       `MapCameraPositionInterface`.
-- ``onCameraMove``
-    - Type: ``OnCameraMoveHandler?``
-- Description: A callback invoked repeatedly while the map camera is moving. Provides the current
+- `onCameraMove`
+    - Type: `OnCameraMoveHandler?`
+    - Description: A callback invoked repeatedly while the map camera is moving. Provides the current
       `MapCameraPositionInterface`.
-- ``onCameraMoveEnd``
-    - Type: ``OnCameraMoveHandler?``
-- Description: A callback invoked when the map camera finishes moving. Provides the final
+- `onCameraMoveEnd`
+    - Type: `OnCameraMoveHandler?`
+    - Description: A callback invoked when the map camera finishes moving. Provides the final
       `MapCameraPositionInterface`.
-- ``onMarkerClick``
-    - Type: ``OnMarkerEventHandler?``
-- Description: A callback invoked when a marker is clicked. Return `true` to indicate the event has
+- `onMarkerClick`
+    - Type: `OnMarkerEventHandler?`
+    - Description: A callback invoked when a marker is clicked. Return `true` to indicate the event has
       been consumed.
-- ``onMarkerDragStart``
-    - Type: ``OnMarkerEventHandler?``
+- `onMarkerDragStart`
+    - Type: `OnMarkerEventHandler?`
     - Description: A callback invoked when the user starts dragging a marker.
-- ``onMarkerDrag``
-    - Type: ``OnMarkerEventHandler?``
+- `onMarkerDrag`
+    - Type: `OnMarkerEventHandler?`
     - Description: A callback invoked repeatedly while a marker is being dragged.
-- ``onMarkerDragEnd``
-    - Type: ``OnMarkerEventHandler?``
+- `onMarkerDragEnd`
+    - Type: `OnMarkerEventHandler?`
     - Description: A callback invoked when the user finishes dragging a marker.
-- ``onMarkerAnimateStart``
-    - Type: ``OnMarkerEventHandler?``
+- `onMarkerAnimateStart`
+    - Type: `OnMarkerEventHandler?`
     - Description: A callback invoked when a marker animation begins.
-- ``onMarkerAnimateEnd``
-    - Type: ``OnMarkerEventHandler?``
+- `onMarkerAnimateEnd`
+    - Type: `OnMarkerEventHandler?`
     - Description: A callback invoked when a marker animation ends.
-- ``onCircleClick``
-    - Type: ``OnCircleEventHandler?``
+- `onCircleClick`
+    - Type: `OnCircleEventHandler?`
     - Description: A callback invoked when a circle overlay is clicked.
-- ``onPolylineClick``
-    - Type: ``OnPolylineEventHandler?``
+- `onPolylineClick`
+    - Type: `OnPolylineEventHandler?`
     - Description: A callback invoked when a polyline is clicked.
-- ``onPolygonClick``
-    - Type: ``OnPolygonEventHandler?``
+- `onPolygonClick`
+    - Type: `OnPolygonEventHandler?`
     - Description: A callback invoked when a polygon is clicked.
-- ``onGroundImageClick``
-    - Type: ``OnGroundImageEventHandler?``
+- `onGroundImageClick`
+    - Type: `OnGroundImageEventHandler?`
     - Description: A callback invoked when a ground image overlay is clicked.
-- ``content``
-    - Type: ``@Composable GoogleMapViewScope.() -> Unit``
-- Description: A composable lambda within the `GoogleMapViewScope` where you can declaratively add
+- `content`
+    - Type: `@Composable GoogleMapViewScope.() -> Unit`
+    - Description: A composable lambda within the `GoogleMapViewScope` where you can declaratively add
       map overlays like `Marker`, `Polyline`, `Polygon`, etc.
 
 ### Returns
@@ -148,20 +148,22 @@ Here is an example of how to use `GoogleMapView` in a Composable screen.
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.mapconductor.core.features.GeoPoint
+import com.mapconductor.core.map.MapCameraPosition
+import com.mapconductor.core.marker.MarkerState
 import com.mapconductor.googlemaps.GoogleMapView
-import com.mapconductor.googlemaps.marker.Marker
-import com.mapconductor.googlemaps.state.GoogleMapViewState
-import com.mapconductor.googlemaps.state.rememberGoogleMapViewState
+import com.mapconductor.googlemaps.GoogleMapViewState
+import com.mapconductor.googlemaps.rememberGoogleMapViewState
 
 @Composable
 fun MyMapScreen() {
     // 1. Remember the map's state.
     // This will survive recompositions and configuration changes.
     val mapState: GoogleMapViewState = rememberGoogleMapViewState(
-        initialPosition = GeoPoint(40.7128, -74.0060), // New York City
-        initialZoom = 12.0
+        cameraPosition = MapCameraPosition(
+            position = GeoPoint(40.7128, -74.0060), // New York City
+            zoom = 12.0
+        )
     )
 
     // 2. Add the GoogleMapView to your composition.
@@ -171,28 +173,17 @@ fun MyMapScreen() {
         onMapClick = { geoPoint ->
             println("Map clicked at: ${geoPoint.latitude}, ${geoPoint.longitude}")
         },
-        onMarkerClick = { marker ->
-            println("Marker clicked: ${marker.id}")
-            // Return true to indicate the event was consumed and prevent default behavior.
-            true
+        onMarkerClick = { markerState ->
+            println("Marker clicked: ${markerState.id}")
         }
     ) {
         // 3. Add overlays declaratively within the content lambda.
-        // This Marker will be displayed on the map.
         Marker(
-            id = "nyc-marker",
-            position = GeoPoint(40.7128, -74.0060),
-            title = "New York City",
-            snippet = "The Big Apple"
+            state = MarkerState(
+                id = "nyc-marker",
+                position = GeoPoint(40.7128, -74.0060)
+            )
         )
     }
-}
-
-@Preview
-@Composable
-fun MyMapScreenPreview() {
-    // Note: Map previews may not render in the Android Studio editor
-    // without special configuration. Run on an emulator or device.
-    MyMapScreen()
 }
 ```

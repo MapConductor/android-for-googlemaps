@@ -25,11 +25,11 @@ Creates an instance of `GoogleMapViewHolder`, which holds references to the `Map
 
 ### Parameters
 
-- ``mapView``
-    - Type: ``MapView``
+- `mapView`
+    - Type: `MapView`
     - Description: The Android `MapView` instance being controlled.
-- ``map``
-    - Type: ``GoogleMap``
+- `map`
+    - Type: `GoogleMap`
     - Description: The `GoogleMap` object used for map interactions and projections.
 
 ## Methods
@@ -47,8 +47,8 @@ override fun toScreenOffset(position: GeoPointInterface): Offset?
 
 #### Parameters
 
-- ``position``
-    - Type: ``GeoPointInterface``
+- `position`
+    - Type: `GeoPointInterface`
     - Description: The geographical coordinate to convert.
 
 #### Returns
@@ -71,9 +71,9 @@ override suspend fun fromScreenOffset(offset: Offset): GeoPoint?
 
 #### Parameters
 
-- ``offset``
-    - Type: ``Offset``
-- Description: The screen pixel coordinate (relative to the map view's top-left corner) to convert.
+- `offset`
+    - Type: `Offset`
+    - Description: The screen pixel coordinate (relative to the map view's top-left corner) to convert.
 
 #### Returns
 

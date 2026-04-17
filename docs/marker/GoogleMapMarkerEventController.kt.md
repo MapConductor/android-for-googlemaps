@@ -30,13 +30,13 @@ is already on the map.
 
 #### Parameters
 
-- ``id``
+- `id`
     - Type: `String`
     - Description: The unique identifier of the marker entity.
 
 #### Returns
 
-- Type: ``MarkerEntityInterface<GoogleMapActualMarker>?``
+- Type: `MarkerEntityInterface<GoogleMapActualMarker>?`
 - Description: The corresponding marker entity, or `null` if no marker with the specified `id` is
   found.
 
@@ -59,8 +59,8 @@ user clicking on a marker.
 
 #### Parameters
 
-- ``state``
-    - Type: ``MarkerState``
+- `state`
+    - Type: `MarkerState`
     - Description: The state of the marker at the time the event is dispatched.
 
 ---
@@ -82,8 +82,8 @@ drag operation on a marker.
 
 #### Parameters
 
-- ``state``
-    - Type: ``MarkerState``
+- `state`
+    - Type: `MarkerState`
     - Description: The state of the marker at the time the event is dispatched.
 
 ---
@@ -105,8 +105,8 @@ operation.
 
 #### Parameters
 
-- ``state``
-    - Type: ``MarkerState``
+- `state`
+    - Type: `MarkerState`
     - Description: The state of the marker at the time the event is dispatched.
 
 ---
@@ -128,8 +128,8 @@ drag operation.
 
 #### Parameters
 
-- ``state``
-    - Type: ``MarkerState``
+- `state`
+    - Type: `MarkerState`
     - Description: The state of the marker at the time the event is dispatched.
 
 ---
@@ -146,9 +146,9 @@ fun setClickListener(listener: OnMarkerEventHandler?)
 
 #### Parameters
 
-- ``listener``
-    - Type: ``OnMarkerEventHandler?``
-- Description: The handler to be invoked on a marker click. The handler receives a `MarkerState`
+- `listener`
+    - Type: `OnMarkerEventHandler?`
+    - Description: The handler to be invoked on a marker click. The handler receives a `MarkerState`
       object. Pass `null` to remove the current listener.
 
 ---
@@ -165,9 +165,9 @@ fun setDragStartListener(listener: OnMarkerEventHandler?)
 
 #### Parameters
 
-- ``listener``
-    - Type: ``OnMarkerEventHandler?``
-- Description: The handler to be invoked when a marker drag starts. The handler receives a
+- `listener`
+    - Type: `OnMarkerEventHandler?`
+    - Description: The handler to be invoked when a marker drag starts. The handler receives a
       `MarkerState` object. Pass `null` to remove the current listener.
 
 ---
@@ -184,9 +184,9 @@ fun setDragListener(listener: OnMarkerEventHandler?)
 
 #### Parameters
 
-- ``listener``
-    - Type: ``OnMarkerEventHandler?``
-- Description: The handler to be invoked during a marker drag. The handler receives a `MarkerState`
+- `listener`
+    - Type: `OnMarkerEventHandler?`
+    - Description: The handler to be invoked during a marker drag. The handler receives a `MarkerState`
       object. Pass `null` to remove the current listener.
 
 ---
@@ -203,9 +203,9 @@ fun setDragEndListener(listener: OnMarkerEventHandler?)
 
 #### Parameters
 
-- ``listener``
-    - Type: ``OnMarkerEventHandler?``
-- Description: The handler to be invoked when a marker drag ends. The handler receives a
+- `listener`
+    - Type: `OnMarkerEventHandler?`
+    - Description: The handler to be invoked when a marker drag ends. The handler receives a
       `MarkerState` object. Pass `null` to remove the current listener.
 
 ---
@@ -222,9 +222,9 @@ fun setAnimateStartListener(listener: OnMarkerEventHandler?)
 
 #### Parameters
 
-- ``listener``
-    - Type: ``OnMarkerEventHandler?``
-- Description: The handler to be invoked when a marker animation starts. The handler receives a
+- `listener`
+    - Type: `OnMarkerEventHandler?`
+    - Description: The handler to be invoked when a marker animation starts. The handler receives a
       `MarkerState` object. Pass `null` to remove the current listener.
 
 ---
@@ -241,9 +241,9 @@ fun setAnimateEndListener(listener: OnMarkerEventHandler?)
 
 #### Parameters
 
-- ``listener``
-    - Type: ``OnMarkerEventHandler?``
-- Description: The handler to be invoked when a marker animation ends. The handler receives a
+- `listener`
+    - Type: `OnMarkerEventHandler?`
+    - Description: The handler to be invoked when a marker animation ends. The handler receives a
       `MarkerState` object. Pass `null` to remove the current listener.
 
 <br>
@@ -266,8 +266,8 @@ DefaultGoogleMapMarkerEventController(
 
 #### Parameters
 
-- ``controller``
-    - Type: ``GoogleMapMarkerController``
+- `controller`
+    - Type: `GoogleMapMarkerController`
     - Description: The main marker controller that will manage the markers and their events.
 
 <br>
@@ -291,6 +291,6 @@ StrategyGoogleMapMarkerEventController(
 
 #### Parameters
 
-- ``controller``
-    - Type: ``StrategyMarkerController<GoogleMapActualMarker>``
+- `controller`
+    - Type: `StrategyMarkerController<GoogleMapActualMarker>`
     - Description: The strategy controller responsible for implementing the event logic.

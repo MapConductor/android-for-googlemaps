@@ -19,12 +19,12 @@ class GoogleMapGroundImageOverlayRenderer(
 
 ## Parameters
 
-- ``holder``
-    - Type: ``GoogleMapViewHolder``
-- Description: The view holder containing the `GoogleMap` instance where overlays will be rendered.
-- ``coroutine``
-    - Type: ``CoroutineScope``
-- Description: The coroutine scope for executing asynchronous operations. Defaults to
+- `holder`
+    - Type: `GoogleMapViewHolder`
+    - Description: The view holder containing the `GoogleMap` instance where overlays will be rendered.
+- `coroutine`
+    - Type: `CoroutineScope`
+    - Description: The coroutine scope for executing asynchronous operations. Defaults to
       `CoroutineScope(Dispatchers.Main)`.
 
 ---
@@ -44,14 +44,14 @@ override suspend fun createGroundImage(state: GroundImageState): GoogleMapActual
 
 #### Parameters
 
-- ``state``
-    - Type: ``GroundImageState``
-- Description: An object containing the desired properties for the new ground overlay, such as the
+- `state`
+    - Type: `GroundImageState`
+    - Description: An object containing the desired properties for the new ground overlay, such as the
       image, geographic bounds, and opacity.
 
 #### Returns
 
-- Type: ``GoogleMapActualGroundImage?``
+- Type: `GoogleMapActualGroundImage?`
 - Description: The newly created `GroundOverlay` instance if successful, or `null` if the creation
   fails (e.g., due to invalid bounds).
 
@@ -69,8 +69,8 @@ override suspend fun removeGroundImage(entity: GroundImageEntityInterface<Google
 
 #### Parameters
 
-- ``entity``
-    - Type: ``GroundImageEntityInterface<GoogleMapActualGroundImage>``
+- `entity`
+    - Type: `GroundImageEntityInterface<GoogleMapActualGroundImage>`
     - Description: The entity wrapper containing the `GroundOverlay` instance to be removed.
 
 #### Returns
@@ -97,20 +97,20 @@ override suspend fun updateGroundImageProperties(
 
 #### Parameters
 
-- ``groundImage``
-    - Type: ``GoogleMapActualGroundImage``
+- `groundImage`
+    - Type: `GoogleMapActualGroundImage`
     - Description: The actual `GroundOverlay` object on the map to be updated.
-- ``current``
-    - Type: ``GroundImageEntityInterface<GoogleMapActualGroundImage>``
+- `current`
+    - Type: `GroundImageEntityInterface<GoogleMapActualGroundImage>`
     - Description: The entity representing the new, desired state of the ground overlay.
-- ``prev``
-    - Type: ``GroundImageEntityInterface<GoogleMapActualGroundImage>``
-- Description: The entity representing the previous state of the ground overlay, used for
+- `prev`
+    - Type: `GroundImageEntityInterface<GoogleMapActualGroundImage>`
+    - Description: The entity representing the previous state of the ground overlay, used for
       comparison.
 
 #### Returns
 
-- Type: ``GoogleMapActualGroundImage?``
+- Type: `GoogleMapActualGroundImage?`
 - Description: The updated `GroundOverlay` instance.
 
 ---

@@ -24,8 +24,8 @@ fun fromBitmap(bitmap: Bitmap): BitmapDescriptor
 ```
 
 #### Parameters
-- ``bitmap``
-    - Type: ``Bitmap``
+- `bitmap`
+    - Type: `Bitmap`
     - Description: The `Bitmap` object to convert into a `BitmapDescriptor`.
 
 #### Returns

@@ -36,22 +36,22 @@ projection. The resulting list of points is ready to be used with map APIs to dr
 
 #### Parameters
 
-- ``center``
-    - Type: ``LatLng``
+- `center`
+    - Type: `LatLng`
     - Description: The geographical center point of the circle.
-- ``radiusMeters``
-    - Type: ``Double``
+- `radiusMeters`
+    - Type: `Double`
     - Description: The radius of the circle, specified in meters.
-- ``geodesic``
-    - Type: ``Boolean``
-- Description: Determines the calculation method.<br/>- `true`: Generates a geodesic circle.
+- `geodesic`
+    - Type: `Boolean`
+    - Description: Determines the calculation method.<br/>- `true`: Generates a geodesic circle.
       Recommended for accuracy over large distances and at high latitudes.<br/>- `false`: Generates
       a non-geodesic circle using a simpler planar projection. Suitable for small radii where the
       Earth's curvature is negligible.
 
 #### Returns
 
-- Type: ``List<LatLng>``
+- Type: `List<LatLng>`
 - Description: A list of `LatLng` points representing the vertices of the polygon that approximates
   the circle. The polygon is formed by connecting these points in order.
 

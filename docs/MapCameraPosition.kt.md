@@ -22,7 +22,7 @@ corresponding fields in the `CameraPosition.Builder`.
 
 ## Returns
 
-- Type: ``CameraPosition``
+- Type: `CameraPosition`
 - Description: A new `CameraPosition` instance configured with the properties of the source
   `MapCameraPosition`.
 
@@ -73,13 +73,13 @@ ensures type safety and provides a consistent object to work with.
 
 ## Parameters
 
-- ``position``
-    - Type: ``MapCameraPositionInterface``
+- `position`
+    - Type: `MapCameraPositionInterface`
     - Description: The source camera position object to convert from.
 
 ## Returns
 
-- Type: ``MapCameraPosition``
+- Type: `MapCameraPosition`
 - Description: A concrete `MapCameraPosition` instance.
 
 ## Example
@@ -131,14 +131,14 @@ set to `null`.
 
 ## Parameters
 
-- ``paddings``
-    - Type: ``MapPaddingsInterface``
-    - Default: ``MapPaddings.Zeros``
+- `paddings`
+    - Type: `MapPaddingsInterface`
+    - Default: `MapPaddings.Zeros`
     - Description: Optional map paddings to associate with the resulting `MapCameraPosition`.
 
 ## Returns
 
-- Type: ``MapCameraPosition``
+- Type: `MapCameraPosition`
 - Description: A new `MapCameraPosition` instance representing the state of the source
   `CameraPosition`.
 

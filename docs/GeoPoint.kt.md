@@ -25,7 +25,7 @@ This extension function is called on an instance of `GeoPoint`. It creates and r
 
 ### Returns
 
-- Type: ``LatLng``
+- Type: `LatLng`
 - Description: A `LatLng` object with the same latitude and longitude as the source `GeoPoint`.
 
 ### Example
@@ -65,13 +65,13 @@ constructs a new `GeoPoint` instance with the corresponding latitude and longitu
 
 ### Parameters
 
-- ``latLng``
-    - Type: ``LatLng``
+- `latLng`
+    - Type: `LatLng`
     - Description: The Google Maps `LatLng` object to convert.
 
 ### Returns
 
-- Type: ``GeoPoint``
+- Type: `GeoPoint`
 - Description: A new `GeoPoint` instance with the latitude and longitude from the provided `LatLng`
   object.
 
@@ -113,7 +113,7 @@ This extension function is called on an instance of `LatLng`. It creates and ret
 
 ### Returns
 
-- Type: ``GeoPoint``
+- Type: `GeoPoint`
 - Description: A `GeoPoint` object with the same latitude and longitude as the source `LatLng`.
 
 ### Example
