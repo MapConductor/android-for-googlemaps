@@ -5,7 +5,7 @@
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     id("maven-publish")
     id("signing")
-    id("com.gradleup.nmcp") version "0.0.8" apply false
+    id("com.gradleup.nmcp") version "0.0.8"
 }
 
 ktlint {
@@ -89,8 +89,12 @@ dependencies {
 
     implementation(platform(libs.androidx.compose.bom)) // ← bomでバージョン合わせる
     // Lifecycle（MapView用）
+    // BOM管理の依存関係はPOMにバージョンが出力されないためMaven Central検証エラーになる
+    // BOMと同じバージョンを明示することで解決
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.common.java8)
+    implementation("com.esri:arcgis-maps-kotlin-toolkit-geoview-compose:${libs.versions.arcgisMapsKotlin.get()}")
+    implementation("com.esri:arcgis-maps-kotlin-toolkit-authentication:${libs.versions.arcgisMapsKotlin.get()}")
 
     // Google Maps SDK
     implementation(libs.play.services.maps)
@@ -189,8 +193,8 @@ signing {
     }
 }
 
-if (gradle.startParameter.taskNames.any { it.contains("publish", ignoreCase = true) || it.contains("Central", ignoreCase = true) }) {
-    apply(plugin = "com.gradleup.nmcp")
+if (project == rootProject) {
+    // standalone build only — in multi-project (android-sdk), parent configures nmcp
     nmcp {
         publish("release") {
             username = findProperty("ossrh_username") as String? ?: System.getenv("OSSRH_USERNAME") ?: ""
