@@ -18,6 +18,7 @@ import com.mapconductor.core.controller.BaseMapViewController
 import com.mapconductor.core.groundimage.GroundImageEvent
 import com.mapconductor.core.groundimage.GroundImageState
 import com.mapconductor.core.groundimage.OnGroundImageEventHandler
+import com.mapconductor.core.map.OnMapInitializedHandler
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.VisibleRegion
 import com.mapconductor.core.marker.MarkerEventControllerInterface
@@ -375,11 +376,15 @@ class GoogleMapViewController(
 
     override fun onMapLoaded() {
         _mapLoadedState.value = true
-        mapLoadedCallback?.invoke()
-        mapLoadedCallback = null
+        mapInitializedCallback?.invoke()
+        mapInitializedCallback = null
 
         val mapDesignType = GoogleMapDesign.toMapDesignType(holder.map.mapType)
         mapDesignTypeChangeListener?.invoke(mapDesignType)
+    }
+
+    override fun setMapInitializedListener(listener: OnMapInitializedHandler?) {
+        mapInitializedCallback = listener
     }
 
     // Trigger an initial camera update after the view and map are ready

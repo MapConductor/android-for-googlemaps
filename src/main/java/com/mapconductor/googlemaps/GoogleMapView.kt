@@ -48,45 +48,6 @@ import android.view.ViewGroup
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 
-@Composable
-fun GoogleMapView(
-    state: GoogleMapViewState,
-    modifier: Modifier = Modifier,
-    markerTiling: MarkerTilingOptions? = null,
-    sdkInitialize: (suspend (android.content.Context) -> Boolean)? = null,
-    onMapLoaded: OnMapLoadedHandler? = null,
-    onMapClick: OnMapEventHandler? = null,
-    onCameraMoveStart: OnCameraMoveHandler? = null,
-    onCameraMove: OnCameraMoveHandler? = null,
-    onCameraMoveEnd: OnCameraMoveHandler? = null,
-    onGroundImageClick: OnGroundImageEventHandler? = null,
-    content: (@Composable GoogleMapViewScope.() -> Unit)? = null,
-) {
-    @Suppress("DEPRECATION")
-    GoogleMapView(
-        state = state,
-        modifier = modifier,
-        markerTiling = markerTiling,
-        sdkInitialize = sdkInitialize,
-        onMapLoaded = onMapLoaded,
-        onMapClick = onMapClick,
-        onCameraMoveStart = onCameraMoveStart,
-        onCameraMove = onCameraMove,
-        onCameraMoveEnd = onCameraMoveEnd,
-        onMarkerClick = null,
-        onMarkerDragStart = null,
-        onMarkerDrag = null,
-        onMarkerDragEnd = null,
-        onMarkerAnimateStart = null,
-        onMarkerAnimateEnd = null,
-        onCircleClick = null,
-        onPolylineClick = null,
-        onPolygonClick = null,
-        onGroundImageClick = onGroundImageClick,
-        content = content,
-    )
-}
-
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun GoogleMapView(
@@ -96,19 +57,10 @@ fun GoogleMapView(
     sdkInitialize: (suspend (android.content.Context) -> Boolean)? = null,
     onMapLoaded: OnMapLoadedHandler? = null,
     onMapClick: OnMapEventHandler? = null,
+    onMapLongClick: OnMapEventHandler? = null,
     onCameraMoveStart: OnCameraMoveHandler? = null,
     onCameraMove: OnCameraMoveHandler? = null,
     onCameraMoveEnd: OnCameraMoveHandler? = null,
-    onMarkerClick: OnMarkerEventHandler?,
-    onMarkerDragStart: OnMarkerEventHandler? = null,
-    onMarkerDrag: OnMarkerEventHandler? = null,
-    onMarkerDragEnd: OnMarkerEventHandler? = null,
-    onMarkerAnimateStart: OnMarkerEventHandler? = null,
-    onMarkerAnimateEnd: OnMarkerEventHandler? = null,
-    onCircleClick: OnCircleEventHandler? = null,
-    onPolylineClick: OnPolylineEventHandler? = null,
-    onPolygonClick: OnPolygonEventHandler? = null,
-    onGroundImageClick: OnGroundImageEventHandler? = null,
     content: (@Composable GoogleMapViewScope.() -> Unit)? = null,
 ) {
     val scope = remember { GoogleMapViewScope() } // Use specific scope
@@ -222,19 +174,7 @@ fun GoogleMapView(
                     onCameraMoveEnd?.invoke(it)
                 }
                 mapController.setMapClickListener(onMapClick)
-                @Suppress("DEPRECATION")
-                run {
-                    mapController.setOnMarkerClickListener(onMarkerClick)
-                    mapController.setOnMarkerDragStart(onMarkerDragStart)
-                    mapController.setOnMarkerDrag(onMarkerDrag)
-                    mapController.setOnMarkerDragEnd(onMarkerDragEnd)
-                    mapController.setOnCircleClickListener(onCircleClick)
-                    mapController.setOnPolylineClickListener(onPolylineClick)
-                    mapController.setOnPolygonClickListener(onPolygonClick)
-                    mapController.setOnMarkerAnimateStart(onMarkerAnimateStart)
-                    mapController.setOnMarkerAnimateEnd(onMarkerAnimateEnd)
-                    mapController.setOnGroundImageClickListener(onGroundImageClick)
-                }
+                mapController.setMapLongClickListener(onMapLongClick)
                 mapController.setMapDesignTypeChangeListener(state::onMapDesignTypeChange)
                 // Post an initial camera update once the MapView is laid out
                 holder.mapView.post { mapController.sendInitialCameraUpdate() }
