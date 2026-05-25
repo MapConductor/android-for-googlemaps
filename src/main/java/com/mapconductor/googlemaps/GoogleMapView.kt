@@ -12,9 +12,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.android.gms.maps.GoogleMapOptions
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.CameraPosition
-import com.mapconductor.core.circle.OnCircleEventHandler
 import com.mapconductor.core.features.GeoPoint
-import com.mapconductor.core.groundimage.OnGroundImageEventHandler
 import com.mapconductor.core.map.MapCameraPositionInterface
 import com.mapconductor.core.map.MapViewBase
 import com.mapconductor.core.map.MutableMapServiceRegistry
@@ -27,10 +25,7 @@ import com.mapconductor.core.marker.MarkerRenderingStrategyInterface
 import com.mapconductor.core.marker.MarkerRenderingSupport
 import com.mapconductor.core.marker.MarkerRenderingSupportKey
 import com.mapconductor.core.marker.MarkerTilingOptions
-import com.mapconductor.core.marker.OnMarkerEventHandler
 import com.mapconductor.core.marker.StrategyMarkerController
-import com.mapconductor.core.polygon.OnPolygonEventHandler
-import com.mapconductor.core.polyline.OnPolylineEventHandler
 import com.mapconductor.googlemaps.circle.GoogleMapCircleController
 import com.mapconductor.googlemaps.circle.GoogleMapCircleOverlayRenderer
 import com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageController
@@ -183,7 +178,7 @@ fun GoogleMapView(
         scope = scope,
         registry = registry,
         onMapLoaded = onMapLoaded,
-        customDisposableEffect = { initState, holderRef ->
+        customDisposableEffect = { _, holderRef ->
             // Specific Google Maps DisposableEffect logic
             val lifecycle = LocalLifecycleOwner.current.lifecycle // Get lifecycle here
             DisposableEffect(lifecycle) {
