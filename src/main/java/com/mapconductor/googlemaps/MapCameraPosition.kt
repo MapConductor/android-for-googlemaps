@@ -10,9 +10,12 @@ import com.mapconductor.core.spherical.Spherical
 import com.mapconductor.core.zoom.AbstractZoomAltitudeConverter
 import com.mapconductor.googlemaps.zoom.ZoomAltitudeConverter
 import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.tan
 
 private val converter = ZoomAltitudeConverter(AbstractZoomAltitudeConverter.DEFAULT_ZOOM0_ALTITUDE)
+private const val NEGATIVE_TILT_TARGET_DISTANCE_SCALE = (2.175 + 1.9375) / 2.0
+private const val NEGATIVE_TILT_ZOOM_OFFSET_AT_MAX_TILT = -1.5
 
 fun MapCameraPosition.toCameraPosition(): CameraPosition {
     if (this.tilt >= 0) {
@@ -30,14 +33,19 @@ fun MapCameraPosition.toCameraPosition(): CameraPosition {
         // bearing 方向に altitude * tan(|tilt|) メートル前方へ置き、同じ eye 位置・高さを再現する。
         val tiltAbsDeg = abs(tilt).coerceIn(0.0, 60.0)
         val tiltAbsRad = Math.toRadians(tiltAbsDeg)
-        val altitude = converter.zoomLevelToAltitude(zoom, position.latitude, tiltAbsDeg)
-        val distanceForward = altitude * tan(tiltAbsRad)
+        val altitude = converter.zoomLevelToAltitude(zoom, position.latitude, 0.0)
+        val distanceForward =
+            altitude *
+                cos(tiltAbsRad) *
+                tan(tiltAbsRad) *
+                NEGATIVE_TILT_TARGET_DISTANCE_SCALE
         val target = Spherical.computeOffset(position, distanceForward, bearing)
+        val adjustedZoom = zoom + NEGATIVE_TILT_ZOOM_OFFSET_AT_MAX_TILT * (tiltAbsDeg / 60.0)
 
         return CameraPosition
             .builder()
             .target(target.toLatLng())
-            .zoom(zoom.toFloat())
+            .zoom(adjustedZoom.toFloat())
             .tilt(tiltAbsDeg.toFloat())
             .bearing(bearing.toFloat())
             .build()
