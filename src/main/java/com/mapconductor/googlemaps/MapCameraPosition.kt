@@ -6,19 +6,43 @@ import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
 import com.mapconductor.core.map.MapPaddings
 import com.mapconductor.core.map.MapPaddingsInterface
+import com.mapconductor.core.spherical.Spherical
 import com.mapconductor.core.zoom.AbstractZoomAltitudeConverter
 import com.mapconductor.googlemaps.zoom.ZoomAltitudeConverter
+import kotlin.math.abs
+import kotlin.math.tan
 
 private val converter = ZoomAltitudeConverter(AbstractZoomAltitudeConverter.DEFAULT_ZOOM0_ALTITUDE)
 
-fun MapCameraPosition.toCameraPosition(): CameraPosition =
-    CameraPosition
-        .builder()
-        .target(GeoPoint.from(position).toLatLng())
-        .zoom(zoom.toFloat())
-        .tilt(tilt.toFloat())
-        .bearing(bearing.toFloat())
-        .build()
+fun MapCameraPosition.toCameraPosition(): CameraPosition {
+    if (this.tilt >= 0) {
+        return CameraPosition
+            .builder()
+            .target(GeoPoint.from(position).toLatLng())
+            .zoom(zoom.toFloat())
+            .tilt(tilt.toFloat())
+            .bearing(bearing.toFloat())
+            .build()
+    } else {
+        // tilt < 0: 水平線より abs(tilt) 度上方を向く（仰角ビュー）
+        // カメラ eye を固定したまま bearing 方向の前方を見る。
+        // Google Maps は上向き pitch を表現できないため、地面ターゲットをカメラ真下から
+        // bearing 方向に altitude * tan(|tilt|) メートル前方へ置き、同じ eye 位置・高さを再現する。
+        val tiltAbsDeg = abs(tilt).coerceIn(0.0, 60.0)
+        val tiltAbsRad = Math.toRadians(tiltAbsDeg)
+        val altitude = converter.zoomLevelToAltitude(zoom, position.latitude, tiltAbsDeg)
+        val distanceForward = altitude * tan(tiltAbsRad)
+        val target = Spherical.computeOffset(position, distanceForward, bearing)
+
+        return CameraPosition
+            .builder()
+            .target(target.toLatLng())
+            .zoom(zoom.toFloat())
+            .tilt(tiltAbsDeg.toFloat())
+            .bearing(bearing.toFloat())
+            .build()
+    }
+}
 
 fun MapCameraPosition.Companion.from(position: MapCameraPositionInterface): MapCameraPosition =
     when (position) {
