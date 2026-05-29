@@ -14,7 +14,7 @@ import kotlin.math.cos
 import kotlin.math.tan
 
 private val converter = ZoomAltitudeConverter(AbstractZoomAltitudeConverter.DEFAULT_ZOOM0_ALTITUDE)
-private const val NEGATIVE_TILT_TARGET_DISTANCE_SCALE = 2.175
+private const val NEGATIVE_TILT_TARGET_DISTANCE_SCALE = 3.175
 private const val NEGATIVE_TILT_ZOOM_OFFSET_AT_MAX_TILT = -1.675
 
 fun MapCameraPosition.toCameraPosition(): CameraPosition {
