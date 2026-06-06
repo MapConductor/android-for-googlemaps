@@ -11,8 +11,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.android.gms.maps.GoogleMapOptions
 import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.model.CameraPosition
-import com.mapconductor.core.features.GeoPoint
+import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
 import com.mapconductor.core.map.MapViewBase
 import com.mapconductor.core.map.MutableMapServiceRegistry
@@ -70,16 +69,9 @@ fun GoogleMapView(
         modifier = modifier,
         viewProvider = {
             val cameraPosition =
-                state.cameraPosition.let { camera ->
-                    CameraPosition
-                        .Builder()
-                        .apply {
-                            target(GeoPoint.from(camera.position).toLatLng())
-                            zoom(camera.zoom.toFloat())
-                            bearing(camera.bearing.toFloat())
-                            tilt(camera.tilt.toFloat())
-                        }.build()
-                }
+                MapCameraPosition
+                    .from(state.cameraPosition)
+                    .toCameraPosition()
 
             val mapInitOptions =
                 GoogleMapOptions()
