@@ -14,6 +14,7 @@ import com.mapconductor.core.marker.MarkerOverlayRendererInterface
 import com.mapconductor.core.marker.MarkerState
 import com.mapconductor.core.marker.MarkerTileRenderer
 import com.mapconductor.core.marker.MarkerTilingOptions
+import com.mapconductor.core.marker.TileRenderWasmEngine
 import com.mapconductor.core.raster.RasterLayerSource
 import com.mapconductor.core.raster.RasterLayerState
 import com.mapconductor.core.raster.TileScheme
@@ -22,10 +23,13 @@ import com.mapconductor.core.tileserver.TileServerRegistry
 import com.mapconductor.googlemaps.GoogleMapActualMarker
 import com.mapconductor.googlemaps.GoogleMapViewHolder
 import com.mapconductor.settings.Settings
+import android.util.Log
 import java.util.UUID
 import kotlin.math.floor
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.withPermit
+import kotlinx.coroutines.withContext
 
 /**
  * Callback interface for managing RasterLayer from MarkerController.
@@ -96,17 +100,21 @@ class GoogleMapMarkerController private constructor(
             val currentZoom = currentTileZoom()
             val tilingEnabled =
                 markerTiling.enabled && data.size >= markerManager.minMarkerCount
+            Log.d(TAG, "add: markers=${data.size} tilingEnabled=$tilingEnabled zoom=$currentZoom minMarkerCount=${markerManager.minMarkerCount}")
 
             val result =
-                MarkerIngestionEngine.ingest(
-                    data = data,
-                    markerManager = markerManager,
-                    renderer = renderer,
-                    defaultMarkerIcon = defaultMarkerIcon,
-                    tilingEnabled = tilingEnabled,
-                    tiledMarkerIds = tiledMarkerIds,
-                    shouldTile = { state -> !state.draggable && state.getAnimation() == null },
-                )
+                withContext(Dispatchers.Default) {
+                    MarkerIngestionEngine.ingest(
+                        data = data,
+                        markerManager = markerManager,
+                        renderer = renderer,
+                        defaultMarkerIcon = defaultMarkerIcon,
+                        tilingEnabled = tilingEnabled,
+                        tiledMarkerIds = tiledMarkerIds,
+                        shouldTile = { state -> !state.draggable && state.getAnimation() == null },
+                    )
+                }
+            Log.d(TAG, "ingest done: tiledDataChanged=${result.tiledDataChanged} hasTiledMarkers=${result.hasTiledMarkers} tiledCount=${tiledMarkerIds.size}")
 
             if (result.tiledDataChanged) {
                 syncTiledOverlay(currentZoom)
@@ -240,10 +248,11 @@ class GoogleMapMarkerController private constructor(
      * Creates a new RasterLayerState to ensure proper change detection.
      */
     private suspend fun updateRasterLayerSource() {
-        val groupId = markerTileGroupId ?: return
-        val tileRenderer = markerTileRenderer ?: return
-        val oldState = markerTileRasterLayerState ?: return
+        val groupId = markerTileGroupId ?: run { Log.w(TAG, "updateRasterLayerSource: groupId is null, skip"); return }
+        val tileRenderer = markerTileRenderer ?: run { Log.w(TAG, "updateRasterLayerSource: tileRenderer is null, skip"); return }
+        val oldState = markerTileRasterLayerState ?: run { Log.w(TAG, "updateRasterLayerSource: rasterLayerState is null, skip"); return }
         cacheVersion = (cacheVersion + 1) and 0x7fffffff
+        tileRenderer.invalidate()
 
         // Create a new state object so RasterLayerController can detect the change
         val newState =
@@ -258,12 +267,14 @@ class GoogleMapMarkerController private constructor(
                 id = oldState.id,
             )
         markerTileRasterLayerState = newState
+        Log.d(TAG, "updateRasterLayerSource: url=${(newState.source as? RasterLayerSource.UrlTemplate)?.template} callback=${if (rasterLayerCallback != null) "set" else "null"}")
         rasterLayerCallback?.onRasterLayerUpdate(newState)
     }
 
     private fun currentTileZoom(): Int = floor(lastKnownZoom).toInt().coerceAtLeast(0)
 
     private suspend fun syncTiledOverlay(zoom: Int) {
+        Log.d(TAG, "syncTiledOverlay: tiledCount=${tiledMarkerIds.size} zoom=$zoom enabled=${markerTiling.enabled}")
         if (tiledMarkerIds.isEmpty()) {
             removeTileOverlay()
             return
@@ -280,9 +291,13 @@ class GoogleMapMarkerController private constructor(
     }
 
     private fun getOrCreateTileRenderer(): MarkerTileRenderer<GoogleMapActualMarker> {
-        markerTileRenderer?.let { return it }
+        markerTileRenderer?.let {
+            Log.d(TAG, "getOrCreateTileRenderer: reusing existing groupId=$markerTileGroupId")
+            return it
+        }
 
         val groupId = UUID.randomUUID().toString()
+        Log.d(TAG, "getOrCreateTileRenderer: creating new groupId=$groupId")
         markerTileGroupId = groupId
 
         val tileRenderer =
@@ -292,6 +307,7 @@ class GoogleMapMarkerController private constructor(
                 cacheSizeBytes = markerTiling.cacheSize,
                 debugTileOverlay = markerTiling.debugTileOverlay,
                 iconScaleCallback = markerTiling.iconScaleCallback,
+                wasmEngine = TileRenderWasmEngine.createOrNull(ResourceProvider.getAppContext(), markerTiling.enableWasmAcceleration),
             )
         markerTileRenderer = tileRenderer
 
@@ -329,6 +345,8 @@ class GoogleMapMarkerController private constructor(
     }
 
     companion object {
+        private const val TAG = "MCTile"
+
         fun create(
             holder: GoogleMapViewHolder,
             markerTiling: MarkerTilingOptions = MarkerTilingOptions.Default,

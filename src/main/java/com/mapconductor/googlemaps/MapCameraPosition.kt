@@ -20,7 +20,7 @@ fun MapCameraPosition.toCameraPosition(): CameraPosition {
             .builder()
             .target(GeoPoint.from(position).toLatLng())
             .zoom(zoom.toFloat())
-            .tilt(tilt.toFloat())
+            .tilt(tilt.coerceIn(0.0, 80.9).toFloat())
             .bearing(bearing.toFloat())
             .build()
     } else {
@@ -28,7 +28,7 @@ fun MapCameraPosition.toCameraPosition(): CameraPosition {
         // カメラ eye を固定したまま bearing 方向の前方を見る。
         // Google Maps は上向き pitch を表現できないため、地面ターゲットをカメラ真下から
         // bearing 方向に altitude * tan(|tilt|) メートル前方へ置き、同じ eye 位置・高さを再現する。
-        val tiltAbsDeg = abs(tilt).coerceIn(0.0, 90.0)
+        val tiltAbsDeg = abs(tilt).coerceIn(0.0, 80.9)
         val tiltAbsRad = Math.toRadians(tiltAbsDeg)
         val altitude = converter.zoomLevelToAltitude(zoom, position.latitude, 0.0)
         val distanceForward = altitude * tan(tiltAbsRad)

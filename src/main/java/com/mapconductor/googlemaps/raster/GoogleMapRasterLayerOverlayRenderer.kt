@@ -77,7 +77,11 @@ class GoogleMapRasterLayerOverlayRenderer(
     override suspend fun onPostProcess() {}
 
     private fun addLayer(state: RasterLayerState): TileOverlay? {
-        val tileSpec = resolveTileSpec(state) ?: return null
+        val tileSpec = resolveTileSpec(state) ?: run {
+            Log.w(TAG, "addLayer: resolveTileSpec returned null for id=${state.id}")
+            return null
+        }
+        Log.d(TAG, "addLayer: id=${state.id} url=${tileSpec.template}")
         val headerBuilder =
             Headers.Builder().also { builder ->
                 state.extraHeaders?.let {
@@ -98,11 +102,17 @@ class GoogleMapRasterLayerOverlayRenderer(
 
         val provider =
             object : TileProvider {
+                private var firstTileLogged = false
+
                 override fun getTile(
                     x: Int,
                     y: Int,
                     zoom: Int,
                 ): Tile {
+                    if (!firstTileLogged) {
+                        firstTileLogged = true
+                        Log.d(TAG, "getTile first call: id=${state.id} z=$zoom x=$x y=$y")
+                    }
                     val schemeY =
                         if (tileSpec.scheme == TileScheme.TMS) {
                             val max = 1 shl zoom
@@ -162,10 +172,10 @@ class GoogleMapRasterLayerOverlayRenderer(
                 .zIndex(resolveOverlayZIndex(state))
                 .transparency(opacityToTransparency(state.opacity))
                 .visible(state.visible)
-        return holder.map.addTileOverlay(options)?.also { overlay ->
-            // Google Maps caches tile results (including NO_TILE) per viewport; clear to reflect data changes.
-            overlay.clearTileCache()
-        }
+        Log.d(TAG, "addTileOverlay calling: id=${state.id} mapIsNull=${holder.map == null} zIndex=${resolveOverlayZIndex(state)} visible=${state.visible}")
+        val overlay = holder.map.addTileOverlay(options)
+        Log.d(TAG, "addTileOverlay result: id=${state.id} overlay=${if (overlay != null) "non-null(OK)" else "null(FAILED)"}")
+        return overlay
     }
 
     private fun updateLayer(
@@ -209,6 +219,7 @@ class GoogleMapRasterLayerOverlayRenderer(
     )
 
     private companion object {
+        private const val TAG = "MCTile"
         private const val MARKER_TILE_RASTER_ID_PREFIX = "marker-tile-"
     }
 

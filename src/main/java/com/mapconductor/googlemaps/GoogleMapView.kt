@@ -36,8 +36,8 @@ import com.mapconductor.googlemaps.polyline.GoogleMapPolylineController
 import com.mapconductor.googlemaps.polyline.GoogleMapPolylineOverlayRenderer
 import com.mapconductor.googlemaps.raster.GoogleMapRasterLayerController
 import com.mapconductor.googlemaps.raster.GoogleMapRasterLayerOverlayRenderer
-import okhttp3.Cache
 import okhttp3.OkHttpClient
+import android.util.Log
 import android.view.ViewGroup
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -68,6 +68,7 @@ fun GoogleMapView(
         cameraState = cameraState,
         modifier = modifier,
         viewProvider = {
+            Log.d("MCTile", "---->viewProvider")
             val cameraPosition =
                 MapCameraPosition
                     .from(state.cameraPosition)
@@ -85,10 +86,15 @@ fun GoogleMapView(
         serviceRegistry = serviceRegistry,
         holderProvider = { mapView ->
 
+            Log.d("MCTile", "---->holderProvider")
             suspendCancellableCoroutine<GoogleMapViewHolder> { cont ->
+                Log.d("MCTile", "---->before getMapAsync")
                 mapView.getMapAsync { map ->
                     val holder = GoogleMapViewHolder(mapView, map)
-                    cont.resume(holder, onCancellation = {})
+                    Log.d("MCTile", "---->after getMapAsync")
+                    cont.resume(holder, onCancellation = {
+                        Log.d("MCTile", "---->getMapAsync cancelled")
+                    })
                 }
             }
         },
@@ -278,13 +284,9 @@ private fun getMarkerController(
 )
 
 private fun getRasterLayerController(holder: GoogleMapViewHolder): GoogleMapRasterLayerController {
-    val cacheDir = holder.mapView.context.cacheDir
-    val cacheSize = 10L * 1024L * 1024L // 10 MiB
-    val builder =
-        OkHttpClient
-            .Builder()
-            .cache(Cache(cacheDir, cacheSize))
-    val okHttpClient = builder.build()
+    // No disk cache: tiles are served from the local in-process tile server (no network latency),
+    // and multiple OkHttpClient instances sharing the same cache directory can cause corruption.
+    val okHttpClient = OkHttpClient.Builder().build()
 
     val renderer =
         GoogleMapRasterLayerOverlayRenderer(

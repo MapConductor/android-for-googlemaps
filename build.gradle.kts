@@ -84,11 +84,11 @@ dependencies {
     implementation(libs.androidx.lifecycle.common.java8)
 
     // Google Maps SDK
-    implementation(libs.play.services.maps)
+    api(libs.play.services.maps)
     if (findProject(":android-sdk-core") != null) {
-        implementation(project(":android-sdk-core"))
+        api(project(":android-sdk-core"))
     } else {
-        implementation("com.mapconductor:core:$libraryVersion")
+        api("com.mapconductor:core:$libraryVersion")
     }
 
     testImplementation(libs.junit)

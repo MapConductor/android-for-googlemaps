@@ -45,6 +45,7 @@ import com.mapconductor.googlemaps.marker.StrategyGoogleMapMarkerEventController
 import com.mapconductor.googlemaps.polygon.GoogleMapPolygonController
 import com.mapconductor.googlemaps.polyline.GoogleMapPolylineController
 import com.mapconductor.googlemaps.raster.GoogleMapRasterLayerController
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -375,6 +376,7 @@ class GoogleMapViewController(
     }
 
     override fun onMapLoaded() {
+        Log.d(TAG, "onMapLoaded")
         _mapLoadedState.value = true
         mapInitializedCallback?.invoke()
         mapInitializedCallback = null
@@ -423,6 +425,7 @@ class GoogleMapViewController(
     }
 
     companion object {
+        private const val TAG = "MCTile"
         private const val INITIAL_CAMERA_UPDATE_MAX_ATTEMPTS = 10
     }
 
