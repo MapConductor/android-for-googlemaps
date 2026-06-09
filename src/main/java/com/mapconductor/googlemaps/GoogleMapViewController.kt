@@ -376,7 +376,6 @@ class GoogleMapViewController(
     }
 
     override fun onMapLoaded() {
-        Log.d(TAG, "onMapLoaded")
         _mapLoadedState.value = true
         mapInitializedCallback?.invoke()
         mapInitializedCallback = null
@@ -425,7 +424,6 @@ class GoogleMapViewController(
     }
 
     companion object {
-        private const val TAG = "MCTile"
         private const val INITIAL_CAMERA_UPDATE_MAX_ATTEMPTS = 10
     }
 
