@@ -81,7 +81,6 @@ class GoogleMapRasterLayerOverlayRenderer(
             Log.w(TAG, "addLayer: resolveTileSpec returned null for id=${state.id}")
             return null
         }
-        Log.d(TAG, "addLayer: id=${state.id} url=${tileSpec.template}")
         val headerBuilder =
             Headers.Builder().also { builder ->
                 state.extraHeaders?.let {
@@ -111,7 +110,6 @@ class GoogleMapRasterLayerOverlayRenderer(
                 ): Tile {
                     if (!firstTileLogged) {
                         firstTileLogged = true
-                        Log.d(TAG, "getTile first call: id=${state.id} z=$zoom x=$x y=$y")
                     }
                     val schemeY =
                         if (tileSpec.scheme == TileScheme.TMS) {
@@ -172,9 +170,7 @@ class GoogleMapRasterLayerOverlayRenderer(
                 .zIndex(resolveOverlayZIndex(state))
                 .transparency(opacityToTransparency(state.opacity))
                 .visible(state.visible)
-        Log.d(TAG, "addTileOverlay calling: id=${state.id} mapIsNull=${holder.map == null} zIndex=${resolveOverlayZIndex(state)} visible=${state.visible}")
         val overlay = holder.map.addTileOverlay(options)
-        Log.d(TAG, "addTileOverlay result: id=${state.id} overlay=${if (overlay != null) "non-null(OK)" else "null(FAILED)"}")
         return overlay
     }
 
@@ -219,7 +215,7 @@ class GoogleMapRasterLayerOverlayRenderer(
     )
 
     private companion object {
-        private const val TAG = "MCTile"
+        private const val TAG = "GoogleMapRasterLayerOverlayRenderer"
         private const val MARKER_TILE_RASTER_ID_PREFIX = "marker-tile-"
     }
 
