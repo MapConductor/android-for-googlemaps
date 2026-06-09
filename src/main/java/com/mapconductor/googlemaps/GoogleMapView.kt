@@ -68,7 +68,6 @@ fun GoogleMapView(
         cameraState = cameraState,
         modifier = modifier,
         viewProvider = {
-            Log.d("MCTile", "---->viewProvider")
             val cameraPosition =
                 MapCameraPosition
                     .from(state.cameraPosition)
@@ -86,15 +85,10 @@ fun GoogleMapView(
         serviceRegistry = serviceRegistry,
         holderProvider = { mapView ->
 
-            Log.d("MCTile", "---->holderProvider")
             suspendCancellableCoroutine<GoogleMapViewHolder> { cont ->
-                Log.d("MCTile", "---->before getMapAsync")
                 mapView.getMapAsync { map ->
                     val holder = GoogleMapViewHolder(mapView, map)
-                    Log.d("MCTile", "---->after getMapAsync")
-                    cont.resume(holder, onCancellation = {
-                        Log.d("MCTile", "---->getMapAsync cancelled")
-                    })
+                    cont.resume(holder, onCancellation = { })
                 }
             }
         },
