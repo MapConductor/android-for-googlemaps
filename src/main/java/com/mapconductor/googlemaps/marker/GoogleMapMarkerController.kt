@@ -100,7 +100,6 @@ class GoogleMapMarkerController private constructor(
             val currentZoom = currentTileZoom()
             val tilingEnabled =
                 markerTiling.enabled && data.size >= markerManager.minMarkerCount
-            Log.d(TAG, "add: markers=${data.size} tilingEnabled=$tilingEnabled zoom=$currentZoom minMarkerCount=${markerManager.minMarkerCount}")
 
             val result =
                 withContext(Dispatchers.Default) {
@@ -114,7 +113,6 @@ class GoogleMapMarkerController private constructor(
                         shouldTile = { state -> !state.draggable && state.getAnimation() == null },
                     )
                 }
-            Log.d(TAG, "ingest done: tiledDataChanged=${result.tiledDataChanged} hasTiledMarkers=${result.hasTiledMarkers} tiledCount=${tiledMarkerIds.size}")
 
             if (result.tiledDataChanged) {
                 syncTiledOverlay(currentZoom)
@@ -267,14 +265,12 @@ class GoogleMapMarkerController private constructor(
                 id = oldState.id,
             )
         markerTileRasterLayerState = newState
-        Log.d(TAG, "updateRasterLayerSource: url=${(newState.source as? RasterLayerSource.UrlTemplate)?.template} callback=${if (rasterLayerCallback != null) "set" else "null"}")
         rasterLayerCallback?.onRasterLayerUpdate(newState)
     }
 
     private fun currentTileZoom(): Int = floor(lastKnownZoom).toInt().coerceAtLeast(0)
 
     private suspend fun syncTiledOverlay(zoom: Int) {
-        Log.d(TAG, "syncTiledOverlay: tiledCount=${tiledMarkerIds.size} zoom=$zoom enabled=${markerTiling.enabled}")
         if (tiledMarkerIds.isEmpty()) {
             removeTileOverlay()
             return
@@ -292,12 +288,10 @@ class GoogleMapMarkerController private constructor(
 
     private fun getOrCreateTileRenderer(): MarkerTileRenderer<GoogleMapActualMarker> {
         markerTileRenderer?.let {
-            Log.d(TAG, "getOrCreateTileRenderer: reusing existing groupId=$markerTileGroupId")
             return it
         }
 
         val groupId = UUID.randomUUID().toString()
-        Log.d(TAG, "getOrCreateTileRenderer: creating new groupId=$groupId")
         markerTileGroupId = groupId
 
         val tileRenderer =
@@ -345,7 +339,7 @@ class GoogleMapMarkerController private constructor(
     }
 
     companion object {
-        private const val TAG = "MCTile"
+        private const val TAG = "GoogleMapMarkerController"
 
         fun create(
             holder: GoogleMapViewHolder,
