@@ -22,9 +22,9 @@ import com.mapconductor.core.tileserver.TileServerRegistry
 import com.mapconductor.googlemaps.GoogleMapActualMarker
 import com.mapconductor.googlemaps.GoogleMapViewHolder
 import com.mapconductor.settings.Settings
-import android.util.Log
 import java.util.UUID
 import kotlin.math.floor
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.withPermit
@@ -245,9 +245,22 @@ class GoogleMapMarkerController private constructor(
      * Creates a new RasterLayerState to ensure proper change detection.
      */
     private suspend fun updateRasterLayerSource() {
-        val groupId = markerTileGroupId ?: run { Log.w(TAG, "updateRasterLayerSource: groupId is null, skip"); return }
-        val tileRenderer = markerTileRenderer ?: run { Log.w(TAG, "updateRasterLayerSource: tileRenderer is null, skip"); return }
-        val oldState = markerTileRasterLayerState ?: run { Log.w(TAG, "updateRasterLayerSource: rasterLayerState is null, skip"); return }
+        val groupId =
+            markerTileGroupId ?: run {
+                Log.w(TAG, "updateRasterLayerSource: groupId is null, skip")
+                return
+            }
+        val tileRenderer =
+            markerTileRenderer ?: run {
+                Log.w(TAG, "updateRasterLayerSource: tileRenderer is null, skip")
+                return
+            }
+        val oldState =
+            markerTileRasterLayerState
+                ?: run {
+                    Log.w(TAG, "updateRasterLayerSource: rasterLayerState is null, skip")
+                    return
+                }
         cacheVersion = (cacheVersion + 1) and 0x7fffffff
         tileRenderer.invalidate()
 

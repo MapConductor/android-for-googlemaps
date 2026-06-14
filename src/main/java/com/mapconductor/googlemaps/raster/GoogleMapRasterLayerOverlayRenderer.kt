@@ -77,10 +77,11 @@ class GoogleMapRasterLayerOverlayRenderer(
     override suspend fun onPostProcess() {}
 
     private fun addLayer(state: RasterLayerState): TileOverlay? {
-        val tileSpec = resolveTileSpec(state) ?: run {
-            Log.w(TAG, "addLayer: resolveTileSpec returned null for id=${state.id}")
-            return null
-        }
+        val tileSpec =
+            resolveTileSpec(state) ?: run {
+                Log.w(TAG, "addLayer: resolveTileSpec returned null for id=${state.id}")
+                return null
+            }
         val headerBuilder =
             Headers.Builder().also { builder ->
                 state.extraHeaders?.let {
@@ -90,12 +91,10 @@ class GoogleMapRasterLayerOverlayRenderer(
                 }
             }
 
-        if (state.userAgent?.trim()?.isNotEmpty() == true) {
-            headerBuilder.set("User-Agent", state.userAgent!!)
+        if (state.userAgent.trim().isNotEmpty()) {
+            headerBuilder.set("User-Agent", state.userAgent)
         } else {
-            val context = holder.mapView.context
-            val userAgent = "Android App(${context.packageName}) powered by MapConductor"
-            headerBuilder.set("User-Agent", userAgent)
+            headerBuilder.set("User-Agent", "MapConductor/RasterLayerAgent(https://mapconductor.com)")
         }
         val requestHeaders = headerBuilder.build()
 

@@ -37,7 +37,6 @@ import com.mapconductor.googlemaps.polyline.GoogleMapPolylineOverlayRenderer
 import com.mapconductor.googlemaps.raster.GoogleMapRasterLayerController
 import com.mapconductor.googlemaps.raster.GoogleMapRasterLayerOverlayRenderer
 import okhttp3.OkHttpClient
-import android.util.Log
 import android.view.ViewGroup
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine

@@ -43,6 +43,11 @@ dependencyResolutionManagement {
 
 rootProject.name = "android-for-googlemaps"
 
-if (providers.gradleProperty("skipSampleApp").map(String::toBoolean).getOrElse(false).not()) {
+if (providers
+        .gradleProperty("skipSampleApp")
+        .map(String::toBoolean)
+        .getOrElse(false)
+        .not()
+) {
     include(":sample-app")
 }

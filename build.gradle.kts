@@ -167,7 +167,6 @@ publishing {
                         ?: System.getenv("GITHUB_TOKEN")
             }
         }
-
     }
 }
 
@@ -189,4 +188,3 @@ if (project == rootProject) {
         }
     }
 }
-
