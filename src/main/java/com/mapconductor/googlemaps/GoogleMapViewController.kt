@@ -15,6 +15,7 @@ import com.mapconductor.core.circle.CircleEvent
 import com.mapconductor.core.circle.CircleState
 import com.mapconductor.core.circle.OnCircleEventHandler
 import com.mapconductor.core.controller.BaseMapViewController
+import com.mapconductor.core.features.GeoRectBounds
 import com.mapconductor.core.groundimage.GroundImageEvent
 import com.mapconductor.core.groundimage.GroundImageState
 import com.mapconductor.core.groundimage.OnGroundImageEventHandler
@@ -146,6 +147,17 @@ class GoogleMapViewController(
                     }
                 },
             )
+        }
+    }
+
+    override fun fitBounds(
+        bounds: GeoRectBounds,
+        padding: Int,
+    ) {
+        val latLngBounds = bounds.toLatLngBounds() ?: return
+        val cameraUpdate = CameraUpdateFactory.newLatLngBounds(latLngBounds, padding)
+        coroutine.launch {
+            holder.map.moveCamera(cameraUpdate)
         }
     }
 
