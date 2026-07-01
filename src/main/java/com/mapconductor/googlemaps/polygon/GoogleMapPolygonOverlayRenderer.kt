@@ -1,6 +1,5 @@
 package com.mapconductor.googlemaps.polygon
 
-import androidx.compose.ui.graphics.toArgb
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolygonOptions
 import com.mapconductor.core.ResourceProvider
@@ -97,9 +96,9 @@ class GoogleMapPolygonOverlayRenderer(
                 PolygonOptions()
                     .addAll(points)
                     .apply { if (!hasHoles) toLatLngHoles(state).forEach { addHole(it) } }
-                    .strokeColor(state.strokeColor.toArgb())
+                    .strokeColor(state.strokeColor)
                     .strokeWidth(ResourceProvider.dpToPx(state.strokeWidth).toFloat())
-                    .fillColor(if (hasHoles) android.graphics.Color.TRANSPARENT else state.fillColor.toArgb())
+                    .fillColor(if (hasHoles) android.graphics.Color.TRANSPARENT else state.fillColor)
                     .zIndex(state.zIndex.toFloat())
                     .clickable(false)
             holder.map.addPolygon(options)?.also {
@@ -135,12 +134,12 @@ class GoogleMapPolygonOverlayRenderer(
             }
             if (hasHoles) {
                 polygon.strokeWidth = ResourceProvider.dpToPx(current.state.strokeWidth).toFloat()
-                polygon.strokeColor = current.state.strokeColor.toArgb()
+                polygon.strokeColor = current.state.strokeColor
                 polygon.fillColor = android.graphics.Color.TRANSPARENT
             } else {
                 polygon.strokeWidth = ResourceProvider.dpToPx(current.state.strokeWidth).toFloat()
-                polygon.strokeColor = current.state.strokeColor.toArgb()
-                polygon.fillColor = current.state.fillColor.toArgb()
+                polygon.strokeColor = current.state.strokeColor
+                polygon.fillColor = current.state.fillColor
             }
             if (finger.zIndex != prevFinger.zIndex) {
                 polygon.zIndex = current.state.zIndex.toFloat()
@@ -223,7 +222,7 @@ class GoogleMapPolygonOverlayRenderer(
     ) {
         provider.points = state.points
         provider.holes = state.holes
-        provider.fillColor = state.fillColor.toArgb()
+        provider.fillColor = state.fillColor
         provider.strokeColor = android.graphics.Color.TRANSPARENT
         provider.strokeWidthPx = 0f
         provider.geodesic = state.geodesic

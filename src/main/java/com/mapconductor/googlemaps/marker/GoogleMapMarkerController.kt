@@ -81,7 +81,7 @@ class GoogleMapMarkerController private constructor(
     ): MarkerEntityInterface<GoogleMapActualMarker>? {
         return markerManager.findNearest(position)?.let { nearest ->
             val tolerance =
-                Settings.Default.tapTolerance.value
+                Settings.Default.tapTolerance
                     .toDouble() * ResourceProvider.getDensity()
             val meterInMapPixel = renderer.zoomToMetersPerPixel(zoom, 256)
             val radius = tolerance * meterInMapPixel

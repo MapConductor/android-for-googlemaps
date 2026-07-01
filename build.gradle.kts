@@ -85,10 +85,10 @@ dependencies {
 
     // Google Maps SDK
     api(libs.play.services.maps)
-    if (findProject(":android-sdk-core") != null) {
-        api(project(":android-sdk-core"))
+    if (findProject(":android-sdk-compose") != null) {
+        api(project(":android-sdk-compose"))
     } else {
-        api("com.mapconductor:core:$libraryVersion")
+        api("com.mapconductor:compose:$libraryVersion")
     }
 
     testImplementation(libs.junit)
