@@ -103,7 +103,7 @@ class GoogleMapPolygonOverlayRenderer(
                     .fillColor((if (hasHoles) Color.Transparent else state.fillColor).toArgb())
                     .zIndex(state.zIndex.toFloat())
                     .clickable(false)
-            holder.map.addPolygon(options)?.also {
+            holder.map.addPolygon(options).also {
                 it.tag = state.id
             }
         }

@@ -100,7 +100,7 @@ class GoogleMapCircleOverlayRenderer(
         state: CircleState,
         center: com.google.android.gms.maps.model.LatLng,
     ): Double {
-        val strokeWidthPx = ResourceProvider.dpToPx(state.strokeWidth).toDouble()
+        val strokeWidthPx = ResourceProvider.dpToPx(state.strokeWidth)
         if (strokeWidthPx <= 0.0) return state.radiusMeters
 
         val projection = holder.map.projection
