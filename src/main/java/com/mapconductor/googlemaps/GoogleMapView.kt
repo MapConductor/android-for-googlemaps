@@ -11,9 +11,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.android.gms.maps.GoogleMapOptions
 import com.google.android.gms.maps.MapView
+import com.mapconductor.compose.map.MapViewBase
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
-import com.mapconductor.compose.MapViewBase
 import com.mapconductor.core.map.MutableMapServiceRegistry
 import com.mapconductor.core.map.OnCameraMoveHandler
 import com.mapconductor.core.map.OnMapEventHandler
@@ -87,7 +87,7 @@ fun GoogleMapView(
             suspendCancellableCoroutine<GoogleMapViewHolder> { cont ->
                 mapView.getMapAsync { map ->
                     val holder = GoogleMapViewHolder(mapView, map)
-                    cont.resume(holder, onCancellation = { })
+                    cont.resume(holder) { cause, _, _ -> }
                 }
             }
         },

@@ -1,5 +1,6 @@
 package com.mapconductor.googlemaps.circle
 
+import androidx.compose.ui.graphics.toArgb
 import com.google.android.gms.maps.model.PolygonOptions
 import com.mapconductor.core.ResourceProvider
 import com.mapconductor.core.calculateZIndex
@@ -34,9 +35,9 @@ class GoogleMapCircleOverlayRenderer(
             val options =
                 PolygonOptions()
                     .addAll(circlePoints)
-                    .strokeColor(state.strokeColor)
+                    .strokeColor(state.strokeColor.toArgb())
                     .strokeWidth(ResourceProvider.dpToPx(state.strokeWidth).toFloat())
-                    .fillColor(state.fillColor)
+                    .fillColor(state.fillColor.toArgb())
                     .clickable(false)
                     .geodesic(state.geodesic)
                     .zIndex((state.zIndex ?: calculateZIndex(state.center)).toFloat())
@@ -81,13 +82,13 @@ class GoogleMapCircleOverlayRenderer(
             }
 
             if (finger.strokeColor != prevFinger.strokeColor) {
-                circle.strokeColor = current.state.strokeColor
+                circle.strokeColor = current.state.strokeColor.toArgb()
             }
             if (finger.strokeWidth != prevFinger.strokeWidth) {
                 circle.strokeWidth = ResourceProvider.dpToPx(current.state.strokeWidth).toFloat()
             }
             if (finger.fillColor != prevFinger.fillColor) {
-                circle.fillColor = current.state.fillColor
+                circle.fillColor = current.state.fillColor.toArgb()
             }
             if (finger.zIndex != prevFinger.zIndex) {
                 circle.zIndex = (current.state.zIndex ?: calculateZIndex(current.state.center)).toFloat()

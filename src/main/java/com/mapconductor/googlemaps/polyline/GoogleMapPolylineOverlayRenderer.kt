@@ -1,5 +1,6 @@
 package com.mapconductor.googlemaps.polyline
 
+import androidx.compose.ui.graphics.toArgb
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
@@ -53,7 +54,7 @@ class GoogleMapPolylineOverlayRenderer(
             val options =
                 PolylineOptions()
                     .addAll(points)
-                    .color(state.strokeColor)
+                    .color(state.strokeColor.toArgb())
                     .width(ResourceProvider.dpToPx(state.strokeWidth).toFloat())
                     .geodesic(state.geodesic)
                     .zIndex(state.zIndex.toFloat())
@@ -90,7 +91,7 @@ class GoogleMapPolylineOverlayRenderer(
             }
 
             if (finger.strokeColor != prevFinger.strokeColor) {
-                polyline.color = current.state.strokeColor
+                polyline.color = current.state.strokeColor.toArgb()
             }
 
             if (finger.zIndex != prevFinger.zIndex) {

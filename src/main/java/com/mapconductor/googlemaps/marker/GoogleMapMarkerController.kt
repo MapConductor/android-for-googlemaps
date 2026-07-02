@@ -47,9 +47,9 @@ class GoogleMapMarkerController private constructor(
     markerManager: MarkerManager<GoogleMapActualMarker>,
     private val markerTiling: MarkerTilingOptions,
 ) : AbstractMarkerController<GoogleMapActualMarker>(
-        markerManager = markerManager,
-        renderer = renderer,
-    ) {
+    markerManager = markerManager,
+    renderer = renderer,
+) {
     private val defaultMarkerIcon: BitmapIcon = DefaultMarkerIcon().toBitmapIcon()
     private val tiledMarkerIds = LinkedHashSet<String>()
 
@@ -81,7 +81,7 @@ class GoogleMapMarkerController private constructor(
     ): MarkerEntityInterface<GoogleMapActualMarker>? {
         return markerManager.findNearest(position)?.let { nearest ->
             val tolerance =
-                Settings.Default.tapTolerance
+                Settings.Default.tapTolerance.value
                     .toDouble() * ResourceProvider.getDensity()
             val meterInMapPixel = renderer.zoomToMetersPerPixel(zoom, 256)
             val radius = tolerance * meterInMapPixel
