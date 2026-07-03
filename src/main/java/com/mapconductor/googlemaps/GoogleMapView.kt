@@ -192,6 +192,10 @@ fun GoogleMapView(
                                     it.onDestroy()
                                 }
                             } else {
+                                // Real teardown (not a configuration change): free the
+                                // controller's overlay controllers (tile-server routes,
+                                // marker managers) and cancel its coroutine scope.
+                                GoogleMapViewControllerStore.get(stateId)?.destroy()
                                 GoogleMapViewControllerStore.remove(stateId)
                             }
                         }

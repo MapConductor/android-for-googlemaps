@@ -25,6 +25,17 @@ class GoogleMapMarkerRenderer(
     private fun resolveZIndex(params: MarkerOverlayRendererInterface.AddParamsInterface): Float =
         (params.state.zIndex ?: calculateZIndex(params.state.position)).toFloat()
 
+    override val supportsAnimationOverlay: Boolean = true
+
+    override fun setMarkerVisible(
+        markerEntity: MarkerEntityInterface<GoogleMapActualMarker>,
+        visible: Boolean,
+    ) {
+        coroutine.launch {
+            markerEntity.marker?.isVisible = visible
+        }
+    }
+
     override fun setMarkerPosition(
         markerEntity: MarkerEntityInterface<GoogleMapActualMarker>,
         position: GeoPoint,

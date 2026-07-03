@@ -25,6 +25,7 @@ import com.mapconductor.core.map.VisibleRegion
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
 import com.mapconductor.core.marker.MarkerRenderingStrategyInterface
+import com.mapconductor.core.marker.MarkerAnimationOverlayHost
 import com.mapconductor.core.marker.MarkerState
 import com.mapconductor.core.marker.OnMarkerEventHandler
 import com.mapconductor.core.marker.StrategyMarkerController
@@ -171,6 +172,10 @@ class GoogleMapViewController(
     }
 
     override suspend fun compositionMarkers(data: List<MarkerState>) = markerController.add(data)
+
+    override fun setMarkerAnimationOverlayHost(host: MarkerAnimationOverlayHost?) {
+        markerController.renderer.animationOverlayHost = host
+    }
 
     override suspend fun updateMarker(state: MarkerState) = markerController.update(state)
 

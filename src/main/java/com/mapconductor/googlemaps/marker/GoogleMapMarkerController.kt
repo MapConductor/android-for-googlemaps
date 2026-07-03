@@ -226,6 +226,9 @@ class GoogleMapMarkerController private constructor(
 
     override fun destroy() {
         // Clean up tile server registration
+        // Unregister this map's route only. Never stop the server here: it is
+        // a process-wide singleton shared by all map controllers and overlay
+        // modules; stopping it breaks tile loading for every other live map.
         markerTileGroupId?.let { groupId ->
             tileServer.unregister(groupId)
         }
