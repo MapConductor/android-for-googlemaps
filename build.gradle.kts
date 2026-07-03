@@ -69,10 +69,9 @@ val libraryVersion = project.findProperty("libraryVersion") as String? ?: "1.0.0
 dependencies {
 
     implementation(platform(libs.androidx.compose.bom)) // BOM manages Compose artifact versions.
-    compileOnly(platform(libs.androidx.compose.bom))
-    compileOnly(libs.androidx.core.ktx)
-    compileOnly(libs.androidx.ui)
-    compileOnly(libs.androidx.foundation)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.foundation)
     compileOnly(libs.androidx.ui.tooling.preview)
     implementation(libs.okhttp)
 
