@@ -24,15 +24,13 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+        aarMetadata {
+            minCompileSdk = project.property("compileSdk").toString().toInt()
+        }
     }
 
     buildFeatures {
         compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion =
-            project.property("kotlinCompilerExtensionVersion").toString()
     }
 
     buildTypes {
@@ -70,13 +68,14 @@ val libraryVersion = project.findProperty("libraryVersion") as String? ?: "1.0.0
 
 dependencies {
 
+    implementation(platform(libs.androidx.compose.bom)) // BOM manages Compose artifact versions.
+    compileOnly(platform(libs.androidx.compose.bom))
     compileOnly(libs.androidx.core.ktx)
     compileOnly(libs.androidx.ui)
     compileOnly(libs.androidx.foundation)
     compileOnly(libs.androidx.ui.tooling.preview)
     implementation(libs.okhttp)
 
-    implementation(platform(libs.androidx.compose.bom)) // ← bomでバージョン合わせる
     // Lifecycle（MapView用）
     // BOM管理の依存関係はPOMにバージョンが出力されないためMaven Central検証エラーになる
     // BOMと同じバージョンを明示することで解決
