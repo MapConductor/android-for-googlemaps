@@ -11,11 +11,11 @@ import com.google.android.gms.maps.GoogleMap.OnMapClickListener
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
 import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener
 import com.google.android.gms.maps.model.LatLng
-import com.mapconductor.core.OnMapInitializedHandler
 import com.mapconductor.core.circle.CircleEvent
 import com.mapconductor.core.circle.CircleState
 import com.mapconductor.core.circle.OnCircleEventHandler
 import com.mapconductor.core.controller.BaseMapViewController
+import com.mapconductor.core.controller.OverlayControllerInterface
 import com.mapconductor.core.features.GeoRectBounds
 import com.mapconductor.core.groundimage.GroundImageEvent
 import com.mapconductor.core.groundimage.GroundImageState
@@ -24,7 +24,6 @@ import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.VisibleRegion
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
-import com.mapconductor.core.marker.MarkerRenderingStrategyInterface
 import com.mapconductor.core.marker.MarkerAnimationOverlayHost
 import com.mapconductor.core.marker.MarkerState
 import com.mapconductor.core.marker.OnMarkerEventHandler
@@ -42,7 +41,6 @@ import com.mapconductor.googlemaps.marker.DefaultGoogleMapMarkerEventController
 import com.mapconductor.googlemaps.marker.GoogleMapMarkerController
 import com.mapconductor.googlemaps.marker.GoogleMapMarkerEventControllerInterface
 import com.mapconductor.googlemaps.marker.GoogleMapMarkerRenderer
-import com.mapconductor.googlemaps.marker.MarkerTileRasterLayerCallback
 import com.mapconductor.googlemaps.marker.StrategyGoogleMapMarkerEventController
 import com.mapconductor.googlemaps.polygon.GoogleMapPolygonController
 import com.mapconductor.googlemaps.polyline.GoogleMapPolylineController
@@ -61,8 +59,9 @@ class GoogleMapViewController(
     private val groundImageController: GoogleMapGroundImageController,
     private val circleController: GoogleMapCircleController,
     private val rasterLayerController: GoogleMapRasterLayerController,
-    override val coroutine: CoroutineScope = CoroutineScope(Dispatchers.Main),
+    override val defaultCoroutine: CoroutineScope = CoroutineScope(Dispatchers.Main),
     val backCoroutine: CoroutineScope = CoroutineScope(Dispatchers.Default),
+    override val mainCoroutine: CoroutineScope = CoroutineScope(Dispatchers.Main),
 ) : BaseMapViewController(),
     GoogleMapViewControllerInterface,
     OnCameraMoveStartedListener,
@@ -85,28 +84,26 @@ class GoogleMapViewController(
 
     init {
         setupListeners()
-        registerController(markerController)
-        registerController(polygonController)
-        registerController(polylineController)
-        registerController(circleController)
-        registerController(rasterLayerController)
+        registerOverlayController(markerController)
+        registerOverlayController(polygonController)
+        registerOverlayController(polylineController)
+        registerOverlayController(circleController)
+        registerOverlayController(rasterLayerController)
         registerMarkerEventController(DefaultGoogleMapMarkerEventController(markerController))
 
         // Wire up the RasterLayer callback for marker tile rendering
-        markerController.setRasterLayerCallback(
-            MarkerTileRasterLayerCallback { state ->
-                if (state != null) {
-                    rasterLayerController.upsert(state)
-                } else {
-                    // Remove all marker tile layers
-                    val markerTileLayers =
-                        rasterLayerController.rasterLayerManager
-                            .allEntities()
-                            .filter { it.state.id.startsWith("marker-tile-") }
-                    markerTileLayers.forEach { entity -> rasterLayerController.removeById(entity.state.id) }
-                }
-            },
-        )
+        markerController.setRasterLayerCallback { state ->
+            if (state != null) {
+                rasterLayerController.upsert(state)
+            } else {
+                // Remove all marker tile layers
+                val markerTileLayers =
+                    rasterLayerController.rasterLayerManager
+                        .allEntities()
+                        .filter { it.state.id.startsWith("marker-tile-") }
+                markerTileLayers.forEach { entity -> rasterLayerController.removeById(entity.state.id) }
+            }
+        }
     }
 
     fun setupListeners() {
@@ -121,7 +118,7 @@ class GoogleMapViewController(
     }
 
     override fun moveCamera(position: MapCameraPosition) {
-        coroutine.launch {
+        defaultCoroutine.launch {
             val dstCameraPosition = position.toCameraPosition()
             val cameraUpdate = CameraUpdateFactory.newCameraPosition(dstCameraPosition)
             holder.map.moveCamera(cameraUpdate)
@@ -133,7 +130,7 @@ class GoogleMapViewController(
         duration: Long,
     ) {
         val dstCameraPosition = position.toCameraPosition()
-        coroutine.launch {
+        defaultCoroutine.launch {
             val cameraUpdate = CameraUpdateFactory.newCameraPosition(dstCameraPosition)
             holder.map.animateCamera(
                 cameraUpdate,
@@ -157,10 +154,19 @@ class GoogleMapViewController(
     ) {
         val latLngBounds = bounds.toLatLngBounds() ?: return
         val cameraUpdate = CameraUpdateFactory.newLatLngBounds(latLngBounds, padding)
-        coroutine.launch {
+        defaultCoroutine.launch {
             holder.map.moveCamera(cameraUpdate)
         }
     }
+
+    override fun getControllers(): List<OverlayControllerInterface<*, *, *>> = listOf(
+        markerController,
+        polylineController,
+        polygonController,
+        circleController,
+        groundImageController,
+        rasterLayerController,
+    )
 
     override suspend fun clearOverlays() {
         markerController.clear()
@@ -174,7 +180,7 @@ class GoogleMapViewController(
     override suspend fun compositionMarkers(data: List<MarkerState>) = markerController.add(data)
 
     override fun setMarkerAnimationOverlayHost(host: MarkerAnimationOverlayHost?) {
-        markerController.renderer.animationOverlayHost = host
+        (markerController.renderer as GoogleMapMarkerRenderer).animationOverlayHost = host
     }
 
     override suspend fun updateMarker(state: MarkerState) = markerController.update(state)
@@ -241,7 +247,7 @@ class GoogleMapViewController(
         backCoroutine.launch {
             markerController.find(touchPosition, zoomSnapshot)?.let { entity ->
                 if (!entity.state.clickable) return@launch
-                coroutine.launch { markerController.dispatchClick(entity.state) }
+                defaultCoroutine.launch { markerController.dispatchClick(entity.state) }
                 return@launch
             }
 
@@ -251,7 +257,7 @@ class GoogleMapViewController(
                         state = entity.state,
                         clicked = touchPosition,
                     )
-                coroutine.launch {
+                defaultCoroutine.launch {
                     circleController.dispatchClick(event)
                 }
                 return@launch
@@ -263,7 +269,7 @@ class GoogleMapViewController(
                         state = entity.state,
                         clicked = touchPosition,
                     )
-                coroutine.launch {
+                defaultCoroutine.launch {
                     groundImageController.dispatchClick(event)
                 }
                 return@launch
@@ -275,7 +281,7 @@ class GoogleMapViewController(
                         state = hitResult.entity.state,
                         clicked = hitResult.closestPoint,
                     )
-                coroutine.launch {
+                defaultCoroutine.launch {
                     polylineController.dispatchClick(event)
                 }
                 return@launch
@@ -287,14 +293,14 @@ class GoogleMapViewController(
                         state = entity.state,
                         clicked = touchPosition,
                     )
-                coroutine.launch {
+                defaultCoroutine.launch {
                     polygonController.dispatchClick(event)
                 }
                 return@launch
             }
 
             mapClickCallback?.let {
-                coroutine.launch { it(position.toGeoPoint()) }
+                defaultCoroutine.launch { it(position.toGeoPoint()) }
             }
         }
     }
@@ -379,7 +385,7 @@ class GoogleMapViewController(
     private var mapDesignTypeChangeListener: GoogleMapDesignTypeChangeHandler? = null
 
     override fun setMapDesignType(value: GoogleMapDesignType) {
-        coroutine.launch {
+        defaultCoroutine.launch {
             holder.map.mapType = value.getValue()
         }
         mapDesignType = value
@@ -400,10 +406,6 @@ class GoogleMapViewController(
         mapDesignTypeChangeListener?.invoke(mapDesignType)
     }
 
-    override fun setMapInitializedListener(listener: OnMapInitializedHandler?) {
-        mapInitializedCallback = listener
-    }
-
     // Trigger an initial camera update after the view and map are ready
     private var initialCameraUpdateAttempts = 0
 
@@ -421,13 +423,11 @@ class GoogleMapViewController(
         backCoroutine.launch { notifyMapCameraPosition(mapCameraPosition) }
     }
 
-    fun createMarkerRenderer(
-        strategy: MarkerRenderingStrategyInterface<GoogleMapActualMarker>,
-    ): MarkerOverlayRendererInterface<GoogleMapActualMarker> = GoogleMapMarkerRenderer(holder = holder)
+    fun createMarkerRenderer(): MarkerOverlayRendererInterface<GoogleMapActualMarker>
+        = GoogleMapMarkerRenderer(holder = holder)
 
     fun createMarkerEventController(
         controller: StrategyMarkerController<GoogleMapActualMarker>,
-        renderer: MarkerOverlayRendererInterface<GoogleMapActualMarker>,
     ): MarkerEventControllerInterface<GoogleMapActualMarker> = StrategyGoogleMapMarkerEventController(controller)
 
     fun registerMarkerEventController(controller: MarkerEventControllerInterface<GoogleMapActualMarker>) {

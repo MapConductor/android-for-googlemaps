@@ -84,10 +84,10 @@ fun GoogleMapView(
         serviceRegistry = serviceRegistry,
         holderProvider = { mapView ->
 
-            suspendCancellableCoroutine<GoogleMapViewHolder> { cont ->
+            suspendCancellableCoroutine { cont ->
                 mapView.getMapAsync { map ->
                     val holder = GoogleMapViewHolder(mapView, map)
-                    cont.resume(holder) { cause, _, _ -> }
+                    cont.resume(holder) { _, _, _ -> }
                 }
             }
         },
@@ -122,14 +122,13 @@ fun GoogleMapView(
 
                         override fun createMarkerRenderer(
                             strategy: MarkerRenderingStrategyInterface<GoogleMapActualMarker>,
-                        ): MarkerOverlayRendererInterface<GoogleMapActualMarker> =
-                            mapController.createMarkerRenderer(strategy)
+                        ): MarkerOverlayRendererInterface<GoogleMapActualMarker> = mapController.createMarkerRenderer()
 
                         override fun createMarkerEventController(
                             controller: StrategyMarkerController<GoogleMapActualMarker>,
-                            renderer: MarkerOverlayRendererInterface<GoogleMapActualMarker>,
-                        ): MarkerEventControllerInterface<GoogleMapActualMarker> =
-                            mapController.createMarkerEventController(controller, renderer)
+                            renderer: MarkerOverlayRendererInterface<GoogleMapActualMarker>
+                        ): MarkerEventControllerInterface<GoogleMapActualMarker>
+                            = mapController.createMarkerEventController(controller)
 
                         override fun registerMarkerEventController(
                             controller: MarkerEventControllerInterface<GoogleMapActualMarker>,

@@ -1,6 +1,7 @@
 package com.mapconductor.googlemaps.marker
 
 import com.mapconductor.core.ResourceProvider
+import com.mapconductor.core.controller.OnCameraChangeReceiverInterface
 import com.mapconductor.core.features.GeoPointInterface
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.marker.AbstractMarkerController
@@ -23,7 +24,6 @@ import com.mapconductor.googlemaps.GoogleMapActualMarker
 import com.mapconductor.googlemaps.GoogleMapViewHolder
 import com.mapconductor.settings.Settings
 import java.util.UUID
-import kotlin.math.floor
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -43,13 +43,13 @@ fun interface MarkerTileRasterLayerCallback {
 }
 
 class GoogleMapMarkerController private constructor(
-    override val renderer: GoogleMapMarkerRenderer,
+    renderer: GoogleMapMarkerRenderer,
     markerManager: MarkerManager<GoogleMapActualMarker>,
     private val markerTiling: MarkerTilingOptions,
 ) : AbstractMarkerController<GoogleMapActualMarker>(
     markerManager = markerManager,
     renderer = renderer,
-) {
+), OnCameraChangeReceiverInterface {
     private val defaultMarkerIcon: BitmapIcon = DefaultMarkerIcon().toBitmapIcon()
     private val tiledMarkerIds = LinkedHashSet<String>()
 
@@ -83,7 +83,7 @@ class GoogleMapMarkerController private constructor(
             val tolerance =
                 Settings.Default.tapTolerance.value
                     .toDouble() * ResourceProvider.getDensity()
-            val meterInMapPixel = renderer.zoomToMetersPerPixel(zoom, 256)
+            val meterInMapPixel = (renderer as GoogleMapMarkerRenderer).zoomToMetersPerPixel(zoom, 256)
             val radius = tolerance * meterInMapPixel
             val distance = computeDistanceBetween(position, nearest.state.position)
             return if (distance <= radius) {
@@ -96,7 +96,6 @@ class GoogleMapMarkerController private constructor(
 
     override suspend fun add(data: List<MarkerState>) {
         semaphore.withPermit {
-            val currentZoom = currentTileZoom()
             val tilingEnabled =
                 markerTiling.enabled && data.size >= markerManager.minMarkerCount
 
@@ -114,12 +113,12 @@ class GoogleMapMarkerController private constructor(
                 }
 
             if (result.tiledDataChanged) {
-                syncTiledOverlay(currentZoom)
+                syncTiledOverlay()
             } else if (result.hasTiledMarkers) {
                 // Keep existing tile overlay if present.
                 // (No per-zoom indexing needed; renderTile queries MarkerManager directly.)
                 if (markerTileRenderer == null || markerTileRasterLayerState == null) {
-                    syncTiledOverlay(currentZoom)
+                    syncTiledOverlay()
                 }
             } else {
                 removeTileOverlay()
@@ -141,7 +140,6 @@ class GoogleMapMarkerController private constructor(
             val wantsTiled = tilingEnabled && !state.draggable && state.getAnimation() == null
             val wasTiled = tiledMarkerIds.contains(state.id)
             val markerIcon = state.icon?.toBitmapIcon() ?: defaultMarkerIcon
-            val currentZoom = currentTileZoom()
 
             if (wantsTiled) {
                 if (!wasTiled) {
@@ -156,7 +154,7 @@ class GoogleMapMarkerController private constructor(
                         isRendered = true,
                     ),
                 )
-                syncTiledOverlay(currentZoom)
+                syncTiledOverlay()
                 return
             }
 
@@ -198,7 +196,7 @@ class GoogleMapMarkerController private constructor(
             renderer.onPostProcess()
 
             if (tiledMarkerIds.isNotEmpty()) {
-                syncTiledOverlay(currentZoom)
+                syncTiledOverlay()
             } else {
                 removeTileOverlay()
             }
@@ -236,7 +234,7 @@ class GoogleMapMarkerController private constructor(
         markerTileRenderer = null
 
         // Remove RasterLayer via callback
-        renderer.coroutine.launch {
+        (renderer as GoogleMapMarkerRenderer).coroutine.launch {
             rasterLayerCallback?.onRasterLayerUpdate(null)
         }
         markerTileRasterLayerState = null
@@ -283,9 +281,7 @@ class GoogleMapMarkerController private constructor(
         rasterLayerCallback?.onRasterLayerUpdate(newState)
     }
 
-    private fun currentTileZoom(): Int = floor(lastKnownZoom).toInt().coerceAtLeast(0)
-
-    private suspend fun syncTiledOverlay(zoom: Int) {
+    private suspend fun syncTiledOverlay() {
         if (tiledMarkerIds.isEmpty()) {
             removeTileOverlay()
             return

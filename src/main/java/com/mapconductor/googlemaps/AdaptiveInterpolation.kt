@@ -16,7 +16,7 @@ internal object AdaptiveInterpolation {
     /**
      * Target segment length on screen (pixels).
      *
-     * 400px roughly preserves the historical "1000m at zoom16 near equator" behavior:
+     * 400px roughly preserves the historical "1000m at zoom16 near the equator" behavior:
      * - zoom16 meters/px ≈ 2.39 → 2.39 * 400 ≈ 956m
      *
      * Lower values increase accuracy but cost more; higher values reduce CPU.
