@@ -2,6 +2,7 @@ package com.mapconductor.googlemaps.marker
 
 import com.mapconductor.core.ResourceProvider
 import com.mapconductor.core.controller.OnCameraChangeReceiverInterface
+import com.mapconductor.core.controller.OverlayControllerInterface
 import com.mapconductor.core.features.GeoPointInterface
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.marker.AbstractMarkerController
@@ -42,14 +43,18 @@ fun interface MarkerTileRasterLayerCallback {
     suspend fun onRasterLayerUpdate(state: RasterLayerState?)
 }
 
-class GoogleMapMarkerController private constructor(
+interface GoogleMapMarkerControllerInterface:
+    OverlayControllerInterface<MarkerState, MarkerEntityInterface<GoogleMapActualMarker>>
+
+internal class GoogleMapMarkerController private constructor(
     renderer: GoogleMapMarkerRenderer,
     markerManager: MarkerManager<GoogleMapActualMarker>,
     private val markerTiling: MarkerTilingOptions,
 ) : AbstractMarkerController<GoogleMapActualMarker>(
     markerManager = markerManager,
     renderer = renderer,
-), OnCameraChangeReceiverInterface {
+), GoogleMapMarkerControllerInterface,
+    OnCameraChangeReceiverInterface {
     private val defaultMarkerIcon: BitmapIcon = DefaultMarkerIcon().toBitmapIcon()
     private val tiledMarkerIds = LinkedHashSet<String>()
 
@@ -68,7 +73,7 @@ class GoogleMapMarkerController private constructor(
      * Sets the callback for RasterLayer operations.
      * This must be called before using tiled marker rendering.
      */
-    fun setRasterLayerCallback(callback: MarkerTileRasterLayerCallback?) {
+    internal fun setRasterLayerCallback(callback: MarkerTileRasterLayerCallback?) {
         rasterLayerCallback = callback
     }
 

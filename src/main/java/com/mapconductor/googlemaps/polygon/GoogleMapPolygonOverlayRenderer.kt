@@ -30,7 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class GoogleMapPolygonOverlayRenderer(
+internal class GoogleMapPolygonOverlayRenderer(
     override val holder: GoogleMapViewHolder,
     private val rasterLayerController: GoogleMapRasterLayerController,
     private val tileServer: LocalTileServer = TileServerRegistry.get(forceNoStoreCache = true),

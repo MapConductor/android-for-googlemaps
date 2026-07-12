@@ -51,7 +51,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class GoogleMapViewController(
+internal class GoogleMapViewController(
     override val holder: GoogleMapViewHolder,
     private val markerController: GoogleMapMarkerController,
     private val polylineController: GoogleMapPolylineController,
@@ -59,9 +59,8 @@ class GoogleMapViewController(
     private val groundImageController: GoogleMapGroundImageController,
     private val circleController: GoogleMapCircleController,
     private val rasterLayerController: GoogleMapRasterLayerController,
-    override val defaultCoroutine: CoroutineScope = CoroutineScope(Dispatchers.Main),
-    val backCoroutine: CoroutineScope = CoroutineScope(Dispatchers.Default),
     override val mainCoroutine: CoroutineScope = CoroutineScope(Dispatchers.Main),
+    override val defaultCoroutine: CoroutineScope = CoroutineScope(Dispatchers.Default),
 ) : BaseMapViewController(),
     GoogleMapViewControllerInterface,
     OnCameraMoveStartedListener,
@@ -118,7 +117,7 @@ class GoogleMapViewController(
     }
 
     override fun moveCamera(position: MapCameraPosition) {
-        defaultCoroutine.launch {
+        mainCoroutine.launch {
             val dstCameraPosition = position.toCameraPosition()
             val cameraUpdate = CameraUpdateFactory.newCameraPosition(dstCameraPosition)
             holder.map.moveCamera(cameraUpdate)
@@ -130,7 +129,7 @@ class GoogleMapViewController(
         duration: Long,
     ) {
         val dstCameraPosition = position.toCameraPosition()
-        defaultCoroutine.launch {
+        mainCoroutine.launch {
             val cameraUpdate = CameraUpdateFactory.newCameraPosition(dstCameraPosition)
             holder.map.animateCamera(
                 cameraUpdate,
@@ -154,18 +153,18 @@ class GoogleMapViewController(
     ) {
         val latLngBounds = bounds.toLatLngBounds() ?: return
         val cameraUpdate = CameraUpdateFactory.newLatLngBounds(latLngBounds, padding)
-        defaultCoroutine.launch {
+        mainCoroutine.launch {
             holder.map.moveCamera(cameraUpdate)
         }
     }
 
-    override fun getControllers(): List<OverlayControllerInterface<*, *, *>> = listOf(
-        markerController,
-        polylineController,
-        polygonController,
-        circleController,
-        groundImageController,
-        rasterLayerController,
+    override fun getControllers(): Map<String, OverlayControllerInterface<*, *>> = mapOf(
+        "marker" to markerController,
+        "polyline" to polylineController,
+        "polygon" to polygonController,
+        "circle" to circleController,
+        "ground_image" to groundImageController,
+        "raster_layer" to rasterLayerController,
     )
 
     override suspend fun clearOverlays() {
@@ -204,7 +203,7 @@ class GoogleMapViewController(
 
     override fun onCameraMove() {
         val mapCameraPosition = getMapCameraPosition()
-        backCoroutine.launch {
+        defaultCoroutine.launch {
             notifyMapCameraPosition(mapCameraPosition)
         }
         cameraMoveCallback?.invoke(getMapCameraPosition())
@@ -212,7 +211,7 @@ class GoogleMapViewController(
 
     override fun onCameraIdle() {
         val mapCameraPosition = getMapCameraPosition()
-        backCoroutine.launch { markerController.onCameraChanged(mapCameraPosition) }
+        defaultCoroutine.launch { markerController.onCameraChanged(mapCameraPosition) }
         cameraMoveEndCallback?.invoke(getMapCameraPosition())
     }
 
@@ -244,10 +243,10 @@ class GoogleMapViewController(
         val zoomSnapshot =
             holder.map.cameraPosition.zoom
                 .toDouble()
-        backCoroutine.launch {
+        defaultCoroutine.launch {
             markerController.find(touchPosition, zoomSnapshot)?.let { entity ->
                 if (!entity.state.clickable) return@launch
-                defaultCoroutine.launch { markerController.dispatchClick(entity.state) }
+                mainCoroutine.launch { markerController.dispatchClick(entity.state) }
                 return@launch
             }
 
@@ -257,7 +256,7 @@ class GoogleMapViewController(
                         state = entity.state,
                         clicked = touchPosition,
                     )
-                defaultCoroutine.launch {
+                mainCoroutine.launch {
                     circleController.dispatchClick(event)
                 }
                 return@launch
@@ -269,7 +268,7 @@ class GoogleMapViewController(
                         state = entity.state,
                         clicked = touchPosition,
                     )
-                defaultCoroutine.launch {
+                mainCoroutine.launch {
                     groundImageController.dispatchClick(event)
                 }
                 return@launch
@@ -281,7 +280,7 @@ class GoogleMapViewController(
                         state = hitResult.entity.state,
                         clicked = hitResult.closestPoint,
                     )
-                defaultCoroutine.launch {
+                mainCoroutine.launch {
                     polylineController.dispatchClick(event)
                 }
                 return@launch
@@ -293,14 +292,14 @@ class GoogleMapViewController(
                         state = entity.state,
                         clicked = touchPosition,
                     )
-                defaultCoroutine.launch {
+                mainCoroutine.launch {
                     polygonController.dispatchClick(event)
                 }
                 return@launch
             }
 
             mapClickCallback?.let {
-                defaultCoroutine.launch { it(position.toGeoPoint()) }
+                mainCoroutine.launch { it(position.toGeoPoint()) }
             }
         }
     }
@@ -385,7 +384,7 @@ class GoogleMapViewController(
     private var mapDesignTypeChangeListener: GoogleMapDesignTypeChangeHandler? = null
 
     override fun setMapDesignType(value: GoogleMapDesignType) {
-        defaultCoroutine.launch {
+        mainCoroutine.launch {
             holder.map.mapType = value.getValue()
         }
         mapDesignType = value
@@ -420,7 +419,7 @@ class GoogleMapViewController(
         }
         initialCameraUpdateAttempts = 0
         val mapCameraPosition = getMapCameraPosition()
-        backCoroutine.launch { notifyMapCameraPosition(mapCameraPosition) }
+        defaultCoroutine.launch { notifyMapCameraPosition(mapCameraPosition) }
     }
 
     fun createMarkerRenderer(): MarkerOverlayRendererInterface<GoogleMapActualMarker>

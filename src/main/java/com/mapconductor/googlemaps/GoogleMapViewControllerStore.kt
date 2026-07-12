@@ -5,7 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 
-object GoogleMapViewControllerStore : StaticHolder<GoogleMapViewController>()
+internal object GoogleMapViewControllerStore : StaticHolder<GoogleMapViewController>()
 
 internal fun Context.findActivity(): Activity? =
     when (this) {
