@@ -58,7 +58,6 @@ internal class GoogleMapMarkerController private constructor(
     private val defaultMarkerIcon: BitmapIcon = DefaultMarkerIcon().toBitmapIcon()
     private val tiledMarkerIds = LinkedHashSet<String>()
 
-    @Volatile
     private var lastKnownZoom: Double = 0.0
 
     // Tile rendering via RasterLayer
@@ -355,6 +354,11 @@ internal class GoogleMapMarkerController private constructor(
 
     companion object {
         private const val TAG = "GoogleMapMarkerController"
+
+        // How much of the icon's visual radius is added to the tap-hit radius,
+        // on top of the fixed tapTolerance. Keeps large icons (e.g. cluster
+        // markers) from being tappable far outside their rendered bounds.
+        private const val ICON_HIT_TEST_FACTOR = 0.5
 
         fun create(
             holder: GoogleMapViewHolder,
