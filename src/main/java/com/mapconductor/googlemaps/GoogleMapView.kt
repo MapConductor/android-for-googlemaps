@@ -92,56 +92,11 @@ fun GoogleMapView(
             }
         },
         controllerProvider = { holder ->
-            val markerController =
-                getMarkerController(
-                    holder = holder,
-                    markerTiling = markerTiling ?: MarkerTilingOptions.Default,
-                )
-            val groundImageController = getGroundImageController(holder)
-            val polylineController = getPolylineController(holder)
-            val rasterLayerController = getRasterLayerController(holder)
-            val polygonController = getPolygonController(holder, rasterLayerController)
-            val circleController = getCircleController(holder)
-
-            // Defer initial camera update until controller is created and view is laid out
-
-            GoogleMapViewController(
-                markerController = markerController,
-                groundImageController = groundImageController,
-                polylineController = polylineController,
-                polygonController = polygonController,
-                circleController = circleController,
-                rasterLayerController = rasterLayerController,
+            createGoogleMapViewController(
                 holder = holder,
+                markerTiling = markerTiling ?: MarkerTilingOptions.Default,
+                serviceRegistry = serviceRegistry,
             ).also { mapController ->
-                serviceRegistry.clear()
-                serviceRegistry.put(
-                    MarkerRenderingSupportKey,
-                    object : MarkerRenderingSupport<GoogleMapActualMarker> {
-                        override val mapLoadedState = mapController.mapLoadedState
-
-                        override fun createMarkerRenderer(
-                            strategy: MarkerRenderingStrategyInterface<GoogleMapActualMarker>,
-                        ): MarkerOverlayRendererInterface<GoogleMapActualMarker> = mapController.createMarkerRenderer()
-
-                        override fun createMarkerEventController(
-                            controller: StrategyMarkerController<GoogleMapActualMarker>,
-                            renderer: MarkerOverlayRendererInterface<GoogleMapActualMarker>
-                        ): MarkerEventControllerInterface<GoogleMapActualMarker>
-                            = mapController.createMarkerEventController(controller)
-
-                        override fun registerMarkerEventController(
-                            controller: MarkerEventControllerInterface<GoogleMapActualMarker>,
-                        ) {
-                            mapController.registerMarkerEventController(controller)
-                        }
-
-                        override fun onMarkerRenderingReady() {
-                            mapController.onMarkerRenderingReady()
-                        }
-                    },
-                )
-
                 state.setController(mapController)
                 mapController.setCameraMoveStartListener {
                     cameraState.value = it
@@ -213,6 +168,55 @@ fun GoogleMapView(
         // For now, assuming content relates to overlay definitions.
         content = content, // This might need adjustment based on how overlays are handled
     )
+}
+
+fun createGoogleMapViewController(
+    holder: GoogleMapViewHolder,
+    markerTiling: MarkerTilingOptions = MarkerTilingOptions.Default,
+    serviceRegistry: MutableMapServiceRegistry? = null,
+): GoogleMapViewController {
+    val rasterLayerController = getRasterLayerController(holder)
+    val mapController =
+        GoogleMapViewController(
+            markerController = getMarkerController(holder, markerTiling),
+            groundImageController = getGroundImageController(holder),
+            polylineController = getPolylineController(holder),
+            polygonController = getPolygonController(holder, rasterLayerController),
+            circleController = getCircleController(holder),
+            rasterLayerController = rasterLayerController,
+            holder = holder,
+        )
+
+    serviceRegistry?.let { registry ->
+        registry.clear()
+        registry.put(
+            MarkerRenderingSupportKey,
+            object : MarkerRenderingSupport<GoogleMapActualMarker> {
+                override val mapLoadedState = mapController.mapLoadedState
+
+                override fun createMarkerRenderer(
+                    strategy: MarkerRenderingStrategyInterface<GoogleMapActualMarker>,
+                ): MarkerOverlayRendererInterface<GoogleMapActualMarker> = mapController.createMarkerRenderer()
+
+                override fun createMarkerEventController(
+                    controller: StrategyMarkerController<GoogleMapActualMarker>,
+                    renderer: MarkerOverlayRendererInterface<GoogleMapActualMarker>,
+                ): MarkerEventControllerInterface<GoogleMapActualMarker> =
+                    mapController.createMarkerEventController(controller)
+
+                override fun registerMarkerEventController(
+                    controller: MarkerEventControllerInterface<GoogleMapActualMarker>,
+                ) {
+                    mapController.registerMarkerEventController(controller)
+                }
+
+                override fun onMarkerRenderingReady() {
+                    mapController.onMarkerRenderingReady()
+                }
+            },
+        )
+    }
+    return mapController
 }
 
 private fun getPolygonController(

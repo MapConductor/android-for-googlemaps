@@ -51,7 +51,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-internal class GoogleMapViewController(
+class GoogleMapViewController internal constructor(
     override val holder: GoogleMapViewHolder,
     private val markerController: GoogleMapMarkerController,
     private val polylineController: GoogleMapPolylineController,
