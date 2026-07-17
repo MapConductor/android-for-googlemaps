@@ -5,12 +5,14 @@ import com.google.android.gms.maps.GoogleMap.MAP_TYPE_NONE
 import com.google.android.gms.maps.GoogleMap.MAP_TYPE_NORMAL
 import com.google.android.gms.maps.GoogleMap.MAP_TYPE_SATELLITE
 import com.google.android.gms.maps.GoogleMap.MAP_TYPE_TERRAIN
+import com.mapconductor.core.map.AttributionRule
 import com.mapconductor.core.map.MapDesignTypeInterface
 
 typealias GoogleMapDesignType = MapDesignTypeInterface<Int>
 
 sealed class GoogleMapDesign(
     override val id: Int,
+    override val attributionRules: List<AttributionRule> = emptyList(),
 ) : GoogleMapDesignType {
     object Normal : GoogleMapDesign(MAP_TYPE_NORMAL)
 
@@ -21,6 +23,11 @@ sealed class GoogleMapDesign(
     object Terrain : GoogleMapDesign(MAP_TYPE_TERRAIN)
 
     object None : GoogleMapDesign(MAP_TYPE_NONE)
+
+    class Custom(
+        id: Int,
+        attributionRules: List<AttributionRule> = emptyList(),
+    ) : GoogleMapDesign(id, attributionRules)
 
     override fun getValue(): Int = id
 
