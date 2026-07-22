@@ -2,6 +2,7 @@ package com.mapconductor.googlemaps
 
 import com.google.android.gms.maps.model.LatLng
 import com.mapconductor.core.features.GeoPointInterface
+import com.mapconductor.core.projection.Earth
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.pow
@@ -9,8 +10,7 @@ import kotlin.math.roundToLong
 import android.util.LruCache
 
 internal object AdaptiveInterpolation {
-    private const val EARTH_RADIUS_METERS = 6_378_137.0
-    private const val EARTH_CIRCUMFERENCE_METERS = 2.0 * Math.PI * EARTH_RADIUS_METERS
+    private const val EARTH_CIRCUMFERENCE_METERS = Earth.CIRCUMFERENCE_METERS
     private const val TILE_SIZE_PIXELS = 256.0
 
     /**
