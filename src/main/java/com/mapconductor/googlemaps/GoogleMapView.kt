@@ -15,6 +15,7 @@ import com.mapconductor.compose.map.MapViewBase
 import com.mapconductor.core.OnCameraMoveHandler
 import com.mapconductor.core.OnMapEventHandler
 import com.mapconductor.core.OnMapLoadedHandler
+import com.mapconductor.core.map.CameraRestriction
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
 import com.mapconductor.core.map.MutableMapServiceRegistry
@@ -47,6 +48,7 @@ fun GoogleMapView(
     state: GoogleMapViewState,
     modifier: Modifier = Modifier,
     markerTiling: MarkerTilingOptions? = null,
+    cameraRestriction: CameraRestriction? = null,
     sdkInitialize: (suspend (android.content.Context) -> Boolean)? = null,
     onMapLoaded: OnMapLoadedHandler? = null,
     onMapClick: OnMapEventHandler? = null,
@@ -116,6 +118,7 @@ fun GoogleMapView(
                 mapController.setMapClickListener(onMapClick)
                 mapController.setMapLongClickListener(onMapLongClick)
                 mapController.setMapDesignTypeChangeListener(state::onMapDesignTypeChange)
+                cameraRestriction?.let { mapController.setCameraRestriction(it) }
                 // Post an initial camera update once the MapView is laid out
                 holder.mapView.post { mapController.sendInitialCameraUpdate() }
             }
@@ -181,7 +184,7 @@ fun createGoogleMapViewController(
             markerController = getMarkerController(holder, markerTiling),
             groundImageController = getGroundImageController(holder),
             polylineController = getPolylineController(holder),
-            polygonController = getPolygonController(holder, rasterLayerController),
+            polygonController = getPolygonController(holder),
             circleController = getCircleController(holder),
             rasterLayerController = rasterLayerController,
             holder = holder,
@@ -219,14 +222,10 @@ fun createGoogleMapViewController(
     return mapController
 }
 
-private fun getPolygonController(
-    holder: GoogleMapViewHolder,
-    rasterLayerController: GoogleMapRasterLayerController,
-): GoogleMapPolygonController {
+private fun getPolygonController(holder: GoogleMapViewHolder): GoogleMapPolygonController {
     val renderer =
         GoogleMapPolygonOverlayRenderer(
             holder = holder,
-            rasterLayerController = rasterLayerController,
         )
 
     val controller =

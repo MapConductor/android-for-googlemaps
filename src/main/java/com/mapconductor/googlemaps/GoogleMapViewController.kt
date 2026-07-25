@@ -20,6 +20,7 @@ import com.mapconductor.core.features.GeoRectBounds
 import com.mapconductor.core.groundimage.GroundImageEvent
 import com.mapconductor.core.groundimage.GroundImageState
 import com.mapconductor.core.groundimage.OnGroundImageEventHandler
+import com.mapconductor.core.map.CameraRestriction
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.VisibleRegion
 import com.mapconductor.core.marker.MarkerEventControllerInterface
@@ -155,6 +156,18 @@ class GoogleMapViewController internal constructor(
         val cameraUpdate = CameraUpdateFactory.newLatLngBounds(latLngBounds, padding)
         mainCoroutine.launch {
             holder.map.moveCamera(cameraUpdate)
+        }
+    }
+
+    override fun setCameraRestriction(restriction: CameraRestriction?) {
+        // Google Maps の統一ズームはネイティブズームそのものなので変換不要。
+        mainCoroutine.launch {
+            holder.map.setLatLngBoundsForCameraTarget(restriction?.bounds?.toLatLngBounds())
+            // preference をクリアするには null 相当（下限 = 通常の最小値）を渡す必要があるため
+            // resetMinMaxZoomPreference で一旦解除してから設定する。
+            holder.map.resetMinMaxZoomPreference()
+            restriction?.minZoom?.let { holder.map.setMinZoomPreference(it.toFloat()) }
+            restriction?.maxZoom?.let { holder.map.setMaxZoomPreference(it.toFloat()) }
         }
     }
 
