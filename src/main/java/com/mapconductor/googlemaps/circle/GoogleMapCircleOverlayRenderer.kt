@@ -8,6 +8,8 @@ import com.mapconductor.core.circle.AbstractCircleOverlayRenderer
 import com.mapconductor.core.circle.CircleEntityInterface
 import com.mapconductor.core.circle.CircleState
 import com.mapconductor.core.features.GeoPoint
+import com.mapconductor.core.geometry.circleToRing
+import com.mapconductor.core.geometry.closeRing
 import com.mapconductor.core.spherical.Spherical.computeDistanceBetween
 import com.mapconductor.googlemaps.GoogleMapActualCircle
 import com.mapconductor.googlemaps.GoogleMapViewHolder
@@ -25,12 +27,7 @@ class GoogleMapCircleOverlayRenderer(
         withContext(coroutine.coroutineContext) {
             val center = GeoPoint.from(state.center).toLatLng()
             val adjustedRadiusMeters = adjustedRadiusMeters(state, center)
-            val circlePoints =
-                CirclePolygonHelper.generateCirclePoints(
-                    center = center,
-                    radiusMeters = adjustedRadiusMeters,
-                    geodesic = state.geodesic,
-                )
+            val circlePoints = circlePoints(state, adjustedRadiusMeters)
 
             val options =
                 PolygonOptions()
@@ -71,13 +68,7 @@ class GoogleMapCircleOverlayRenderer(
             if (needsRegeneration) {
                 val center = GeoPoint.from(current.state.center).toLatLng()
                 val adjustedRadiusMeters = adjustedRadiusMeters(current.state, center)
-                val circlePoints =
-                    CirclePolygonHelper.generateCirclePoints(
-                        center = center,
-                        radiusMeters = adjustedRadiusMeters,
-                        geodesic = current.state.geodesic,
-                    )
-                circle.points = circlePoints
+                circle.points = circlePoints(current.state, adjustedRadiusMeters)
                 circle.isGeodesic = current.state.geodesic
             }
 
@@ -95,6 +86,14 @@ class GoogleMapCircleOverlayRenderer(
             }
             circle
         }
+
+    /** コア共通の [circleToRing] で円リングを生成し、Google の LatLng（閉じたリング）へ変換する。 */
+    private fun circlePoints(
+        state: CircleState,
+        radiusMeters: Double,
+    ): List<com.google.android.gms.maps.model.LatLng> =
+        closeRing(circleToRing(state.center, radiusMeters, state.geodesic))
+            .map { GeoPoint.from(it).toLatLng() }
 
     private fun adjustedRadiusMeters(
         state: CircleState,
