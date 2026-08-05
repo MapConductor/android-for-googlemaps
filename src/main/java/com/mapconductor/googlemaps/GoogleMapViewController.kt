@@ -22,10 +22,11 @@ import com.mapconductor.core.groundimage.GroundImageState
 import com.mapconductor.core.groundimage.OnGroundImageEventHandler
 import com.mapconductor.core.map.CameraRestriction
 import com.mapconductor.core.map.MapCameraPosition
+import com.mapconductor.core.map.MapUISettings
 import com.mapconductor.core.map.VisibleRegion
+import com.mapconductor.core.marker.MarkerAnimationOverlayHost
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
-import com.mapconductor.core.marker.MarkerAnimationOverlayHost
 import com.mapconductor.core.marker.MarkerState
 import com.mapconductor.core.marker.OnMarkerEventHandler
 import com.mapconductor.core.marker.StrategyMarkerController
@@ -51,6 +52,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class GoogleMapViewController internal constructor(
     override val holder: GoogleMapViewHolder,
@@ -159,6 +161,16 @@ class GoogleMapViewController internal constructor(
         }
     }
 
+
+    override fun applyUISettings(settings: MapUISettings) {
+        holder.map.uiSettings.apply {
+            isScrollGesturesEnabled = settings.scrollGesture
+            isZoomGesturesEnabled = settings.zoomGesture
+            isRotateGesturesEnabled = settings.rotateGesture
+            isTiltGesturesEnabled = settings.tiltGesture
+        }
+    }
+
     override fun setCameraRestriction(restriction: CameraRestriction?) {
         // Google Maps の統一ズームはネイティブズームそのものなので変換不要。
         mainCoroutine.launch {
@@ -257,7 +269,14 @@ class GoogleMapViewController internal constructor(
             holder.map.cameraPosition.zoom
                 .toDouble()
         defaultCoroutine.launch {
-            markerController.find(touchPosition, zoomSnapshot)?.let { entity ->
+            // マーカーのヒットテストはアイコン矩形で判定するため座標を画面へ投影する。
+            // Google Maps の `Projection` は UI スレッドから触る前提なので、ここだけメインへ切り替える
+            // （android-for-tomtom も同じ理由でメインに寄せている）。
+            val markerEntity =
+                withContext(mainCoroutine.coroutineContext) {
+                    markerController.find(touchPosition, zoomSnapshot)
+                }
+            markerEntity?.let { entity ->
                 if (!entity.state.clickable) return@launch
                 mainCoroutine.launch { markerController.dispatchClick(entity.state) }
                 return@launch

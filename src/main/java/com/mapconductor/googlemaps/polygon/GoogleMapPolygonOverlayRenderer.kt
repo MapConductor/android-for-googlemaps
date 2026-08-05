@@ -10,8 +10,8 @@ import com.mapconductor.core.polygon.AbstractPolygonOverlayRenderer
 import com.mapconductor.core.polygon.PolygonEntityInterface
 import com.mapconductor.core.polygon.PolygonState
 import com.mapconductor.core.polygon.unionHoles
-import com.mapconductor.core.spherical.createInterpolatePoints
-import com.mapconductor.core.spherical.createLinearInterpolatePoints
+import com.mapconductor.core.spherical.WGS84Geodesic
+import com.mapconductor.core.spherical.Planar
 import com.mapconductor.googlemaps.AdaptiveInterpolation
 import com.mapconductor.googlemaps.GoogleMapActualPolygon
 import com.mapconductor.googlemaps.GoogleMapViewHolder
@@ -42,7 +42,7 @@ internal class GoogleMapPolygonOverlayRenderer(
         val key = AdaptiveInterpolation.cacheKey(AdaptiveInterpolation.pointsHash(statePoints), maxSegmentLength)
         interpolationCache.get(key)?.let { return it }
 
-        val geoPoints = createInterpolatePoints(statePoints, maxSegmentLength = maxSegmentLength)
+        val geoPoints = WGS84Geodesic.createInterpolatePoints(statePoints, maxSegmentLength = maxSegmentLength)
         val points = geoPoints.map { GeoPoint.from(it).toLatLng() }
         interpolationCache.put(key, points)
         return points
@@ -54,7 +54,7 @@ internal class GoogleMapPolygonOverlayRenderer(
     ): List<LatLng> =
         when (geodesic) {
             true -> geodesicPoints(statePoints)
-            false -> createLinearInterpolatePoints(statePoints).map { GeoPoint.from(it).toLatLng() }
+            false -> Planar.createInterpolatePoints(statePoints).map { GeoPoint.from(it).toLatLng() }
         }
 
     private fun toLatLngHoles(

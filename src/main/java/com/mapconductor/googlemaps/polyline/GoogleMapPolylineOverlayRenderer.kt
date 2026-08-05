@@ -10,8 +10,8 @@ import com.mapconductor.core.features.GeoPointInterface
 import com.mapconductor.core.polyline.AbstractPolylineOverlayRenderer
 import com.mapconductor.core.polyline.PolylineEntityInterface
 import com.mapconductor.core.polyline.PolylineState
-import com.mapconductor.core.spherical.createInterpolatePoints
-import com.mapconductor.core.spherical.createLinearInterpolatePoints
+import com.mapconductor.core.spherical.WGS84Geodesic
+import com.mapconductor.core.spherical.Planar
 import com.mapconductor.googlemaps.AdaptiveInterpolation
 import com.mapconductor.googlemaps.GoogleMapActualPolyline
 import com.mapconductor.googlemaps.GoogleMapViewHolder
@@ -38,7 +38,7 @@ class GoogleMapPolylineOverlayRenderer(
         val key = AdaptiveInterpolation.cacheKey(AdaptiveInterpolation.pointsHash(statePoints), maxSegmentLength)
         interpolationCache.get(key)?.let { return it }
 
-        val geoPoints = createInterpolatePoints(statePoints, maxSegmentLength = maxSegmentLength)
+        val geoPoints = WGS84Geodesic.createInterpolatePoints(statePoints, maxSegmentLength = maxSegmentLength)
         val points = geoPoints.map { GeoPoint.from(it).toLatLng() }
         interpolationCache.put(key, points)
         return points
@@ -49,7 +49,7 @@ class GoogleMapPolylineOverlayRenderer(
             val points: List<LatLng> =
                 when (state.geodesic) {
                     true -> geodesicPoints(state.points)
-                    false -> createLinearInterpolatePoints(state.points).map { GeoPoint.from(it).toLatLng() }
+                    false -> Planar.createInterpolatePoints(state.points).map { GeoPoint.from(it).toLatLng() }
                 }
             val options =
                 PolylineOptions()
@@ -79,7 +79,7 @@ class GoogleMapPolylineOverlayRenderer(
                     when (current.state.geodesic) {
                         true -> geodesicPoints(current.state.points)
                         false ->
-                            createLinearInterpolatePoints(current.state.points).map {
+                            Planar.createInterpolatePoints(current.state.points).map {
                                 GeoPoint.from(it).toLatLng()
                             }
                     }

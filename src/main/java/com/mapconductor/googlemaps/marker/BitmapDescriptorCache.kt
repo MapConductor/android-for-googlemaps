@@ -2,15 +2,22 @@ package com.mapconductor.googlemaps.marker
 
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import java.util.concurrent.ConcurrentHashMap
 import android.graphics.Bitmap
+import android.util.LruCache
 
 /**
  * Cache wrapper for BitmapDescriptor to avoid recreating instances for identical bitmaps.
  * Uses bitmap hashCode as the cache key for efficient lookup.
  */
 object BitmapDescriptorCache {
-    private val cache = ConcurrentHashMap<Int, BitmapDescriptor>()
+    // Bounded LRU (count-based, max 512 entries) rather than an unbounded map:
+    // this is a process-global singleton whose clearCache() is never called, so an
+    // unbounded map would grow forever with icon churn. The core BitmapIconCache
+    // regenerates bitmaps on LRU eviction, minting new identity-hash keys, so the
+    // key space is effectively unbounded. LruCache is synchronized internally.
+    private val cache = object : LruCache<Int, BitmapDescriptor>(512) {
+        override fun sizeOf(key: Int, value: BitmapDescriptor): Int = 1
+    }
 
     /**
      * Gets a cached BitmapDescriptor for the given bitmap, or creates and caches a new one.
@@ -20,9 +27,7 @@ object BitmapDescriptorCache {
      */
     fun fromBitmap(bitmap: Bitmap): BitmapDescriptor {
         val key = bitmap.hashCode()
-        return cache.getOrPut(key) {
-            BitmapDescriptorFactory.fromBitmap(bitmap)
-        }
+        return cache.get(key) ?: BitmapDescriptorFactory.fromBitmap(bitmap).also { cache.put(key, it) }
     }
 
     /**
@@ -30,11 +35,11 @@ object BitmapDescriptorCache {
      * or when you want to force recreation of all descriptors.
      */
     fun clearCache() {
-        cache.clear()
+        cache.evictAll()
     }
 
     /**
      * Gets the current cache size for debugging/monitoring purposes.
      */
-    fun getCacheSize(): Int = cache.size
+    fun getCacheSize(): Int = cache.size()
 }
