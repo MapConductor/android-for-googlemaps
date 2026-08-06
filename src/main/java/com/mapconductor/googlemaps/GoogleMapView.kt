@@ -61,7 +61,6 @@ fun GoogleMapView(
     val scope = remember { GoogleMapViewScope() } // Use specific scope
     val context = LocalContext.current // Context will be available from MapViewBase too if needed
     val registry = remember { scope.buildRegistry() }
-    val serviceRegistry = remember { MutableMapServiceRegistry() }
     val cameraState = remember { mutableStateOf<MapCameraPositionInterface?>(state.cameraPosition) }
 
     MapViewBase(
@@ -83,7 +82,6 @@ fun GoogleMapView(
                 onCreate(null)
             }
         },
-        serviceRegistry = serviceRegistry,
         holderProvider = { mapView ->
 
             suspendCancellableCoroutine { cont ->
@@ -97,7 +95,7 @@ fun GoogleMapView(
             createGoogleMapViewController(
                 holder = holder,
                 markerTiling = markerTiling ?: MarkerTilingOptions.Default,
-                serviceRegistry = serviceRegistry,
+                serviceRegistry = state.serviceRegistry,
             ).also { mapController ->
                 state.setController(mapController)
                 mapController.setCameraMoveStartListener {
@@ -173,6 +171,14 @@ fun GoogleMapView(
     )
 }
 
+/**
+ * Creates the imperative controller graph used by both the Compose MapView and non-Compose hosts
+ * such as React Native.
+ *
+ * @param serviceRegistry 登録先のサービスレジストリ。Compose からは `state.serviceRegistry` を渡す
+ *   （react-sdk / ios-sdk と同じく持ち主は state）。React Native / Cordova のような非 Compose
+ *   ホストは state を持たないので、自前のレジストリを渡す。
+ */
 fun createGoogleMapViewController(
     holder: GoogleMapViewHolder,
     markerTiling: MarkerTilingOptions = MarkerTilingOptions.Default,
@@ -191,7 +197,6 @@ fun createGoogleMapViewController(
         )
 
     serviceRegistry?.let { registry ->
-        registry.clear()
         registry.put(
             MarkerRenderingSupportKey,
             object : MarkerRenderingSupport<GoogleMapActualMarker> {

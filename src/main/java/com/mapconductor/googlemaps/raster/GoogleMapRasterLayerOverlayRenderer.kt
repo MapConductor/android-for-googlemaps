@@ -94,7 +94,7 @@ class GoogleMapRasterLayerOverlayRenderer(
         if (state.userAgent.trim().isNotEmpty()) {
             headerBuilder.set("User-Agent", state.userAgent)
         } else {
-            headerBuilder.set("User-Agent", "MapConductor/RasterLayerAgent(https://mapconductor.com)")
+            headerBuilder.set("User-Agent", RasterLayerState.DEFAULT_USER_AGENT)
         }
         val requestHeaders = headerBuilder.build()
 
