@@ -70,8 +70,6 @@ class GoogleMapViewState(
     @Suppress("UNCHECKED_CAST")
     override fun getMapViewHolder(): GoogleMapViewHolder? = controller?.holder as? GoogleMapViewHolder
 
-    override fun getControllers() = controller?.getControllers()
-
     override fun moveCameraTo(
         cameraPosition: MapCameraPosition,
         durationMillis: Long?,
