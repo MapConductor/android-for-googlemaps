@@ -1,5 +1,6 @@
 package com.mapconductor.googlemaps
 
+import android.util.Log
 import com.google.android.gms.maps.model.CameraPosition
 import com.mapconductor.core.features.GeoPoint
 import com.mapconductor.core.map.MapCameraPosition
@@ -10,6 +11,7 @@ import com.mapconductor.core.spherical.Spherical
 import com.mapconductor.core.zoom.AbstractZoomAltitudeConverter
 import com.mapconductor.googlemaps.zoom.ZoomAltitudeConverter
 import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.tan
 
 private val converter = ZoomAltitudeConverter(AbstractZoomAltitudeConverter.DEFAULT_ZOOM0_ALTITUDE)
@@ -33,11 +35,12 @@ fun MapCameraPosition.toCameraPosition(): CameraPosition {
         val altitude = converter.zoomLevelToAltitude(zoom, position.latitude, 0.0)
         val distanceForward = altitude * tan(tiltAbsRad)
         val target = Spherical.computeOffset(position, distanceForward, bearing)
+        val adjustedZoom = converter.altitudeToZoomLevel(altitude / cos(tiltAbsRad), target.latitude, 0.0)
 
         return CameraPosition
             .builder()
             .target(target.toLatLng())
-            .zoom(zoom.toFloat())
+            .zoom(adjustedZoom.toFloat())
             .tilt(tiltAbsDeg.toFloat())
             .bearing(bearing.toFloat())
             .build()
