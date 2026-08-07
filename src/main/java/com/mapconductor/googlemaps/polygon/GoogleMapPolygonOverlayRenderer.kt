@@ -10,8 +10,8 @@ import com.mapconductor.core.polygon.AbstractPolygonOverlayRenderer
 import com.mapconductor.core.polygon.PolygonEntityInterface
 import com.mapconductor.core.polygon.PolygonState
 import com.mapconductor.core.polygon.unionHoles
-import com.mapconductor.core.spherical.WGS84Geodesic
 import com.mapconductor.core.spherical.Planar
+import com.mapconductor.core.spherical.WGS84Geodesic
 import com.mapconductor.googlemaps.AdaptiveInterpolation
 import com.mapconductor.googlemaps.GoogleMapActualPolygon
 import com.mapconductor.googlemaps.GoogleMapViewHolder

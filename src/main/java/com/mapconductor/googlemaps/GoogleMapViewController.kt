@@ -1,8 +1,6 @@
 package com.mapconductor.googlemaps
 
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.GoogleMap.CancelableCallback
 import com.google.android.gms.maps.GoogleMap.OnCameraIdleListener
 import com.google.android.gms.maps.GoogleMap.OnCameraMoveCanceledListener
 import com.google.android.gms.maps.GoogleMap.OnCameraMoveListener
@@ -11,19 +9,17 @@ import com.google.android.gms.maps.GoogleMap.OnMapClickListener
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
 import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener
 import com.google.android.gms.maps.model.LatLng
-import com.mapconductor.core.circle.CircleEvent
 import com.mapconductor.core.circle.CircleState
 import com.mapconductor.core.circle.OnCircleEventHandler
 import com.mapconductor.core.controller.BaseMapViewController
 import com.mapconductor.core.controller.OverlayControllerInterface
+import com.mapconductor.core.features.GeoPoint
 import com.mapconductor.core.features.GeoRectBounds
-import com.mapconductor.core.groundimage.GroundImageEvent
 import com.mapconductor.core.groundimage.GroundImageState
 import com.mapconductor.core.groundimage.OnGroundImageEventHandler
 import com.mapconductor.core.map.CameraRestriction
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapUISettings
-import com.mapconductor.core.map.VisibleRegion
 import com.mapconductor.core.marker.MarkerAnimationOverlayHost
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
@@ -31,10 +27,8 @@ import com.mapconductor.core.marker.MarkerState
 import com.mapconductor.core.marker.OnMarkerEventHandler
 import com.mapconductor.core.marker.StrategyMarkerController
 import com.mapconductor.core.polygon.OnPolygonEventHandler
-import com.mapconductor.core.polygon.PolygonEvent
 import com.mapconductor.core.polygon.PolygonState
 import com.mapconductor.core.polyline.OnPolylineEventHandler
-import com.mapconductor.core.polyline.PolylineEvent
 import com.mapconductor.core.polyline.PolylineState
 import com.mapconductor.core.raster.RasterLayerState
 import com.mapconductor.googlemaps.circle.GoogleMapCircleController
@@ -52,16 +46,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class GoogleMapViewController internal constructor(
     override val holder: GoogleMapViewHolder,
-    private val markerController: GoogleMapMarkerController,
-    private val polylineController: GoogleMapPolylineController,
-    private val polygonController: GoogleMapPolygonController,
-    private val groundImageController: GoogleMapGroundImageController,
-    private val circleController: GoogleMapCircleController,
-    private val rasterLayerController: GoogleMapRasterLayerController,
+    internal val markerController: GoogleMapMarkerController,
+    internal val polylineController: GoogleMapPolylineController,
+    internal val polygonController: GoogleMapPolygonController,
+    internal val groundImageController: GoogleMapGroundImageController,
+    internal val circleController: GoogleMapCircleController,
+    internal val rasterLayerController: GoogleMapRasterLayerController,
     override val mainCoroutine: CoroutineScope = CoroutineScope(Dispatchers.Main),
     override val defaultCoroutine: CoroutineScope = CoroutineScope(Dispatchers.Default),
 ) : BaseMapViewController(),
@@ -74,15 +67,15 @@ class GoogleMapViewController internal constructor(
     OnMarkerClickListener,
     OnMarkerDragListener,
     GoogleMap.OnMapLoadedCallback {
-    private val markerEventControllers = mutableListOf<GoogleMapMarkerEventControllerInterface>()
+    internal val markerEventControllers = mutableListOf<GoogleMapMarkerEventControllerInterface>()
     private val _mapLoadedState = MutableStateFlow(false)
     val mapLoadedState: StateFlow<Boolean> = _mapLoadedState
-    private var markerClickListener: OnMarkerEventHandler? = null
-    private var markerDragStartListener: OnMarkerEventHandler? = null
-    private var markerDragListener: OnMarkerEventHandler? = null
-    private var markerDragEndListener: OnMarkerEventHandler? = null
-    private var markerAnimateStartListener: OnMarkerEventHandler? = null
-    private var markerAnimateEndListener: OnMarkerEventHandler? = null
+    internal var markerClickListener: OnMarkerEventHandler? = null
+    internal var markerDragStartListener: OnMarkerEventHandler? = null
+    internal var markerDragListener: OnMarkerEventHandler? = null
+    internal var markerDragEndListener: OnMarkerEventHandler? = null
+    internal var markerAnimateStartListener: OnMarkerEventHandler? = null
+    internal var markerAnimateEndListener: OnMarkerEventHandler? = null
 
     init {
         setupListeners()
@@ -108,6 +101,50 @@ class GoogleMapViewController internal constructor(
         }
     }
 
+    override fun moveCamera(position: MapCameraPosition) = handleMoveCamera(position)
+
+    override fun animateCamera(
+        position: MapCameraPosition,
+        duration: Long,
+    ) = handleAnimateCamera(position, duration)
+
+    override fun fitBounds(
+        bounds: GeoRectBounds,
+        padding: Int,
+    ) = handleFitBounds(bounds, padding)
+
+    override fun setCameraRestriction(restriction: CameraRestriction?) = handleCameraRestriction(restriction)
+
+    override fun onCameraMove() = handleCameraMove()
+
+    override fun onCameraIdle() = handleCameraIdle()
+
+    override fun onCameraMoveStarted(p0: Int) = handleCameraMoveStarted(p0)
+
+    override fun onCameraMoveCanceled() = handleCameraMoveCanceled()
+
+    override fun onMapClick(position: LatLng) = handleMapClick(position)
+
+    // 拡張ファイル（Camera / Gestures）からは基底クラスの protected へ触れないため、
+    // ここで internal の入口を用意しておく。
+    internal fun mapClickHandler(): ((GeoPoint) -> Unit)? = mapClickCallback
+
+    internal fun emitCameraMoveStart(position: MapCameraPosition) {
+        cameraMoveStartCallback?.invoke(position)
+    }
+
+    internal fun emitCameraMove(position: MapCameraPosition) {
+        cameraMoveCallback?.invoke(position)
+    }
+
+    internal fun emitCameraMoveEnd(position: MapCameraPosition) {
+        cameraMoveEndCallback?.invoke(position)
+    }
+
+    internal suspend fun emitCameraPosition(position: MapCameraPosition) {
+        notifyMapCameraPosition(position)
+    }
+
     fun setupListeners() {
         holder.map.setOnCameraMoveStartedListener(this)
         holder.map.setOnCameraMoveCanceledListener(this)
@@ -119,49 +156,6 @@ class GoogleMapViewController internal constructor(
         holder.map.setOnMarkerDragListener(this)
     }
 
-    override fun moveCamera(position: MapCameraPosition) {
-        mainCoroutine.launch {
-            val dstCameraPosition = position.toCameraPosition()
-            val cameraUpdate = CameraUpdateFactory.newCameraPosition(dstCameraPosition)
-            holder.map.moveCamera(cameraUpdate)
-        }
-    }
-
-    override fun animateCamera(
-        position: MapCameraPosition,
-        duration: Long,
-    ) {
-        val dstCameraPosition = position.toCameraPosition()
-        mainCoroutine.launch {
-            val cameraUpdate = CameraUpdateFactory.newCameraPosition(dstCameraPosition)
-            holder.map.animateCamera(
-                cameraUpdate,
-                duration.toInt(),
-                object : CancelableCallback {
-                    override fun onCancel() {
-                        cameraMoveEndCallback?.invoke(getMapCameraPosition())
-                    }
-
-                    override fun onFinish() {
-                        cameraMoveEndCallback?.invoke(getMapCameraPosition())
-                    }
-                },
-            )
-        }
-    }
-
-    override fun fitBounds(
-        bounds: GeoRectBounds,
-        padding: Int,
-    ) {
-        val latLngBounds = bounds.toLatLngBounds() ?: return
-        val cameraUpdate = CameraUpdateFactory.newLatLngBounds(latLngBounds, padding)
-        mainCoroutine.launch {
-            holder.map.moveCamera(cameraUpdate)
-        }
-    }
-
-
     override fun applyUISettings(settings: MapUISettings) {
         holder.map.uiSettings.apply {
             isScrollGesturesEnabled = settings.scrollGesture
@@ -171,26 +165,15 @@ class GoogleMapViewController internal constructor(
         }
     }
 
-    override fun setCameraRestriction(restriction: CameraRestriction?) {
-        // Google Maps の統一ズームはネイティブズームそのものなので変換不要。
-        mainCoroutine.launch {
-            holder.map.setLatLngBoundsForCameraTarget(restriction?.bounds?.toLatLngBounds())
-            // preference をクリアするには null 相当（下限 = 通常の最小値）を渡す必要があるため
-            // resetMinMaxZoomPreference で一旦解除してから設定する。
-            holder.map.resetMinMaxZoomPreference()
-            restriction?.minZoom?.let { holder.map.setMinZoomPreference(it.toFloat()) }
-            restriction?.maxZoom?.let { holder.map.setMaxZoomPreference(it.toFloat()) }
-        }
-    }
-
-    override fun getControllers(): Map<String, OverlayControllerInterface<*, *>> = mapOf(
-        "marker" to markerController,
-        "polyline" to polylineController,
-        "polygon" to polygonController,
-        "circle" to circleController,
-        "ground_image" to groundImageController,
-        "raster_layer" to rasterLayerController,
-    )
+    override fun getControllers(): Map<String, OverlayControllerInterface<*, *>> =
+        mapOf(
+            "marker" to markerController,
+            "polyline" to polylineController,
+            "polygon" to polygonController,
+            "circle" to circleController,
+            "ground_image" to groundImageController,
+            "raster_layer" to rasterLayerController,
+        )
 
     override suspend fun clearOverlays() {
         markerController.clear()
@@ -225,116 +208,6 @@ class GoogleMapViewController internal constructor(
     override suspend fun compositionPolylines(data: List<PolylineState>) = polylineController.add(data)
 
     override suspend fun updatePolyline(state: PolylineState) = polylineController.update(state)
-
-    override fun onCameraMove() {
-        val mapCameraPosition = getMapCameraPosition()
-        defaultCoroutine.launch {
-            notifyMapCameraPosition(mapCameraPosition)
-        }
-        cameraMoveCallback?.invoke(getMapCameraPosition())
-    }
-
-    override fun onCameraIdle() {
-        val mapCameraPosition = getMapCameraPosition()
-        defaultCoroutine.launch { markerController.onCameraChanged(mapCameraPosition) }
-        cameraMoveEndCallback?.invoke(getMapCameraPosition())
-    }
-
-    override fun onCameraMoveStarted(p0: Int) {
-        cameraMoveStartCallback?.invoke(getMapCameraPosition())
-    }
-
-    override fun onCameraMoveCanceled() {
-        cameraMoveEndCallback?.invoke(getMapCameraPosition())
-    }
-
-    private fun getMapCameraPosition(): MapCameraPosition {
-        val camera = holder.map.cameraPosition.toMapCameraPosition()
-        holder.map.projection.visibleRegion.let {
-            val visibleRegion =
-                VisibleRegion(
-                    bounds = it.latLngBounds.toGeoRectBounds(),
-                    nearLeft = it.nearLeft.toGeoPoint(),
-                    nearRight = it.nearRight.toGeoPoint(),
-                    farLeft = it.farLeft.toGeoPoint(),
-                    farRight = it.farRight.toGeoPoint(),
-                )
-            return camera.copy(visibleRegion = visibleRegion)
-        }
-    }
-
-    override fun onMapClick(position: LatLng) {
-        val touchPosition = position.toGeoPoint()
-        val zoomSnapshot =
-            holder.map.cameraPosition.zoom
-                .toDouble()
-        defaultCoroutine.launch {
-            // マーカーのヒットテストはアイコン矩形で判定するため座標を画面へ投影する。
-            // Google Maps の `Projection` は UI スレッドから触る前提なので、ここだけメインへ切り替える
-            // （android-for-tomtom も同じ理由でメインに寄せている）。
-            val markerEntity =
-                withContext(mainCoroutine.coroutineContext) {
-                    markerController.find(touchPosition, zoomSnapshot)
-                }
-            markerEntity?.let { entity ->
-                if (!entity.state.clickable) return@launch
-                mainCoroutine.launch { markerController.dispatchClick(entity.state) }
-                return@launch
-            }
-
-            circleController.find(touchPosition)?.let { entity ->
-                val event =
-                    CircleEvent(
-                        state = entity.state,
-                        clicked = touchPosition,
-                    )
-                mainCoroutine.launch {
-                    circleController.dispatchClick(event)
-                }
-                return@launch
-            }
-
-            groundImageController.find(touchPosition)?.let { entity ->
-                val event =
-                    GroundImageEvent(
-                        state = entity.state,
-                        clicked = touchPosition,
-                    )
-                mainCoroutine.launch {
-                    groundImageController.dispatchClick(event)
-                }
-                return@launch
-            }
-
-            polylineController.findWithClosestPoint(touchPosition)?.let { hitResult ->
-                val event =
-                    PolylineEvent(
-                        state = hitResult.entity.state,
-                        clicked = hitResult.closestPoint,
-                    )
-                mainCoroutine.launch {
-                    polylineController.dispatchClick(event)
-                }
-                return@launch
-            }
-
-            polygonController.find(touchPosition)?.let { entity ->
-                val event =
-                    PolygonEvent(
-                        state = entity.state,
-                        clicked = touchPosition,
-                    )
-                mainCoroutine.launch {
-                    polygonController.dispatchClick(event)
-                }
-                return@launch
-            }
-
-            mapClickCallback?.let {
-                mainCoroutine.launch { it(position.toGeoPoint()) }
-            }
-        }
-    }
 
     override suspend fun compositionGroundImages(data: List<GroundImageState>) = groundImageController.add(data)
 
@@ -454,8 +327,8 @@ class GoogleMapViewController internal constructor(
         defaultCoroutine.launch { notifyMapCameraPosition(mapCameraPosition) }
     }
 
-    fun createMarkerRenderer(): MarkerOverlayRendererInterface<GoogleMapActualMarker>
-        = GoogleMapMarkerRenderer(holder = holder)
+    fun createMarkerRenderer(): MarkerOverlayRendererInterface<GoogleMapActualMarker> =
+        GoogleMapMarkerRenderer(holder = holder)
 
     fun createMarkerEventController(
         controller: StrategyMarkerController<GoogleMapActualMarker>,

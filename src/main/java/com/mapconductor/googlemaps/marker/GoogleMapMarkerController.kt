@@ -42,7 +42,7 @@ fun interface MarkerTileRasterLayerCallback {
     suspend fun onRasterLayerUpdate(state: RasterLayerState?)
 }
 
-interface GoogleMapMarkerControllerInterface:
+interface GoogleMapMarkerControllerInterface :
     OverlayControllerInterface<MarkerState, MarkerEntityInterface<GoogleMapActualMarker>>
 
 internal class GoogleMapMarkerController private constructor(
@@ -50,9 +50,10 @@ internal class GoogleMapMarkerController private constructor(
     markerManager: MarkerManager<GoogleMapActualMarker>,
     private val markerTiling: MarkerTilingOptions,
 ) : AbstractMarkerController<GoogleMapActualMarker>(
-    markerManager = markerManager,
-    renderer = renderer,
-), GoogleMapMarkerControllerInterface,
+        markerManager = markerManager,
+        renderer = renderer,
+    ),
+    GoogleMapMarkerControllerInterface,
     OnCameraChangeReceiverInterface {
     private val defaultMarkerIcon: BitmapIcon = DefaultMarkerIcon().toBitmapIcon()
     private val tiledMarkerIds = LinkedHashSet<String>()

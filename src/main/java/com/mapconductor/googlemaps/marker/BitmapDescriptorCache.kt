@@ -15,9 +15,13 @@ object BitmapDescriptorCache {
     // unbounded map would grow forever with icon churn. The core BitmapIconCache
     // regenerates bitmaps on LRU eviction, minting new identity-hash keys, so the
     // key space is effectively unbounded. LruCache is synchronized internally.
-    private val cache = object : LruCache<Int, BitmapDescriptor>(512) {
-        override fun sizeOf(key: Int, value: BitmapDescriptor): Int = 1
-    }
+    private val cache =
+        object : LruCache<Int, BitmapDescriptor>(512) {
+            override fun sizeOf(
+                key: Int,
+                value: BitmapDescriptor,
+            ): Int = 1
+        }
 
     /**
      * Gets a cached BitmapDescriptor for the given bitmap, or creates and caches a new one.

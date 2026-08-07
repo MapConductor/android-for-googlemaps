@@ -8,10 +8,14 @@ import com.mapconductor.core.polygon.PolygonManagerInterface
 import com.mapconductor.core.polygon.PolygonState
 import com.mapconductor.googlemaps.GoogleMapActualPolygon
 
-interface GoogleMapPolygonControllerInterface : OverlayControllerInterface<
-    PolygonState,
-    PolygonEntityInterface<GoogleMapActualPolygon>>
+interface GoogleMapPolygonControllerInterface :
+    OverlayControllerInterface<
+        PolygonState,
+        PolygonEntityInterface<GoogleMapActualPolygon>,
+    >
+
 internal class GoogleMapPolygonController(
     polygonManager: PolygonManagerInterface<GoogleMapActualPolygon> = PolygonManager(),
     renderer: GoogleMapPolygonOverlayRenderer,
-) : PolygonController<GoogleMapActualPolygon>(polygonManager, renderer), GoogleMapPolygonControllerInterface
+) : PolygonController<GoogleMapActualPolygon>(polygonManager, renderer),
+    GoogleMapPolygonControllerInterface
