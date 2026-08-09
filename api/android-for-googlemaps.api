@@ -190,7 +190,6 @@ public interface com.mapconductor.googlemaps.circle.GoogleMapCircleControllerInt
 public final class com.mapconductor.googlemaps.circle.GoogleMapCircleControllerInterface$DefaultImpls {
   public static boolean has(com.mapconductor.googlemaps.circle.GoogleMapCircleControllerInterface, java.lang.String);
   public static void setClickListenerAny(com.mapconductor.googlemaps.circle.GoogleMapCircleControllerInterface, java.lang.Object);
-  public static com.mapconductor.core.controller.OverlayKind getKind(com.mapconductor.googlemaps.circle.GoogleMapCircleControllerInterface);
 }
 public final class com.mapconductor.googlemaps.circle.GoogleMapCircleOverlayRenderer extends com.mapconductor.core.circle.AbstractCircleOverlayRenderer<com.google.android.gms.maps.model.Polygon> {
   public com.mapconductor.googlemaps.circle.GoogleMapCircleOverlayRenderer(com.mapconductor.googlemaps.GoogleMapViewHolder, kotlinx.coroutines.CoroutineScope);
@@ -212,7 +211,6 @@ public interface com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageCon
 public final class com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageControllerInterface$DefaultImpls {
   public static boolean has(com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageControllerInterface, java.lang.String);
   public static void setClickListenerAny(com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageControllerInterface, java.lang.Object);
-  public static com.mapconductor.core.controller.OverlayKind getKind(com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageControllerInterface);
 }
 public final class com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageOverlayRenderer extends com.mapconductor.core.groundimage.AbstractGroundImageOverlayRenderer<com.google.android.gms.maps.model.GroundOverlay> {
   public com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageOverlayRenderer(com.mapconductor.googlemaps.GoogleMapViewHolder, kotlinx.coroutines.CoroutineScope);
@@ -266,7 +264,6 @@ public interface com.mapconductor.googlemaps.marker.GoogleMapMarkerControllerInt
 public final class com.mapconductor.googlemaps.marker.GoogleMapMarkerControllerInterface$DefaultImpls {
   public static boolean has(com.mapconductor.googlemaps.marker.GoogleMapMarkerControllerInterface, java.lang.String);
   public static void setClickListenerAny(com.mapconductor.googlemaps.marker.GoogleMapMarkerControllerInterface, java.lang.Object);
-  public static com.mapconductor.core.controller.OverlayKind getKind(com.mapconductor.googlemaps.marker.GoogleMapMarkerControllerInterface);
 }
 public interface com.mapconductor.googlemaps.marker.GoogleMapMarkerEventControllerInterface extends com.mapconductor.core.marker.MarkerEventControllerInterface<com.google.android.gms.maps.model.Marker>, com.mapconductor.core.marker.NativeMarkerClickTargetInterface<com.google.android.gms.maps.model.Marker> {
   public abstract void dispatchDragStart(com.mapconductor.core.marker.MarkerState);
@@ -316,7 +313,6 @@ public interface com.mapconductor.googlemaps.polygon.GoogleMapPolygonControllerI
 public final class com.mapconductor.googlemaps.polygon.GoogleMapPolygonControllerInterface$DefaultImpls {
   public static boolean has(com.mapconductor.googlemaps.polygon.GoogleMapPolygonControllerInterface, java.lang.String);
   public static void setClickListenerAny(com.mapconductor.googlemaps.polygon.GoogleMapPolygonControllerInterface, java.lang.Object);
-  public static com.mapconductor.core.controller.OverlayKind getKind(com.mapconductor.googlemaps.polygon.GoogleMapPolygonControllerInterface);
 }
 public final class com.mapconductor.googlemaps.polygon.GoogleMapPolygonOverlayRenderer extends com.mapconductor.core.polygon.AbstractPolygonOverlayRenderer<com.google.android.gms.maps.model.Polygon> {
   public com.mapconductor.googlemaps.polygon.GoogleMapPolygonOverlayRenderer(com.mapconductor.googlemaps.GoogleMapViewHolder, kotlinx.coroutines.CoroutineScope);
@@ -338,7 +334,6 @@ public interface com.mapconductor.googlemaps.polyline.GoogleMapPolylineControlle
 public final class com.mapconductor.googlemaps.polyline.GoogleMapPolylineControllerInterface$DefaultImpls {
   public static boolean has(com.mapconductor.googlemaps.polyline.GoogleMapPolylineControllerInterface, java.lang.String);
   public static void setClickListenerAny(com.mapconductor.googlemaps.polyline.GoogleMapPolylineControllerInterface, java.lang.Object);
-  public static com.mapconductor.core.controller.OverlayKind getKind(com.mapconductor.googlemaps.polyline.GoogleMapPolylineControllerInterface);
 }
 public final class com.mapconductor.googlemaps.polyline.GoogleMapPolylineOverlayRenderer extends com.mapconductor.core.polyline.AbstractPolylineOverlayRenderer<com.google.android.gms.maps.model.Polyline> {
   public com.mapconductor.googlemaps.polyline.GoogleMapPolylineOverlayRenderer(com.mapconductor.googlemaps.GoogleMapViewHolder, kotlinx.coroutines.CoroutineScope);
@@ -360,7 +355,6 @@ public interface com.mapconductor.googlemaps.raster.GoogleMapRasterLayerControll
 public final class com.mapconductor.googlemaps.raster.GoogleMapRasterLayerControllerInterface$DefaultImpls {
   public static boolean has(com.mapconductor.googlemaps.raster.GoogleMapRasterLayerControllerInterface, java.lang.String);
   public static void setClickListenerAny(com.mapconductor.googlemaps.raster.GoogleMapRasterLayerControllerInterface, java.lang.Object);
-  public static com.mapconductor.core.controller.OverlayKind getKind(com.mapconductor.googlemaps.raster.GoogleMapRasterLayerControllerInterface);
 }
 public final class com.mapconductor.googlemaps.raster.GoogleMapRasterLayerOverlayRenderer implements com.mapconductor.core.raster.RasterLayerOverlayRendererInterface<com.google.android.gms.maps.model.TileOverlay> {
   public com.mapconductor.googlemaps.raster.GoogleMapRasterLayerOverlayRenderer(com.mapconductor.googlemaps.GoogleMapViewHolder, okhttp3.OkHttpClient, kotlinx.coroutines.CoroutineScope);
