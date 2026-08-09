@@ -9,7 +9,6 @@ import com.google.android.gms.maps.GoogleMap.OnMapClickListener
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
 import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener
 import com.google.android.gms.maps.model.LatLng
-import com.mapconductor.core.circle.CircleState
 import com.mapconductor.core.circle.OnCircleEventHandler
 import com.mapconductor.core.controller.BaseMapViewController
 import com.mapconductor.core.features.GeoPoint
@@ -22,15 +21,12 @@ import com.mapconductor.core.map.MapUISettings
 import com.mapconductor.core.marker.MarkerAnimationOverlayHost
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
-import com.mapconductor.core.marker.MarkerState
 import com.mapconductor.core.marker.OnMarkerEventHandler
 import com.mapconductor.core.marker.StrategyMarkerController
 import com.mapconductor.core.marker.dispatchNativeMarkerClick
 import com.mapconductor.core.polygon.OnPolygonEventHandler
-import com.mapconductor.core.polygon.PolygonState
 import com.mapconductor.core.polyline.OnPolylineEventHandler
 import com.mapconductor.core.polyline.PolylineState
-import com.mapconductor.core.raster.RasterLayerState
 import com.mapconductor.googlemaps.circle.GoogleMapCircleController
 import com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageController
 import com.mapconductor.googlemaps.marker.DefaultGoogleMapMarkerEventController
@@ -174,38 +170,14 @@ class GoogleMapViewController internal constructor(
         rasterLayerController.clear()
     }
 
-    override suspend fun compositionMarkers(data: List<MarkerState>) = markerController.add(data)
-
     override fun setMarkerAnimationOverlayHost(host: MarkerAnimationOverlayHost?) {
         (markerController.renderer as GoogleMapMarkerRenderer).animationOverlayHost = host
     }
-
-    override suspend fun updateMarker(state: MarkerState) = markerController.update(state)
-
-    override suspend fun compositionCircles(data: List<CircleState>) = circleController.add(data)
-
-    override suspend fun updateCircle(state: CircleState) = circleController.update(state)
-
-    override suspend fun compositionRasterLayers(data: List<RasterLayerState>) = rasterLayerController.add(data)
-
-    override suspend fun updateRasterLayer(state: RasterLayerState) = rasterLayerController.update(state)
 
     @Deprecated("Use CircleState.onClick instead.")
     override fun setOnCircleClickListener(listener: OnCircleEventHandler?) {
         this.circleController.clickListener = listener
     }
-
-    override suspend fun compositionPolylines(data: List<PolylineState>) = polylineController.add(data)
-
-    override suspend fun updatePolyline(state: PolylineState) = polylineController.update(state)
-
-    override suspend fun compositionGroundImages(data: List<GroundImageState>) = groundImageController.add(data)
-
-    override suspend fun updateGroundImage(state: GroundImageState) = groundImageController.update(state)
-
-    override suspend fun compositionPolygons(data: List<PolygonState>) = polygonController.add(data)
-
-    override suspend fun updatePolygon(state: PolygonState) = polygonController.update(state)
 
     @Deprecated("Use MarkerState.onDragStart instead.")
     override fun setOnMarkerDragStart(listener: OnMarkerEventHandler?) {
@@ -243,22 +215,13 @@ class GoogleMapViewController internal constructor(
         markerEventControllers.forEach { it.setClickListener(listener) }
     }
 
-    override fun hasMarker(state: MarkerState): Boolean = this.markerController.markerManager.hasEntity(state.id)
-
     override fun hasPolyline(state: PolylineState): Boolean =
         this.polylineController.polylineManager
             .hasEntity(state.id)
 
-    override fun hasPolygon(state: PolygonState): Boolean = this.polygonController.polygonManager.hasEntity(state.id)
-
-    override fun hasCircle(state: CircleState): Boolean = this.circleController.circleManager.hasEntity(state.id)
-
     override fun hasGroundImage(state: GroundImageState): Boolean =
         this.groundImageController.groundImageManager
             .hasEntity(state.id)
-
-    override fun hasRasterLayer(state: RasterLayerState): Boolean =
-        this.rasterLayerController.rasterLayerManager.hasEntity(state.id)
 
     @Deprecated("Use GroundImageState.onClick instead.")
     override fun setOnGroundImageClickListener(listener: OnGroundImageEventHandler?) {

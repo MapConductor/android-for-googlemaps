@@ -68,32 +68,16 @@ public final class com.mapconductor.googlemaps.GoogleMapViewController extends c
   public final void setupListeners();
   public void applyUISettings(com.mapconductor.core.map.MapUISettings);
   public java.lang.Object clearOverlays(kotlin.coroutines.Continuation<? super kotlin.Unit>);
-  public java.lang.Object compositionMarkers(java.util.List<com.mapconductor.core.marker.MarkerState>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
   public void setMarkerAnimationOverlayHost(com.mapconductor.core.marker.MarkerAnimationOverlayHost);
-  public java.lang.Object updateMarker(com.mapconductor.core.marker.MarkerState, kotlin.coroutines.Continuation<? super kotlin.Unit>);
-  public java.lang.Object compositionCircles(java.util.List<com.mapconductor.core.circle.CircleState>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
-  public java.lang.Object updateCircle(com.mapconductor.core.circle.CircleState, kotlin.coroutines.Continuation<? super kotlin.Unit>);
-  public java.lang.Object compositionRasterLayers(java.util.List<com.mapconductor.core.raster.RasterLayerState>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
-  public java.lang.Object updateRasterLayer(com.mapconductor.core.raster.RasterLayerState, kotlin.coroutines.Continuation<? super kotlin.Unit>);
   public void setOnCircleClickListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.circle.CircleEvent, kotlin.Unit>);
-  public java.lang.Object compositionPolylines(java.util.List<com.mapconductor.core.polyline.PolylineState>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
-  public java.lang.Object updatePolyline(com.mapconductor.core.polyline.PolylineState, kotlin.coroutines.Continuation<? super kotlin.Unit>);
-  public java.lang.Object compositionGroundImages(java.util.List<com.mapconductor.core.groundimage.GroundImageState>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
-  public java.lang.Object updateGroundImage(com.mapconductor.core.groundimage.GroundImageState, kotlin.coroutines.Continuation<? super kotlin.Unit>);
-  public java.lang.Object compositionPolygons(java.util.List<com.mapconductor.core.polygon.PolygonState>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
-  public java.lang.Object updatePolygon(com.mapconductor.core.polygon.PolygonState, kotlin.coroutines.Continuation<? super kotlin.Unit>);
   public void setOnMarkerDragStart(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
   public void setOnMarkerDrag(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
   public void setOnMarkerDragEnd(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
   public void setOnMarkerAnimateStart(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
   public void setOnMarkerAnimateEnd(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
   public void setOnMarkerClickListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public boolean hasMarker(com.mapconductor.core.marker.MarkerState);
   public boolean hasPolyline(com.mapconductor.core.polyline.PolylineState);
-  public boolean hasPolygon(com.mapconductor.core.polygon.PolygonState);
-  public boolean hasCircle(com.mapconductor.core.circle.CircleState);
   public boolean hasGroundImage(com.mapconductor.core.groundimage.GroundImageState);
-  public boolean hasRasterLayer(com.mapconductor.core.raster.RasterLayerState);
   public void setOnGroundImageClickListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.groundimage.GroundImageEvent, kotlin.Unit>);
   public void setOnPolylineClickListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.polyline.PolylineEvent, kotlin.Unit>);
   public void setOnPolygonClickListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.polygon.PolygonEvent, kotlin.Unit>);
@@ -203,6 +187,11 @@ public final class com.mapconductor.googlemaps.circle.GoogleMapCircleController 
 }
 public interface com.mapconductor.googlemaps.circle.GoogleMapCircleControllerInterface extends com.mapconductor.core.controller.OverlayControllerInterface<com.mapconductor.core.circle.CircleState, com.mapconductor.core.circle.CircleEntityInterface<com.google.android.gms.maps.model.Polygon>> {
 }
+public final class com.mapconductor.googlemaps.circle.GoogleMapCircleControllerInterface$DefaultImpls {
+  public static boolean has(com.mapconductor.googlemaps.circle.GoogleMapCircleControllerInterface, java.lang.String);
+  public static void setClickListenerAny(com.mapconductor.googlemaps.circle.GoogleMapCircleControllerInterface, java.lang.Object);
+  public static com.mapconductor.core.controller.OverlayKind getKind(com.mapconductor.googlemaps.circle.GoogleMapCircleControllerInterface);
+}
 public final class com.mapconductor.googlemaps.circle.GoogleMapCircleOverlayRenderer extends com.mapconductor.core.circle.AbstractCircleOverlayRenderer<com.google.android.gms.maps.model.Polygon> {
   public com.mapconductor.googlemaps.circle.GoogleMapCircleOverlayRenderer(com.mapconductor.googlemaps.GoogleMapViewHolder, kotlinx.coroutines.CoroutineScope);
   public com.mapconductor.googlemaps.circle.GoogleMapCircleOverlayRenderer(com.mapconductor.googlemaps.GoogleMapViewHolder, kotlinx.coroutines.CoroutineScope, int, kotlin.jvm.internal.DefaultConstructorMarker);
@@ -219,6 +208,11 @@ public final class com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageC
   public com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageController(com.mapconductor.core.groundimage.GroundImageManagerInterface, com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageOverlayRenderer, int, kotlin.jvm.internal.DefaultConstructorMarker);
 }
 public interface com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageControllerInterface extends com.mapconductor.core.controller.OverlayControllerInterface<com.mapconductor.core.groundimage.GroundImageState, com.mapconductor.core.groundimage.GroundImageEntityInterface<com.google.android.gms.maps.model.GroundOverlay>> {
+}
+public final class com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageControllerInterface$DefaultImpls {
+  public static boolean has(com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageControllerInterface, java.lang.String);
+  public static void setClickListenerAny(com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageControllerInterface, java.lang.Object);
+  public static com.mapconductor.core.controller.OverlayKind getKind(com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageControllerInterface);
 }
 public final class com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageOverlayRenderer extends com.mapconductor.core.groundimage.AbstractGroundImageOverlayRenderer<com.google.android.gms.maps.model.GroundOverlay> {
   public com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageOverlayRenderer(com.mapconductor.googlemaps.GoogleMapViewHolder, kotlinx.coroutines.CoroutineScope);
@@ -269,6 +263,11 @@ public final class com.mapconductor.googlemaps.marker.GoogleMapMarkerController$
 }
 public interface com.mapconductor.googlemaps.marker.GoogleMapMarkerControllerInterface extends com.mapconductor.core.controller.OverlayControllerInterface<com.mapconductor.core.marker.MarkerState, com.mapconductor.core.marker.MarkerEntityInterface<com.google.android.gms.maps.model.Marker>> {
 }
+public final class com.mapconductor.googlemaps.marker.GoogleMapMarkerControllerInterface$DefaultImpls {
+  public static boolean has(com.mapconductor.googlemaps.marker.GoogleMapMarkerControllerInterface, java.lang.String);
+  public static void setClickListenerAny(com.mapconductor.googlemaps.marker.GoogleMapMarkerControllerInterface, java.lang.Object);
+  public static com.mapconductor.core.controller.OverlayKind getKind(com.mapconductor.googlemaps.marker.GoogleMapMarkerControllerInterface);
+}
 public interface com.mapconductor.googlemaps.marker.GoogleMapMarkerEventControllerInterface extends com.mapconductor.core.marker.MarkerEventControllerInterface<com.google.android.gms.maps.model.Marker>, com.mapconductor.core.marker.NativeMarkerClickTargetInterface<com.google.android.gms.maps.model.Marker> {
   public abstract void dispatchDragStart(com.mapconductor.core.marker.MarkerState);
   public abstract void dispatchDrag(com.mapconductor.core.marker.MarkerState);
@@ -314,6 +313,11 @@ public final class com.mapconductor.googlemaps.polygon.GoogleMapPolygonControlle
 }
 public interface com.mapconductor.googlemaps.polygon.GoogleMapPolygonControllerInterface extends com.mapconductor.core.controller.OverlayControllerInterface<com.mapconductor.core.polygon.PolygonState, com.mapconductor.core.polygon.PolygonEntityInterface<com.google.android.gms.maps.model.Polygon>> {
 }
+public final class com.mapconductor.googlemaps.polygon.GoogleMapPolygonControllerInterface$DefaultImpls {
+  public static boolean has(com.mapconductor.googlemaps.polygon.GoogleMapPolygonControllerInterface, java.lang.String);
+  public static void setClickListenerAny(com.mapconductor.googlemaps.polygon.GoogleMapPolygonControllerInterface, java.lang.Object);
+  public static com.mapconductor.core.controller.OverlayKind getKind(com.mapconductor.googlemaps.polygon.GoogleMapPolygonControllerInterface);
+}
 public final class com.mapconductor.googlemaps.polygon.GoogleMapPolygonOverlayRenderer extends com.mapconductor.core.polygon.AbstractPolygonOverlayRenderer<com.google.android.gms.maps.model.Polygon> {
   public com.mapconductor.googlemaps.polygon.GoogleMapPolygonOverlayRenderer(com.mapconductor.googlemaps.GoogleMapViewHolder, kotlinx.coroutines.CoroutineScope);
   public com.mapconductor.googlemaps.polygon.GoogleMapPolygonOverlayRenderer(com.mapconductor.googlemaps.GoogleMapViewHolder, kotlinx.coroutines.CoroutineScope, int, kotlin.jvm.internal.DefaultConstructorMarker);
@@ -331,6 +335,11 @@ public final class com.mapconductor.googlemaps.polyline.GoogleMapPolylineControl
 }
 public interface com.mapconductor.googlemaps.polyline.GoogleMapPolylineControllerInterface extends com.mapconductor.core.controller.OverlayControllerInterface<com.mapconductor.core.polyline.PolylineState, com.mapconductor.core.polyline.PolylineEntityInterface<com.google.android.gms.maps.model.Polyline>> {
 }
+public final class com.mapconductor.googlemaps.polyline.GoogleMapPolylineControllerInterface$DefaultImpls {
+  public static boolean has(com.mapconductor.googlemaps.polyline.GoogleMapPolylineControllerInterface, java.lang.String);
+  public static void setClickListenerAny(com.mapconductor.googlemaps.polyline.GoogleMapPolylineControllerInterface, java.lang.Object);
+  public static com.mapconductor.core.controller.OverlayKind getKind(com.mapconductor.googlemaps.polyline.GoogleMapPolylineControllerInterface);
+}
 public final class com.mapconductor.googlemaps.polyline.GoogleMapPolylineOverlayRenderer extends com.mapconductor.core.polyline.AbstractPolylineOverlayRenderer<com.google.android.gms.maps.model.Polyline> {
   public com.mapconductor.googlemaps.polyline.GoogleMapPolylineOverlayRenderer(com.mapconductor.googlemaps.GoogleMapViewHolder, kotlinx.coroutines.CoroutineScope);
   public com.mapconductor.googlemaps.polyline.GoogleMapPolylineOverlayRenderer(com.mapconductor.googlemaps.GoogleMapViewHolder, kotlinx.coroutines.CoroutineScope, int, kotlin.jvm.internal.DefaultConstructorMarker);
@@ -347,6 +356,11 @@ public final class com.mapconductor.googlemaps.raster.GoogleMapRasterLayerContro
   public com.mapconductor.googlemaps.raster.GoogleMapRasterLayerController(com.mapconductor.core.raster.RasterLayerManagerInterface, com.mapconductor.googlemaps.raster.GoogleMapRasterLayerOverlayRenderer, int, kotlin.jvm.internal.DefaultConstructorMarker);
 }
 public interface com.mapconductor.googlemaps.raster.GoogleMapRasterLayerControllerInterface extends com.mapconductor.core.controller.OverlayControllerInterface<com.mapconductor.core.raster.RasterLayerState, com.mapconductor.core.raster.RasterLayerEntityInterface<com.google.android.gms.maps.model.TileOverlay>> {
+}
+public final class com.mapconductor.googlemaps.raster.GoogleMapRasterLayerControllerInterface$DefaultImpls {
+  public static boolean has(com.mapconductor.googlemaps.raster.GoogleMapRasterLayerControllerInterface, java.lang.String);
+  public static void setClickListenerAny(com.mapconductor.googlemaps.raster.GoogleMapRasterLayerControllerInterface, java.lang.Object);
+  public static com.mapconductor.core.controller.OverlayKind getKind(com.mapconductor.googlemaps.raster.GoogleMapRasterLayerControllerInterface);
 }
 public final class com.mapconductor.googlemaps.raster.GoogleMapRasterLayerOverlayRenderer implements com.mapconductor.core.raster.RasterLayerOverlayRendererInterface<com.google.android.gms.maps.model.TileOverlay> {
   public com.mapconductor.googlemaps.raster.GoogleMapRasterLayerOverlayRenderer(com.mapconductor.googlemaps.GoogleMapViewHolder, okhttp3.OkHttpClient, kotlinx.coroutines.CoroutineScope);
