@@ -174,14 +174,10 @@ public final class com.mapconductor.googlemaps.GoogleMapViewState extends com.ma
   public com.mapconductor.googlemaps.GoogleMapViewState(java.lang.String, com.mapconductor.core.map.MapDesignTypeInterface<java.lang.Integer>, com.mapconductor.core.map.MapCameraPosition);
   public com.mapconductor.googlemaps.GoogleMapViewState(java.lang.String, com.mapconductor.core.map.MapDesignTypeInterface, com.mapconductor.core.map.MapCameraPosition, int, kotlin.jvm.internal.DefaultConstructorMarker);
   public java.lang.String getId();
-  public com.mapconductor.core.map.MapCameraPosition getCameraPosition();
   public final kotlinx.coroutines.flow.StateFlow<com.mapconductor.core.map.MapPaddings> getPadding();
   public com.mapconductor.core.map.MapDesignTypeInterface<java.lang.Integer> getMapDesignType();
   public void setMapDesignType(com.mapconductor.core.map.MapDesignTypeInterface<java.lang.Integer>);
-  public void moveCameraTo(com.mapconductor.core.features.GeoPoint, java.lang.Long);
   public com.mapconductor.googlemaps.GoogleMapViewHolder getMapViewHolder();
-  public void moveCameraTo(com.mapconductor.core.map.MapCameraPosition, java.lang.Long);
-  public void fitBounds(com.mapconductor.core.features.GeoRectBounds, int);
   public java.lang.Object getMapDesignType();
   public void setMapDesignType(java.lang.Object);
   public com.mapconductor.core.map.MapViewHolderInterface getMapViewHolder();
