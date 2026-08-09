@@ -376,10 +376,8 @@ final class com.mapconductor.googlemaps.raster.GoogleMapRasterLayerOverlayRender
   public int hashCode();
   public boolean equals(java.lang.Object);
 }
-public final class com.mapconductor.googlemaps.zoom.ZoomAltitudeConverter extends com.mapconductor.core.zoom.AbstractZoomAltitudeConverter {
+public final class com.mapconductor.googlemaps.zoom.ZoomAltitudeConverter extends com.mapconductor.core.zoom.WebMercatorZoomAltitudeConverter {
   public com.mapconductor.googlemaps.zoom.ZoomAltitudeConverter(double);
   public com.mapconductor.googlemaps.zoom.ZoomAltitudeConverter(double, int, kotlin.jvm.internal.DefaultConstructorMarker);
-  public double zoomLevelToAltitude(double, double, double);
-  public double altitudeToZoomLevel(double, double, double);
   public com.mapconductor.googlemaps.zoom.ZoomAltitudeConverter();
 }
