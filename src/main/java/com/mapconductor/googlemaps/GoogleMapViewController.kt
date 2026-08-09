@@ -12,6 +12,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.mapconductor.core.circle.OnCircleEventHandler
 import com.mapconductor.core.controller.BaseMapViewController
 import com.mapconductor.core.features.GeoPoint
+import com.mapconductor.core.features.GeoPointInterface
 import com.mapconductor.core.features.GeoRectBounds
 import com.mapconductor.core.groundimage.GroundImageState
 import com.mapconductor.core.groundimage.OnGroundImageEventHandler
@@ -23,6 +24,7 @@ import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
 import com.mapconductor.core.marker.OnMarkerEventHandler
 import com.mapconductor.core.marker.StrategyMarkerController
+import com.mapconductor.core.marker.dispatchGeoMarkerClick
 import com.mapconductor.core.marker.dispatchNativeMarkerClick
 import com.mapconductor.core.polygon.OnPolygonEventHandler
 import com.mapconductor.core.polyline.OnPolylineEventHandler
@@ -120,6 +122,16 @@ class GoogleMapViewController internal constructor(
     override fun onCameraMoveCanceled() = handleCameraMoveCanceled()
 
     override fun onMapClick(position: LatLng) = handleMapClick(position)
+
+    /**
+     * タイル描画されたマーカーのヒットテスト。
+     *
+     * ネイティブの `Marker` として描かれたものは `OnMarkerClickListener` が先に消費するので
+     * ここへは来ない（[com.mapconductor.core.marker.dispatchNativeMarkerClick]）。
+     * 呼び出し元がメインスレッドなので `Projection` を触ってよい。
+     */
+    override fun dispatchMarkerTap(position: GeoPointInterface): Boolean =
+        markerEventControllers.dispatchGeoMarkerClick(position)
 
     // 拡張ファイル（Camera / Gestures）からは基底クラスの protected へ触れないため、
     // ここで internal の入口を用意しておく。

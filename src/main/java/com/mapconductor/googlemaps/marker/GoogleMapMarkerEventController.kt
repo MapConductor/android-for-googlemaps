@@ -1,5 +1,7 @@
 package com.mapconductor.googlemaps.marker
 
+import com.mapconductor.core.features.GeoPointInterface
+import com.mapconductor.core.marker.GeoMarkerClickTargetInterface
 import com.mapconductor.core.marker.MarkerEntityInterface
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerState
@@ -10,7 +12,10 @@ import com.mapconductor.googlemaps.GoogleMapActualMarker
 
 internal interface GoogleMapMarkerEventControllerInterface :
     MarkerEventControllerInterface<GoogleMapActualMarker>,
-    NativeMarkerClickTargetInterface<GoogleMapActualMarker> {
+    // ネイティブの Marker として描かれたものは OnMarkerClickListener 経由（tag から逆引き）。
+    NativeMarkerClickTargetInterface<GoogleMapActualMarker>,
+    // タイル描画されたマーカーは地図クリックの座標から引く。
+    GeoMarkerClickTargetInterface<GoogleMapActualMarker> {
     fun dispatchDragStart(state: MarkerState)
 
     fun dispatchDrag(state: MarkerState)
@@ -35,6 +40,9 @@ internal class DefaultGoogleMapMarkerEventController(
 ) : GoogleMapMarkerEventControllerInterface {
     override fun getEntity(id: String): MarkerEntityInterface<GoogleMapActualMarker>? =
         controller.markerManager.getEntity(id)
+
+    override fun find(position: GeoPointInterface): MarkerEntityInterface<GoogleMapActualMarker>? =
+        controller.find(position)
 
     override fun dispatchClick(state: MarkerState) = controller.dispatchClick(state)
 
@@ -73,6 +81,9 @@ internal class StrategyGoogleMapMarkerEventController(
     private val controller: StrategyMarkerController<GoogleMapActualMarker>,
 ) : GoogleMapMarkerEventControllerInterface {
     override fun getEntity(id: String): MarkerEntityInterface<GoogleMapActualMarker>? = controller.getEntity(id)
+
+    override fun find(position: GeoPointInterface): MarkerEntityInterface<GoogleMapActualMarker>? =
+        controller.find(position)
 
     override fun dispatchClick(state: MarkerState) = controller.dispatchClick(state)
 
