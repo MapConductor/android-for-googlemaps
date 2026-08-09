@@ -3,6 +3,7 @@ package com.mapconductor.googlemaps
 import com.google.android.gms.maps.model.LatLng
 import com.mapconductor.core.circle.CircleEvent
 import com.mapconductor.core.groundimage.GroundImageEvent
+import com.mapconductor.core.marker.clickableOnly
 import com.mapconductor.core.polygon.PolygonEvent
 import com.mapconductor.core.polyline.PolylineEvent
 import kotlinx.coroutines.launch
@@ -24,8 +25,9 @@ internal fun GoogleMapViewController.handleMapClick(position: LatLng) {
             withContext(mainCoroutine.coroutineContext) {
                 markerController.find(touchPosition, zoomSnapshot)
             }
-        markerEntity?.let { entity ->
-            if (!entity.state.clickable) return@launch
+        // clickable=false のマーカーは「当たらなかった」ことにして次の層へ進める
+        // （握り潰すと地図クリックも飛ばなくなる）。判定はコアの clickableOnly。
+        markerEntity.clickableOnly()?.let { entity ->
             mainCoroutine.launch { markerController.dispatchClick(entity.state) }
             return@launch
         }
