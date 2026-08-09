@@ -273,9 +273,7 @@ public final class com.mapconductor.googlemaps.marker.GoogleMapMarkerController$
 }
 public interface com.mapconductor.googlemaps.marker.GoogleMapMarkerControllerInterface extends com.mapconductor.core.controller.OverlayControllerInterface<com.mapconductor.core.marker.MarkerState, com.mapconductor.core.marker.MarkerEntityInterface<com.google.android.gms.maps.model.Marker>> {
 }
-public interface com.mapconductor.googlemaps.marker.GoogleMapMarkerEventControllerInterface extends com.mapconductor.core.marker.MarkerEventControllerInterface<com.google.android.gms.maps.model.Marker> {
-  public abstract com.mapconductor.core.marker.MarkerEntityInterface<com.google.android.gms.maps.model.Marker> getEntity(java.lang.String);
-  public abstract void dispatchClick(com.mapconductor.core.marker.MarkerState);
+public interface com.mapconductor.googlemaps.marker.GoogleMapMarkerEventControllerInterface extends com.mapconductor.core.marker.MarkerEventControllerInterface<com.google.android.gms.maps.model.Marker>, com.mapconductor.core.marker.NativeMarkerClickTargetInterface<com.google.android.gms.maps.model.Marker> {
   public abstract void dispatchDragStart(com.mapconductor.core.marker.MarkerState);
   public abstract void dispatchDrag(com.mapconductor.core.marker.MarkerState);
   public abstract void dispatchDragEnd(com.mapconductor.core.marker.MarkerState);

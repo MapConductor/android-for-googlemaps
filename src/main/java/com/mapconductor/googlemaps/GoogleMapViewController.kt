@@ -25,6 +25,7 @@ import com.mapconductor.core.marker.MarkerOverlayRendererInterface
 import com.mapconductor.core.marker.MarkerState
 import com.mapconductor.core.marker.OnMarkerEventHandler
 import com.mapconductor.core.marker.StrategyMarkerController
+import com.mapconductor.core.marker.dispatchNativeMarkerClick
 import com.mapconductor.core.polygon.OnPolygonEventHandler
 import com.mapconductor.core.polygon.PolygonState
 import com.mapconductor.core.polyline.OnPolylineEventHandler
@@ -347,16 +348,20 @@ class GoogleMapViewController internal constructor(
         controller.setAnimateEndListener(markerAnimateEndListener)
     }
 
-    override fun onMarkerClick(marker: GoogleMapActualMarker): Boolean {
-        val stateId = marker.tag as? String ?: return false
-        markerEventControllers.forEach { controller ->
-            val entity = controller.getEntity(stateId) ?: return@forEach
-            if (!entity.state.clickable) return true
-            controller.dispatchClick(entity.state)
-            return true
-        }
-        return false
-    }
+    /**
+     * ネイティブのマーカークリック。
+     *
+     * Google Maps の `Marker` には clickable 相当の API が無く、マーカーをタップすると
+     * SDK がイベントを消費して `OnMapClickListener` が発火しないため、他のオーバーレイ
+     * （polygon / polyline / circle は `.clickable(false)` にして地図クリックへ寄せている）
+     * と違い、ここだけネイティブのリスナーを使わざるを得ない。
+     *
+     * 判断はコアの [dispatchNativeMarkerClick] に一本化してある（TomTom も同じ経路）。
+     * false を返すと SDK の既定動作（情報ウィンドウ＋カメラ移動）になるので、
+     * アプリが `getMapViewHolder().map` へ直接追加したマーカーはそちらで処理される。
+     */
+    override fun onMarkerClick(marker: GoogleMapActualMarker): Boolean =
+        markerEventControllers.dispatchNativeMarkerClick(marker.tag)
 
     override fun onMarkerDrag(marker: GoogleMapActualMarker) {
         val stateId = marker.tag as? String ?: return

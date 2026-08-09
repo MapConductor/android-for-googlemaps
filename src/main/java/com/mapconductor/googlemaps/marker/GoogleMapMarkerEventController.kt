@@ -3,15 +3,14 @@ package com.mapconductor.googlemaps.marker
 import com.mapconductor.core.marker.MarkerEntityInterface
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerState
+import com.mapconductor.core.marker.NativeMarkerClickTargetInterface
 import com.mapconductor.core.marker.OnMarkerEventHandler
 import com.mapconductor.core.marker.StrategyMarkerController
 import com.mapconductor.googlemaps.GoogleMapActualMarker
 
-internal interface GoogleMapMarkerEventControllerInterface : MarkerEventControllerInterface<GoogleMapActualMarker> {
-    fun getEntity(id: String): MarkerEntityInterface<GoogleMapActualMarker>?
-
-    fun dispatchClick(state: MarkerState)
-
+internal interface GoogleMapMarkerEventControllerInterface :
+    MarkerEventControllerInterface<GoogleMapActualMarker>,
+    NativeMarkerClickTargetInterface<GoogleMapActualMarker> {
     fun dispatchDragStart(state: MarkerState)
 
     fun dispatchDrag(state: MarkerState)
