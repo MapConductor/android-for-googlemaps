@@ -230,21 +230,6 @@ public final class com.mapconductor.googlemaps.marker.BitmapDescriptorCache {
   public final void clearCache();
   public final int getCacheSize();
 }
-public final class com.mapconductor.googlemaps.marker.DefaultGoogleMapMarkerEventController implements com.mapconductor.googlemaps.marker.GoogleMapMarkerEventControllerInterface {
-  public com.mapconductor.googlemaps.marker.DefaultGoogleMapMarkerEventController(com.mapconductor.googlemaps.marker.GoogleMapMarkerController);
-  public com.mapconductor.core.marker.MarkerEntityInterface<com.google.android.gms.maps.model.Marker> getEntity(java.lang.String);
-  public com.mapconductor.core.marker.MarkerEntityInterface<com.google.android.gms.maps.model.Marker> find(com.mapconductor.core.features.GeoPointInterface);
-  public void dispatchClick(com.mapconductor.core.marker.MarkerState);
-  public void dispatchDragStart(com.mapconductor.core.marker.MarkerState);
-  public void dispatchDrag(com.mapconductor.core.marker.MarkerState);
-  public void dispatchDragEnd(com.mapconductor.core.marker.MarkerState);
-  public void setClickListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public void setDragStartListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public void setDragListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public void setDragEndListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public void setAnimateStartListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public void setAnimateEndListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-}
 public final class com.mapconductor.googlemaps.marker.GoogleMapMarkerController extends com.mapconductor.core.marker.AbstractMarkerController<com.google.android.gms.maps.model.Marker> implements com.mapconductor.googlemaps.marker.GoogleMapMarkerControllerInterface, com.mapconductor.core.controller.OnCameraChangeReceiverInterface {
   public static final com.mapconductor.googlemaps.marker.GoogleMapMarkerController$Companion Companion;
   public java.lang.Object add(java.util.List<com.mapconductor.core.marker.MarkerState>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
@@ -264,17 +249,6 @@ public final class com.mapconductor.googlemaps.marker.GoogleMapMarkerControllerI
   public static boolean has(com.mapconductor.googlemaps.marker.GoogleMapMarkerControllerInterface, java.lang.String);
   public static void setClickListenerAny(com.mapconductor.googlemaps.marker.GoogleMapMarkerControllerInterface, java.lang.Object);
 }
-public interface com.mapconductor.googlemaps.marker.GoogleMapMarkerEventControllerInterface extends com.mapconductor.core.marker.MarkerEventControllerInterface<com.google.android.gms.maps.model.Marker>, com.mapconductor.core.marker.NativeMarkerClickTargetInterface<com.google.android.gms.maps.model.Marker>, com.mapconductor.core.marker.GeoMarkerClickTargetInterface<com.google.android.gms.maps.model.Marker> {
-  public abstract void dispatchDragStart(com.mapconductor.core.marker.MarkerState);
-  public abstract void dispatchDrag(com.mapconductor.core.marker.MarkerState);
-  public abstract void dispatchDragEnd(com.mapconductor.core.marker.MarkerState);
-  public abstract void setClickListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public abstract void setDragStartListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public abstract void setDragListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public abstract void setDragEndListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public abstract void setAnimateStartListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public abstract void setAnimateEndListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-}
 public final class com.mapconductor.googlemaps.marker.GoogleMapMarkerRenderer extends com.mapconductor.core.marker.AbstractMarkerOverlayRenderer<com.mapconductor.googlemaps.GoogleMapViewHolder, com.google.android.gms.maps.model.Marker> {
   public com.mapconductor.googlemaps.marker.GoogleMapMarkerRenderer(com.mapconductor.googlemaps.GoogleMapViewHolder, kotlinx.coroutines.CoroutineScope);
   public com.mapconductor.googlemaps.marker.GoogleMapMarkerRenderer(com.mapconductor.googlemaps.GoogleMapViewHolder, kotlinx.coroutines.CoroutineScope, int, kotlin.jvm.internal.DefaultConstructorMarker);
@@ -288,21 +262,6 @@ public final class com.mapconductor.googlemaps.marker.GoogleMapMarkerRenderer ex
 }
 public interface com.mapconductor.googlemaps.marker.MarkerTileRasterLayerCallback {
   public abstract java.lang.Object onRasterLayerUpdate(com.mapconductor.core.raster.RasterLayerState, kotlin.coroutines.Continuation<? super kotlin.Unit>);
-}
-public final class com.mapconductor.googlemaps.marker.StrategyGoogleMapMarkerEventController implements com.mapconductor.googlemaps.marker.GoogleMapMarkerEventControllerInterface {
-  public com.mapconductor.googlemaps.marker.StrategyGoogleMapMarkerEventController(com.mapconductor.core.marker.StrategyMarkerController<com.google.android.gms.maps.model.Marker>);
-  public com.mapconductor.core.marker.MarkerEntityInterface<com.google.android.gms.maps.model.Marker> getEntity(java.lang.String);
-  public com.mapconductor.core.marker.MarkerEntityInterface<com.google.android.gms.maps.model.Marker> find(com.mapconductor.core.features.GeoPointInterface);
-  public void dispatchClick(com.mapconductor.core.marker.MarkerState);
-  public void dispatchDragStart(com.mapconductor.core.marker.MarkerState);
-  public void dispatchDrag(com.mapconductor.core.marker.MarkerState);
-  public void dispatchDragEnd(com.mapconductor.core.marker.MarkerState);
-  public void setClickListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public void setDragStartListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public void setDragListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public void setDragEndListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public void setAnimateStartListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public void setAnimateEndListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
 }
 public final class com.mapconductor.googlemaps.polygon.GoogleMapPolygonController extends com.mapconductor.core.polygon.PolygonController<com.google.android.gms.maps.model.Polygon> implements com.mapconductor.googlemaps.polygon.GoogleMapPolygonControllerInterface {
   public com.mapconductor.googlemaps.polygon.GoogleMapPolygonController(com.mapconductor.core.polygon.PolygonManagerInterface<com.google.android.gms.maps.model.Polygon>, com.mapconductor.googlemaps.polygon.GoogleMapPolygonOverlayRenderer);

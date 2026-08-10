@@ -19,6 +19,7 @@ import com.mapconductor.core.groundimage.OnGroundImageEventHandler
 import com.mapconductor.core.map.CameraRestriction
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapUISettings
+import com.mapconductor.core.marker.DefaultMarkerEventController
 import com.mapconductor.core.marker.MarkerAnimationOverlayHost
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
@@ -31,11 +32,8 @@ import com.mapconductor.core.polyline.OnPolylineEventHandler
 import com.mapconductor.core.polyline.PolylineState
 import com.mapconductor.googlemaps.circle.GoogleMapCircleController
 import com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageController
-import com.mapconductor.googlemaps.marker.DefaultGoogleMapMarkerEventController
 import com.mapconductor.googlemaps.marker.GoogleMapMarkerController
-import com.mapconductor.googlemaps.marker.GoogleMapMarkerEventControllerInterface
 import com.mapconductor.googlemaps.marker.GoogleMapMarkerRenderer
-import com.mapconductor.googlemaps.marker.StrategyGoogleMapMarkerEventController
 import com.mapconductor.googlemaps.polygon.GoogleMapPolygonController
 import com.mapconductor.googlemaps.polyline.GoogleMapPolylineController
 import com.mapconductor.googlemaps.raster.GoogleMapRasterLayerController
@@ -65,7 +63,7 @@ class GoogleMapViewController internal constructor(
     OnMarkerClickListener,
     OnMarkerDragListener,
     GoogleMap.OnMapLoadedCallback {
-    internal val markerEventControllers = mutableListOf<GoogleMapMarkerEventControllerInterface>()
+    internal val markerEventControllers = mutableListOf<DefaultMarkerEventController<GoogleMapActualMarker>>()
     private val _mapLoadedState = MutableStateFlow(false)
     val mapLoadedState: StateFlow<Boolean> = _mapLoadedState
     internal var markerClickListener: OnMarkerEventHandler? = null
@@ -82,7 +80,7 @@ class GoogleMapViewController internal constructor(
         registerOverlayController(polylineController)
         registerOverlayController(circleController)
         registerOverlayController(rasterLayerController)
-        registerMarkerEventController(DefaultGoogleMapMarkerEventController(markerController))
+        registerMarkerEventController(DefaultMarkerEventController(markerController))
 
         // Wire up the RasterLayer callback for marker tile rendering
         markerController.setRasterLayerCallback { state ->
@@ -297,10 +295,11 @@ class GoogleMapViewController internal constructor(
 
     fun createMarkerEventController(
         controller: StrategyMarkerController<GoogleMapActualMarker>,
-    ): MarkerEventControllerInterface<GoogleMapActualMarker> = StrategyGoogleMapMarkerEventController(controller)
+    ): MarkerEventControllerInterface<GoogleMapActualMarker> = DefaultMarkerEventController(controller)
 
     fun registerMarkerEventController(controller: MarkerEventControllerInterface<GoogleMapActualMarker>) {
-        val typed = controller as? GoogleMapMarkerEventControllerInterface ?: return
+        @Suppress("UNCHECKED_CAST")
+        val typed = controller as? DefaultMarkerEventController<GoogleMapActualMarker> ?: return
         registerMarkerEventController(typed)
     }
 
@@ -312,7 +311,7 @@ class GoogleMapViewController internal constructor(
         private const val INITIAL_CAMERA_UPDATE_MAX_ATTEMPTS = 10
     }
 
-    internal fun registerMarkerEventController(controller: GoogleMapMarkerEventControllerInterface) {
+    internal fun registerMarkerEventController(controller: DefaultMarkerEventController<GoogleMapActualMarker>) {
         if (markerEventControllers.contains(controller)) return
         markerEventControllers.add(controller)
         controller.setClickListener(markerClickListener)
