@@ -89,6 +89,11 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.common.java8)
 
+    // CancellableContinuation.resume の 3 引数 onCancellation は coroutines 1.9 以降。
+    // 明示しないと推移的に 1.7.3 が入り、単体ビルドだけがコンパイルエラーになる
+    // （集約ビルドの catalog は 1.9.0 を指しているので気づけない）。
+    implementation(libs.kotlinx.coroutines.android)
+
     // Google Maps SDK
     api(libs.play.services.maps)
     if (findProject(":android-sdk-compose") != null) {
