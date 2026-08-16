@@ -1,6 +1,5 @@
 package com.mapconductor.googlemaps
 
-import android.util.Log
 import com.google.android.gms.maps.model.CameraPosition
 import com.mapconductor.core.features.GeoPoint
 import com.mapconductor.core.map.MapCameraPosition

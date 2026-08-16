@@ -18,6 +18,8 @@ import com.mapconductor.core.OnMapLoadedHandler
 import com.mapconductor.core.map.CameraRestriction
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
+import com.mapconductor.core.map.MapCapability
+import com.mapconductor.core.map.MapCapabilityStatus
 import com.mapconductor.core.map.MutableMapServiceRegistry
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
@@ -197,6 +199,17 @@ fun createGoogleMapViewController(
         )
 
     serviceRegistry?.let { registry ->
+        // オーバーレイをタップに対して透過させられるか（実測 2026-08-09）。
+        // Polygon / Polyline / Circle / GroundOverlay は clickable(false) で透過し、
+        // OnMapClickListener が発火するのでコアのカスケードへ寄せてある。
+        // ただし Marker には clickable 相当の API が無く、タップは常に消費される。
+        registry.declare(
+            MapCapability.ClickPassthrough,
+            MapCapabilityStatus.Degraded(
+                "overlays pass taps through, but Marker has no clickable flag so marker taps " +
+                    "are always consumed by the SDK",
+            ),
+        )
         registry.put(
             MarkerRenderingSupportKey,
             object : MarkerRenderingSupport<GoogleMapActualMarker> {

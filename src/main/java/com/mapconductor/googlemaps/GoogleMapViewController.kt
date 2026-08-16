@@ -9,34 +9,31 @@ import com.google.android.gms.maps.GoogleMap.OnMapClickListener
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
 import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener
 import com.google.android.gms.maps.model.LatLng
-import com.mapconductor.core.circle.CircleState
 import com.mapconductor.core.circle.OnCircleEventHandler
 import com.mapconductor.core.controller.BaseMapViewController
 import com.mapconductor.core.features.GeoPoint
+import com.mapconductor.core.features.GeoPointInterface
 import com.mapconductor.core.features.GeoRectBounds
 import com.mapconductor.core.groundimage.GroundImageState
 import com.mapconductor.core.groundimage.OnGroundImageEventHandler
 import com.mapconductor.core.map.CameraRestriction
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapUISettings
+import com.mapconductor.core.marker.DefaultMarkerEventController
 import com.mapconductor.core.marker.MarkerAnimationOverlayHost
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
-import com.mapconductor.core.marker.MarkerState
 import com.mapconductor.core.marker.OnMarkerEventHandler
 import com.mapconductor.core.marker.StrategyMarkerController
+import com.mapconductor.core.marker.dispatchGeoMarkerClick
+import com.mapconductor.core.marker.dispatchNativeMarkerClick
 import com.mapconductor.core.polygon.OnPolygonEventHandler
-import com.mapconductor.core.polygon.PolygonState
 import com.mapconductor.core.polyline.OnPolylineEventHandler
 import com.mapconductor.core.polyline.PolylineState
-import com.mapconductor.core.raster.RasterLayerState
 import com.mapconductor.googlemaps.circle.GoogleMapCircleController
 import com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageController
-import com.mapconductor.googlemaps.marker.DefaultGoogleMapMarkerEventController
 import com.mapconductor.googlemaps.marker.GoogleMapMarkerController
-import com.mapconductor.googlemaps.marker.GoogleMapMarkerEventControllerInterface
 import com.mapconductor.googlemaps.marker.GoogleMapMarkerRenderer
-import com.mapconductor.googlemaps.marker.StrategyGoogleMapMarkerEventController
 import com.mapconductor.googlemaps.polygon.GoogleMapPolygonController
 import com.mapconductor.googlemaps.polyline.GoogleMapPolylineController
 import com.mapconductor.googlemaps.raster.GoogleMapRasterLayerController
@@ -66,7 +63,7 @@ class GoogleMapViewController internal constructor(
     OnMarkerClickListener,
     OnMarkerDragListener,
     GoogleMap.OnMapLoadedCallback {
-    internal val markerEventControllers = mutableListOf<GoogleMapMarkerEventControllerInterface>()
+    internal val markerEventControllers = mutableListOf<DefaultMarkerEventController<GoogleMapActualMarker>>()
     private val _mapLoadedState = MutableStateFlow(false)
     val mapLoadedState: StateFlow<Boolean> = _mapLoadedState
     internal var markerClickListener: OnMarkerEventHandler? = null
@@ -83,7 +80,7 @@ class GoogleMapViewController internal constructor(
         registerOverlayController(polylineController)
         registerOverlayController(circleController)
         registerOverlayController(rasterLayerController)
-        registerMarkerEventController(DefaultGoogleMapMarkerEventController(markerController))
+        registerMarkerEventController(DefaultMarkerEventController(markerController))
 
         // Wire up the RasterLayer callback for marker tile rendering
         markerController.setRasterLayerCallback { state ->
@@ -123,6 +120,16 @@ class GoogleMapViewController internal constructor(
     override fun onCameraMoveCanceled() = handleCameraMoveCanceled()
 
     override fun onMapClick(position: LatLng) = handleMapClick(position)
+
+    /**
+     * タイル描画されたマーカーのヒットテスト。
+     *
+     * ネイティブの `Marker` として描かれたものは `OnMarkerClickListener` が先に消費するので
+     * ここへは来ない（[com.mapconductor.core.marker.dispatchNativeMarkerClick]）。
+     * 呼び出し元がメインスレッドなので `Projection` を触ってよい。
+     */
+    override fun dispatchMarkerTap(position: GeoPointInterface): Boolean =
+        markerEventControllers.dispatchGeoMarkerClick(position)
 
     // 拡張ファイル（Camera / Gestures）からは基底クラスの protected へ触れないため、
     // ここで internal の入口を用意しておく。
@@ -173,38 +180,14 @@ class GoogleMapViewController internal constructor(
         rasterLayerController.clear()
     }
 
-    override suspend fun compositionMarkers(data: List<MarkerState>) = markerController.add(data)
-
     override fun setMarkerAnimationOverlayHost(host: MarkerAnimationOverlayHost?) {
         (markerController.renderer as GoogleMapMarkerRenderer).animationOverlayHost = host
     }
-
-    override suspend fun updateMarker(state: MarkerState) = markerController.update(state)
-
-    override suspend fun compositionCircles(data: List<CircleState>) = circleController.add(data)
-
-    override suspend fun updateCircle(state: CircleState) = circleController.update(state)
-
-    override suspend fun compositionRasterLayers(data: List<RasterLayerState>) = rasterLayerController.add(data)
-
-    override suspend fun updateRasterLayer(state: RasterLayerState) = rasterLayerController.update(state)
 
     @Deprecated("Use CircleState.onClick instead.")
     override fun setOnCircleClickListener(listener: OnCircleEventHandler?) {
         this.circleController.clickListener = listener
     }
-
-    override suspend fun compositionPolylines(data: List<PolylineState>) = polylineController.add(data)
-
-    override suspend fun updatePolyline(state: PolylineState) = polylineController.update(state)
-
-    override suspend fun compositionGroundImages(data: List<GroundImageState>) = groundImageController.add(data)
-
-    override suspend fun updateGroundImage(state: GroundImageState) = groundImageController.update(state)
-
-    override suspend fun compositionPolygons(data: List<PolygonState>) = polygonController.add(data)
-
-    override suspend fun updatePolygon(state: PolygonState) = polygonController.update(state)
 
     @Deprecated("Use MarkerState.onDragStart instead.")
     override fun setOnMarkerDragStart(listener: OnMarkerEventHandler?) {
@@ -242,22 +225,13 @@ class GoogleMapViewController internal constructor(
         markerEventControllers.forEach { it.setClickListener(listener) }
     }
 
-    override fun hasMarker(state: MarkerState): Boolean = this.markerController.markerManager.hasEntity(state.id)
-
     override fun hasPolyline(state: PolylineState): Boolean =
         this.polylineController.polylineManager
             .hasEntity(state.id)
 
-    override fun hasPolygon(state: PolygonState): Boolean = this.polygonController.polygonManager.hasEntity(state.id)
-
-    override fun hasCircle(state: CircleState): Boolean = this.circleController.circleManager.hasEntity(state.id)
-
     override fun hasGroundImage(state: GroundImageState): Boolean =
         this.groundImageController.groundImageManager
             .hasEntity(state.id)
-
-    override fun hasRasterLayer(state: RasterLayerState): Boolean =
-        this.rasterLayerController.rasterLayerManager.hasEntity(state.id)
 
     @Deprecated("Use GroundImageState.onClick instead.")
     override fun setOnGroundImageClickListener(listener: OnGroundImageEventHandler?) {
@@ -321,10 +295,11 @@ class GoogleMapViewController internal constructor(
 
     fun createMarkerEventController(
         controller: StrategyMarkerController<GoogleMapActualMarker>,
-    ): MarkerEventControllerInterface<GoogleMapActualMarker> = StrategyGoogleMapMarkerEventController(controller)
+    ): MarkerEventControllerInterface<GoogleMapActualMarker> = DefaultMarkerEventController(controller)
 
     fun registerMarkerEventController(controller: MarkerEventControllerInterface<GoogleMapActualMarker>) {
-        val typed = controller as? GoogleMapMarkerEventControllerInterface ?: return
+        @Suppress("UNCHECKED_CAST")
+        val typed = controller as? DefaultMarkerEventController<GoogleMapActualMarker> ?: return
         registerMarkerEventController(typed)
     }
 
@@ -336,7 +311,7 @@ class GoogleMapViewController internal constructor(
         private const val INITIAL_CAMERA_UPDATE_MAX_ATTEMPTS = 10
     }
 
-    internal fun registerMarkerEventController(controller: GoogleMapMarkerEventControllerInterface) {
+    internal fun registerMarkerEventController(controller: DefaultMarkerEventController<GoogleMapActualMarker>) {
         if (markerEventControllers.contains(controller)) return
         markerEventControllers.add(controller)
         controller.setClickListener(markerClickListener)
@@ -347,16 +322,20 @@ class GoogleMapViewController internal constructor(
         controller.setAnimateEndListener(markerAnimateEndListener)
     }
 
-    override fun onMarkerClick(marker: GoogleMapActualMarker): Boolean {
-        val stateId = marker.tag as? String ?: return false
-        markerEventControllers.forEach { controller ->
-            val entity = controller.getEntity(stateId) ?: return@forEach
-            if (!entity.state.clickable) return true
-            controller.dispatchClick(entity.state)
-            return true
-        }
-        return false
-    }
+    /**
+     * ネイティブのマーカークリック。
+     *
+     * Google Maps の `Marker` には clickable 相当の API が無く、マーカーをタップすると
+     * SDK がイベントを消費して `OnMapClickListener` が発火しないため、他のオーバーレイ
+     * （polygon / polyline / circle は `.clickable(false)` にして地図クリックへ寄せている）
+     * と違い、ここだけネイティブのリスナーを使わざるを得ない。
+     *
+     * 判断はコアの [dispatchNativeMarkerClick] に一本化してある（TomTom も同じ経路）。
+     * false を返すと SDK の既定動作（情報ウィンドウ＋カメラ移動）になるので、
+     * アプリが `getMapViewHolder().map` へ直接追加したマーカーはそちらで処理される。
+     */
+    override fun onMarkerClick(marker: GoogleMapActualMarker): Boolean =
+        markerEventControllers.dispatchNativeMarkerClick(marker.tag)
 
     override fun onMarkerDrag(marker: GoogleMapActualMarker) {
         val stateId = marker.tag as? String ?: return

@@ -1,85 +1,29 @@
 package com.mapconductor.googlemaps
 
 import com.google.android.gms.maps.model.LatLng
-import com.mapconductor.core.circle.CircleEvent
-import com.mapconductor.core.groundimage.GroundImageEvent
-import com.mapconductor.core.polygon.PolygonEvent
-import com.mapconductor.core.polyline.PolylineEvent
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-// 地図のタップ処理。
-// タップは**マーカーが先**で、どのマーカーにも当たらなかったときだけ
-// 地図のタップとして扱う（android の他プロバイダと同じ順序）。
+/**
+ * 地図のタップ処理。
+ *
+ * カスケード（marker → circle → groundImage → polyline → polygon → map）は
+ * コアの [com.mapconductor.core.controller.BaseMapViewController.dispatchTap] が回す。
+ *
+ * ## なぜメインスレッドへ寄せるか
+ *
+ * マーカーのヒットテストはアイコン矩形で判定するため座標を画面へ投影する。
+ * Google Maps の `Projection` は UI スレッドから触る前提なので、カスケード全体を
+ * メインで回す（android-for-tomtom も同じ理由でメインに寄せている）。
+ *
+ * ## ネイティブのマーカークリックとの関係
+ *
+ * ネイティブの `Marker` として描かれたマーカーは `OnMarkerClickListener` が先に
+ * 拾うので、ここへは来ない（`MarkerOptions` に clickable 相当が無く、タップしても
+ * `OnMapClickListener` が発火しないため。[com.mapconductor.core.marker.dispatchNativeMarkerClick] 参照）。
+ * ここで拾うのは**タイル描画されたマーカー**で、それは
+ * [GoogleMapViewController.dispatchMarkerTap] が担う。
+ */
 internal fun GoogleMapViewController.handleMapClick(position: LatLng) {
     val touchPosition = position.toGeoPoint()
-    val zoomSnapshot =
-        holder.map.cameraPosition.zoom
-            .toDouble()
-    defaultCoroutine.launch {
-        // マーカーのヒットテストはアイコン矩形で判定するため座標を画面へ投影する。
-        // Google Maps の `Projection` は UI スレッドから触る前提なので、ここだけメインへ切り替える
-        // （android-for-tomtom も同じ理由でメインに寄せている）。
-        val markerEntity =
-            withContext(mainCoroutine.coroutineContext) {
-                markerController.find(touchPosition, zoomSnapshot)
-            }
-        markerEntity?.let { entity ->
-            if (!entity.state.clickable) return@launch
-            mainCoroutine.launch { markerController.dispatchClick(entity.state) }
-            return@launch
-        }
-
-        circleController.find(touchPosition)?.let { entity ->
-            val event =
-                CircleEvent(
-                    state = entity.state,
-                    clicked = touchPosition,
-                )
-            mainCoroutine.launch {
-                circleController.dispatchClick(event)
-            }
-            return@launch
-        }
-
-        groundImageController.find(touchPosition)?.let { entity ->
-            val event =
-                GroundImageEvent(
-                    state = entity.state,
-                    clicked = touchPosition,
-                )
-            mainCoroutine.launch {
-                groundImageController.dispatchClick(event)
-            }
-            return@launch
-        }
-
-        polylineController.findWithClosestPoint(touchPosition)?.let { hitResult ->
-            val event =
-                PolylineEvent(
-                    state = hitResult.entity.state,
-                    clicked = hitResult.closestPoint,
-                )
-            mainCoroutine.launch {
-                polylineController.dispatchClick(event)
-            }
-            return@launch
-        }
-
-        polygonController.find(touchPosition)?.let { entity ->
-            val event =
-                PolygonEvent(
-                    state = entity.state,
-                    clicked = touchPosition,
-                )
-            mainCoroutine.launch {
-                polygonController.dispatchClick(event)
-            }
-            return@launch
-        }
-
-        mapClickHandler()?.let {
-            mainCoroutine.launch { it(position.toGeoPoint()) }
-        }
-    }
+    mainCoroutine.launch { dispatchTap(touchPosition) }
 }
