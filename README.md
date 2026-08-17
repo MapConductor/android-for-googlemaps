@@ -10,6 +10,16 @@ Even you use the wrapper API, but you can still access to the native Google Maps
 
 https://mapconductor.com/setup/android/google-maps/
 
+### API key
+
+This module reads the key from an `AndroidManifest.xml` `<meta-data>` entry:
+
+```xml
+<meta-data android:name="com.google.android.geo.API_KEY" android:value="${GOOGLE_MAPS_API_KEY}" />
+```
+
+Put the value in `secrets.properties` and let the Secrets Gradle Plugin inject it; keep that file out of source control.
+
 ## Usage
 
 ```kotlin
