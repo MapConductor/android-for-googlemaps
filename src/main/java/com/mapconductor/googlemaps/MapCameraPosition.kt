@@ -2,6 +2,7 @@ package com.mapconductor.googlemaps
 
 import com.google.android.gms.maps.model.CameraPosition
 import com.mapconductor.core.features.GeoPoint
+import com.mapconductor.core.map.CameraBearing
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
 import com.mapconductor.core.map.MapPaddings
@@ -22,7 +23,7 @@ fun MapCameraPosition.toCameraPosition(): CameraPosition {
             .target(GeoPoint.from(position).toLatLng())
             .zoom(zoom.toFloat())
             .tilt(tilt.coerceIn(0.0, 60.0).toFloat())
-            .bearing(bearing.toFloat())
+            .bearing(CameraBearing.toNativeHeading(bearing).toFloat())
             .build()
     } else {
         // tilt < 0: 水平線より abs(tilt) 度上方を向く（仰角ビュー）
@@ -33,7 +34,7 @@ fun MapCameraPosition.toCameraPosition(): CameraPosition {
         val tiltAbsRad = Math.toRadians(tiltAbsDeg)
         val altitude = converter.zoomLevelToAltitude(zoom, position.latitude, 0.0)
         val distanceForward = altitude * tan(tiltAbsRad)
-        val target = Spherical.computeOffset(position, distanceForward, bearing)
+        val target = Spherical.computeOffset(position, distanceForward, CameraBearing.toNativeHeading(bearing))
         val adjustedZoom = converter.altitudeToZoomLevel(altitude / cos(tiltAbsRad), target.latitude, 0.0)
 
         return CameraPosition
@@ -41,7 +42,7 @@ fun MapCameraPosition.toCameraPosition(): CameraPosition {
             .target(target.toLatLng())
             .zoom(adjustedZoom.toFloat())
             .tilt(tiltAbsDeg.toFloat())
-            .bearing(bearing.toFloat())
+            .bearing(CameraBearing.toNativeHeading(bearing).toFloat())
             .build()
     }
 }
@@ -71,7 +72,7 @@ fun CameraPosition.toMapCameraPosition(paddings: MapPaddingsInterface = MapPaddi
     return MapCameraPosition(
         position = position,
         zoom = zoom.toDouble(),
-        bearing = bearing.toDouble(),
+        bearing = CameraBearing.bearingFromNativeHeading(bearing.toDouble()),
         tilt = tilt.toDouble(),
         paddings = paddings,
         visibleRegion = null,
