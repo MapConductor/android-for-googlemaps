@@ -20,6 +20,8 @@ import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
 import com.mapconductor.core.map.MapCapability
 import com.mapconductor.core.map.MapCapabilityStatus
+import com.mapconductor.core.raster.RasterTilePreference
+import com.mapconductor.core.raster.RasterTilePreferenceKey
 import com.mapconductor.core.map.MutableMapServiceRegistry
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
@@ -199,6 +201,14 @@ fun createGoogleMapViewController(
         )
 
     serviceRegistry?.let { registry ->
+        // Google displays each overlay tile across 256 dp regardless of its
+        // encoded pixel dimensions. Rasterisers must size style paint for that slot.
+        registry.put(
+            RasterTilePreferenceKey,
+            object : RasterTilePreference {
+                override val preferredTileSize: Int = 256
+            },
+        )
         // オーバーレイをタップに対して透過させられるか（実測 2026-08-09）。
         // Polygon / Polyline / Circle / GroundOverlay は clickable(false) で透過し、
         // OnMapClickListener が発火するのでコアのカスケードへ寄せてある。
