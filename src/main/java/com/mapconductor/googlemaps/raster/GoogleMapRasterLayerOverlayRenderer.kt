@@ -10,6 +10,7 @@ import com.mapconductor.core.raster.RasterLayerOverlayRendererInterface
 import com.mapconductor.core.raster.RasterLayerSource
 import com.mapconductor.core.raster.RasterLayerState
 import com.mapconductor.core.raster.TileScheme
+import com.mapconductor.core.tileserver.TileServerRegistry
 import com.mapconductor.googlemaps.GoogleMapViewHolder
 import okhttp3.Headers
 import okhttp3.OkHttpClient
@@ -32,6 +33,25 @@ class GoogleMapRasterLayerOverlayRenderer(
     private val okHttpClient: OkHttpClient,
     override val coroutine: CoroutineScope = CoroutineScope(Dispatchers.Main),
 ) : RasterLayerOverlayRendererInterface<TileOverlay> {
+    private val localRequests = mutableMapOf<TileOverlay, GoogleLocalTileRequestQueue>()
+
+    internal fun updateLocalZoom(zoom: Double) {
+        localRequests.values.forEach { it.updateZoom(zoom) }
+    }
+
+    internal fun refreshLocalTilesAfterZoom() {
+        // Google backs off retryable null tiles. Reset that backoff after a
+        // zoom settles, so returning to a cancelled zoom does not wait seconds.
+        localRequests.forEach { (overlay, requests) ->
+            if (requests.consumeRetryAfterZoom()) overlay.clearTileCache()
+        }
+    }
+
+    internal fun cancelLocalRequests() {
+        localRequests.values.forEach { it.close() }
+        localRequests.clear()
+    }
+
     private fun isMarkerTileRaster(state: RasterLayerState): Boolean = state.id.startsWith(MARKER_TILE_RASTER_ID_PREFIX)
 
     private fun resolveOverlayZIndex(state: RasterLayerState): Float =
@@ -57,6 +77,7 @@ class GoogleMapRasterLayerOverlayRenderer(
                 val prev = params.prev
                 val next = params.current.state
                 if (prev.state.source != next.source || prev.state.debug != next.debug) {
+                    localRequests.remove(prev.layer)?.close()
                     prev.layer.remove()
                     addLayer(next)
                 } else {
@@ -69,6 +90,7 @@ class GoogleMapRasterLayerOverlayRenderer(
     override suspend fun onRemove(data: List<RasterLayerEntityInterface<TileOverlay>>) {
         withContext(coroutine.coroutineContext) {
             data.forEach { entity ->
+                localRequests.remove(entity.layer)?.close()
                 entity.layer.remove()
             }
         }
@@ -98,6 +120,16 @@ class GoogleMapRasterLayerOverlayRenderer(
         }
         val requestHeaders = headerBuilder.build()
 
+        // Only this registry's local routes bypass HTTP. Remote raster
+        // sources retain their headers, user agent and OkHttp behaviour.
+        val server = if (tileSpec.template.startsWith("http://127.0.0.1:")) TileServerRegistry.get() else null
+        val requests = if (server != null && tileSpec.template.startsWith("${server.baseUrl}/tiles/")) {
+            GoogleLocalTileRequestQueue { url, cancelled -> server.renderLocalTile(url, cancelled) }.also {
+                it.updateZoom(holder.map.cameraPosition.zoom.toDouble())
+            }
+        } else {
+            null
+        }
         val provider =
             object : TileProvider {
                 private var firstTileLogged = false
@@ -106,7 +138,7 @@ class GoogleMapRasterLayerOverlayRenderer(
                     x: Int,
                     y: Int,
                     zoom: Int,
-                ): Tile {
+                ): Tile? {
                     if (!firstTileLogged) {
                         firstTileLogged = true
                     }
@@ -122,6 +154,18 @@ class GoogleMapRasterLayerOverlayRenderer(
                             .replace("{x}", x.toString())
                             .replace("{y}", schemeY.toString())
                             .replace("{z}", zoom.toString())
+
+                    if (requests != null) {
+                        // A cancelled/failed tile is retryable. NO_TILE would
+                        // cache a permanent hole when this zoom is revisited.
+                        val bytes = runCatching { requests.renderTile(url, zoom) }.getOrNull() ?: return null
+                        val rendered = if (state.debug) {
+                            addDebugOverlay(bytes, tileSpec.tileSize, x, schemeY, zoom, tileSpec.scheme)
+                        } else {
+                            bytes
+                        }
+                        return Tile(tileSpec.tileSize, tileSpec.tileSize, rendered)
+                    }
 
                     val request: Request =
                         Request
@@ -170,6 +214,9 @@ class GoogleMapRasterLayerOverlayRenderer(
                 .transparency(opacityToTransparency(state.opacity))
                 .visible(state.visible)
         val overlay = holder.map.addTileOverlay(options)
+        if (requests != null) {
+            if (overlay != null) localRequests[overlay] = requests else requests.close()
+        }
         return overlay
     }
 

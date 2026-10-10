@@ -308,6 +308,8 @@ public final class com.mapconductor.googlemaps.polyline.GoogleMapPolylineOverlay
 public final class com.mapconductor.googlemaps.raster.GoogleMapRasterLayerController extends com.mapconductor.core.raster.RasterLayerController<com.google.android.gms.maps.model.TileOverlay> implements com.mapconductor.googlemaps.raster.GoogleMapRasterLayerControllerInterface {
   public com.mapconductor.googlemaps.raster.GoogleMapRasterLayerController(com.mapconductor.core.raster.RasterLayerManagerInterface<com.google.android.gms.maps.model.TileOverlay>, com.mapconductor.googlemaps.raster.GoogleMapRasterLayerOverlayRenderer);
   public com.mapconductor.googlemaps.raster.GoogleMapRasterLayerController(com.mapconductor.core.raster.RasterLayerManagerInterface, com.mapconductor.googlemaps.raster.GoogleMapRasterLayerOverlayRenderer, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public java.lang.Object onCameraChanged(com.mapconductor.core.map.MapCameraPosition, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public void destroy();
 }
 public interface com.mapconductor.googlemaps.raster.GoogleMapRasterLayerControllerInterface extends com.mapconductor.core.controller.OverlayControllerInterface<com.mapconductor.core.raster.RasterLayerState, com.mapconductor.core.raster.RasterLayerEntityInterface<com.google.android.gms.maps.model.TileOverlay>> {
 }
