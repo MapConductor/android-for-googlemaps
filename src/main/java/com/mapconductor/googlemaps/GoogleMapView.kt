@@ -20,8 +20,7 @@ import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
 import com.mapconductor.core.map.MapCapability
 import com.mapconductor.core.map.MapCapabilityStatus
-import com.mapconductor.core.raster.RasterTilePreference
-import com.mapconductor.core.raster.RasterTilePreferenceKey
+import com.mapconductor.core.map.MapViewStyle
 import com.mapconductor.core.map.MutableMapServiceRegistry
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
@@ -30,6 +29,8 @@ import com.mapconductor.core.marker.MarkerRenderingSupport
 import com.mapconductor.core.marker.MarkerRenderingSupportKey
 import com.mapconductor.core.marker.MarkerTilingOptions
 import com.mapconductor.core.marker.StrategyMarkerController
+import com.mapconductor.core.raster.RasterTilePreference
+import com.mapconductor.core.raster.RasterTilePreferenceKey
 import com.mapconductor.googlemaps.circle.GoogleMapCircleController
 import com.mapconductor.googlemaps.circle.GoogleMapCircleOverlayRenderer
 import com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageController
@@ -60,6 +61,15 @@ fun GoogleMapView(
     onCameraMoveStart: OnCameraMoveHandler? = null,
     onCameraMove: OnCameraMoveHandler? = null,
     onCameraMoveEnd: OnCameraMoveHandler? = null,
+    /**
+     * How the map looks, when the app states it rather than naming a design.
+     *
+     * A vector style *is* the basemap. `com.mapconductor:vectorstyle` builds
+     * one; what happens underneath depends on this backend and the app does
+     * not have to know.
+     */
+    style: MapViewStyle? = null,
+    onStyleDiagnostics: ((List<String>) -> Unit)? = null,
     content: (@Composable GoogleMapViewScope.() -> Unit)? = null,
 ) {
     val scope = remember { GoogleMapViewScope() } // Use specific scope
@@ -171,6 +181,8 @@ fun GoogleMapView(
         // Pass content if it needs to be rendered within the overlay providers in MapViewBase,
         // or handle it here if it's specific to GoogleMapView structure before calling MapViewBase.
         // For now, assuming content relates to overlay definitions.
+        style = style,
+        onStyleDiagnostics = onStyleDiagnostics,
         content = content, // This might need adjustment based on how overlays are handled
     )
 }

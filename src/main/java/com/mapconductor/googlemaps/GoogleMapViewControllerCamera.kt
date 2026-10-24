@@ -74,6 +74,7 @@ internal fun GoogleMapViewController.handleCameraMove() {
 }
 
 internal fun GoogleMapViewController.handleCameraIdle() {
+    rasterLayerController.onCameraIdle()
     val mapCameraPosition = getMapCameraPosition()
     defaultCoroutine.launch { markerController.onCameraChanged(mapCameraPosition) }
     emitCameraMoveEnd(getMapCameraPosition())
