@@ -22,6 +22,7 @@ import com.mapconductor.core.tileserver.TileServerRegistry
 import com.mapconductor.googlemaps.GoogleMapActualMarker
 import com.mapconductor.googlemaps.GoogleMapViewHolder
 import java.util.UUID
+import kotlin.math.floor
 import kotlin.time.Duration.Companion.milliseconds
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
@@ -59,7 +60,12 @@ internal class GoogleMapMarkerController private constructor(
     private val defaultMarkerIcon: BitmapIcon = DefaultMarkerIcon().toBitmapIcon()
     private val tiledMarkerIds = LinkedHashSet<String>()
 
+    // タイルを描くスレッドからも読む（[displayTileZoom]）。
+    @Volatile
     private var lastKnownZoom: Double = 0.0
+
+    /** 前回タイルを描き直したときの [displayTileZoom]。 */
+    private var lastDisplayTileZoom: Int? = null
 
     // Tile rendering via RasterLayer
     private val tileServer = TileServerRegistry.get()
@@ -255,8 +261,19 @@ internal class GoogleMapMarkerController private constructor(
         viewportSwitch.onCameraChanged(mapCameraPosition)
         lastKnownZoom = mapCameraPosition.zoom
 
-        // Also update the MarkerTileRenderer's camera zoom for fractional zoom support
+        // Google Maps は切り捨てたズームのタイルを出す。マーカーとラベルを MapLibre 系と
+        // 同じ大きさに見せるため、タイルは四捨五入したズームに合わせて描いている
+        // （[MarkerTileRenderer] の displayTileZoom）。それが変わったら、地図が持っている
+        // タイルは大きさが合わなくなるので取り直させる。
+        val displayZoom = displayTileZoom()
+        if (displayZoom != lastDisplayTileZoom) {
+            lastDisplayTileZoom = displayZoom
+            if (markerTileRenderer != null) scheduleTileRefresh()
+        }
     }
+
+    /** カメラのズームを四捨五入したズーム（MapLibre 系がタイルに使うズーム）。 */
+    private fun displayTileZoom(): Int = floor(lastKnownZoom + 0.5).toInt()
 
     /**
      * マーカータイルのラスターレイヤの表示だけを切り替える。
@@ -366,6 +383,7 @@ internal class GoogleMapMarkerController private constructor(
                 debugTileOverlay = markerTiling.debugTileOverlay,
                 iconScaleCallback = markerTiling.iconScaleCallback,
                 declutterPx = markerTiling.declutterPx,
+                displayTileZoom = ::displayTileZoom,
             )
         markerTileRenderer = tileRenderer
 
