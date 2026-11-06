@@ -17,6 +17,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.util.concurrent.atomic.AtomicLong
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -39,7 +40,7 @@ class GoogleMapRasterLayerOverlayRenderer(
     private val localRequests = mutableMapOf<TileOverlay, GoogleLocalTileRequestQueue>()
 
     /** 各オーバーレイがタイルを最後に返した時刻。差し替えた古い方を外す時機に使う。 */
-    private val tileActivity = mutableMapOf<TileOverlay, TileActivity>()
+    private val tileActivity = mutableMapOf<TileOverlay, AtomicLong>()
 
     /** 差し替え済みで、新しい方のタイルが揃うのを待って外す古いオーバーレイ。 */
     private val retiring = mutableSetOf<TileOverlay>()
@@ -130,7 +131,7 @@ class GoogleMapRasterLayerOverlayRenderer(
             while (true) {
                 val now = SystemClock.elapsedRealtime()
                 if (now - start >= RETIRE_TIMEOUT_MS) break
-                val last = activity?.lastServedAt ?: 0L
+                val last = activity?.get() ?: 0L
                 if (last > 0L && now - last >= RETIRE_QUIET_MS) break
                 delay(RETIRE_POLL_MS)
             }
@@ -139,11 +140,6 @@ class GoogleMapRasterLayerOverlayRenderer(
                 old.remove()
             }
         }
-    }
-
-    private class TileActivity {
-        @Volatile
-        var lastServedAt: Long = 0L
     }
 
     override suspend fun onPostProcess() {}
@@ -180,7 +176,7 @@ class GoogleMapRasterLayerOverlayRenderer(
         } else {
             null
         }
-        val activity = TileActivity()
+        val activity = AtomicLong(0L)
         val provider =
             object : TileProvider {
                 private var firstTileLogged = false
@@ -210,7 +206,7 @@ class GoogleMapRasterLayerOverlayRenderer(
                         // A cancelled/failed tile is retryable. NO_TILE would
                         // cache a permanent hole when this zoom is revisited.
                         val bytes = runCatching { requests.renderTile(url, zoom) }.getOrNull() ?: return null
-                        activity.lastServedAt = SystemClock.elapsedRealtime()
+                        activity.set(SystemClock.elapsedRealtime())
                         val rendered = if (state.debug) {
                             addDebugOverlay(bytes, tileSpec.tileSize, x, schemeY, zoom, tileSpec.scheme)
                         } else {
@@ -249,7 +245,7 @@ class GoogleMapRasterLayerOverlayRenderer(
                                     imageBytes
                                 }
 
-                            activity.lastServedAt = SystemClock.elapsedRealtime()
+                            activity.set(SystemClock.elapsedRealtime())
                             // Return a new Tile with the image data
                             return Tile(tileSpec.tileSize, tileSpec.tileSize, renderedBytes)
                         }
