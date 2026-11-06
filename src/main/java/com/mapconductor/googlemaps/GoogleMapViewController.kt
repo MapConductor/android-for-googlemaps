@@ -79,6 +79,7 @@ class GoogleMapViewController internal constructor(
         registerOverlayController(polygonController)
         registerOverlayController(polylineController)
         registerOverlayController(circleController)
+        registerOverlayController(groundImageController)
         registerOverlayController(rasterLayerController)
         registerMarkerEventController(DefaultMarkerEventController(markerController))
 
