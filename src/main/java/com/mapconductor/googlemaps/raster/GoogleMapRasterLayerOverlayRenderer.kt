@@ -17,15 +17,19 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.util.concurrent.atomic.AtomicLong
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
+import android.os.SystemClock
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class GoogleMapRasterLayerOverlayRenderer(
@@ -34,6 +38,12 @@ class GoogleMapRasterLayerOverlayRenderer(
     override val coroutine: CoroutineScope = CoroutineScope(Dispatchers.Main),
 ) : RasterLayerOverlayRendererInterface<TileOverlay> {
     private val localRequests = mutableMapOf<TileOverlay, GoogleLocalTileRequestQueue>()
+
+    /** 各オーバーレイがタイルを最後に返した時刻。差し替えた古い方を外す時機に使う。 */
+    private val tileActivity = mutableMapOf<TileOverlay, AtomicLong>()
+
+    /** 差し替え済みで、新しい方のタイルが揃うのを待って外す古いオーバーレイ。 */
+    private val retiring = mutableSetOf<TileOverlay>()
 
     internal fun updateLocalZoom(zoom: Double) {
         localRequests.values.forEach { it.updateZoom(zoom) }
@@ -77,9 +87,12 @@ class GoogleMapRasterLayerOverlayRenderer(
                 val prev = params.prev
                 val next = params.current.state
                 if (prev.state.source != next.source || prev.state.debug != next.debug) {
+                    // 先に外すと、新しいタイルが届くまでの間（マーカータイルで 0.3 秒ほど）
+                    // レイヤーが丸ごと消えて点滅する。新しい方を足してから古い方を外す。
                     localRequests.remove(prev.layer)?.close()
-                    prev.layer.remove()
-                    addLayer(next)
+                    val added = addLayer(next)
+                    retireWhenReplaced(prev.layer, added)
+                    added
                 } else {
                     updateLayer(prev.layer, next)
                     prev.layer
@@ -91,7 +104,40 @@ class GoogleMapRasterLayerOverlayRenderer(
         withContext(coroutine.coroutineContext) {
             data.forEach { entity ->
                 localRequests.remove(entity.layer)?.close()
+                tileActivity.remove(entity.layer)
                 entity.layer.remove()
+            }
+            retiring.forEach { it.remove() }
+            retiring.clear()
+        }
+    }
+
+    /**
+     * [old] を、[replacement] がタイルを返し終えたころに外す。
+     *
+     * Google Maps にはタイルを描き終えた通知が無いので、新しい方がタイルを 1 枚以上返し、
+     * そのあと [RETIRE_QUIET_MS] のあいだ頼まれなくなったら揃ったとみなす。地図が
+     * 何も頼まない（見えている範囲にタイルが無い）こともあるので、[RETIRE_TIMEOUT_MS] で
+     * 打ち切って外す。
+     */
+    private fun retireWhenReplaced(
+        old: TileOverlay,
+        replacement: TileOverlay?,
+    ) {
+        retiring.add(old)
+        val activity = replacement?.let { tileActivity[it] }
+        coroutine.launch {
+            val start = SystemClock.elapsedRealtime()
+            while (true) {
+                val now = SystemClock.elapsedRealtime()
+                if (now - start >= RETIRE_TIMEOUT_MS) break
+                val last = activity?.get() ?: 0L
+                if (last > 0L && now - last >= RETIRE_QUIET_MS) break
+                delay(RETIRE_POLL_MS)
+            }
+            if (retiring.remove(old)) {
+                tileActivity.remove(old)
+                old.remove()
             }
         }
     }
@@ -130,6 +176,7 @@ class GoogleMapRasterLayerOverlayRenderer(
         } else {
             null
         }
+        val activity = AtomicLong(0L)
         val provider =
             object : TileProvider {
                 private var firstTileLogged = false
@@ -159,6 +206,7 @@ class GoogleMapRasterLayerOverlayRenderer(
                         // A cancelled/failed tile is retryable. NO_TILE would
                         // cache a permanent hole when this zoom is revisited.
                         val bytes = runCatching { requests.renderTile(url, zoom) }.getOrNull() ?: return null
+                        activity.set(SystemClock.elapsedRealtime())
                         val rendered = if (state.debug) {
                             addDebugOverlay(bytes, tileSpec.tileSize, x, schemeY, zoom, tileSpec.scheme)
                         } else {
@@ -197,6 +245,7 @@ class GoogleMapRasterLayerOverlayRenderer(
                                     imageBytes
                                 }
 
+                            activity.set(SystemClock.elapsedRealtime())
                             // Return a new Tile with the image data
                             return Tile(tileSpec.tileSize, tileSpec.tileSize, renderedBytes)
                         }
@@ -214,6 +263,7 @@ class GoogleMapRasterLayerOverlayRenderer(
                 .transparency(opacityToTransparency(state.opacity))
                 .visible(state.visible)
         val overlay = holder.map.addTileOverlay(options)
+        if (overlay != null) tileActivity[overlay] = activity
         if (requests != null) {
             if (overlay != null) localRequests[overlay] = requests else requests.close()
         }
@@ -262,6 +312,14 @@ class GoogleMapRasterLayerOverlayRenderer(
 
     private companion object {
         private const val TAG = "GoogleMapRasterLayerOverlayRenderer"
+
+        /** 新しいオーバーレイへの依頼がこれだけ途切れたら、古い方を外す。 */
+        private const val RETIRE_QUIET_MS = 150L
+
+        /** 新しい方が何も頼まれなくても、古い方はこれだけ待って外す。 */
+        private const val RETIRE_TIMEOUT_MS = 1_500L
+
+        private const val RETIRE_POLL_MS = 30L
         private const val MARKER_TILE_RASTER_ID_PREFIX = "marker-tile-"
     }
 
