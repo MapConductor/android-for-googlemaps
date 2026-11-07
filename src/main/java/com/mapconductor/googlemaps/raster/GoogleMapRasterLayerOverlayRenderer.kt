@@ -45,6 +45,13 @@ class GoogleMapRasterLayerOverlayRenderer(
     /** 差し替え済みで、新しい方のタイルが揃うのを待って外す古いオーバーレイ。 */
     private val retiring = mutableSetOf<TileOverlay>()
 
+    /**
+     * 各オーバーレイに渡したタイルプロバイダ。SDK はオーバーレイを外しても、地図を
+     * 破棄しても、渡されたプロバイダをプロセス共有の表に残す（実測）。そこから
+     * このレンダラ・ホルダー・MapView まで辿れてしまうので、外すときに中身を切り離す。
+     */
+    private val providers = mutableMapOf<TileOverlay, DetachableTileProvider>()
+
     internal fun updateLocalZoom(zoom: Double) {
         localRequests.values.forEach { it.updateZoom(zoom) }
     }
@@ -60,6 +67,27 @@ class GoogleMapRasterLayerOverlayRenderer(
     internal fun cancelLocalRequests() {
         localRequests.values.forEach { it.close() }
         localRequests.clear()
+    }
+
+    /**
+     * Takes every overlay this renderer added off the map. Called when the map
+     * goes away: the SDK keeps a tile overlay's provider in a process-wide
+     * table until the overlay is removed, and the provider reaches this
+     * renderer and through it the map view. Must run on the main thread, before
+     * the MapView is destroyed.
+     */
+    internal fun removeAllLayers() {
+        cancelLocalRequests()
+        (tileActivity.keys + retiring).forEach { overlay -> runCatching { overlay.remove() } }
+        tileActivity.clear()
+        retiring.clear()
+        providers.values.forEach { it.detach() }
+        providers.clear()
+    }
+
+    private fun forget(overlay: TileOverlay) {
+        tileActivity.remove(overlay)
+        providers.remove(overlay)?.detach()
     }
 
     private fun isMarkerTileRaster(state: RasterLayerState): Boolean = state.id.startsWith(MARKER_TILE_RASTER_ID_PREFIX)
@@ -104,10 +132,13 @@ class GoogleMapRasterLayerOverlayRenderer(
         withContext(coroutine.coroutineContext) {
             data.forEach { entity ->
                 localRequests.remove(entity.layer)?.close()
-                tileActivity.remove(entity.layer)
+                forget(entity.layer)
                 entity.layer.remove()
             }
-            retiring.forEach { it.remove() }
+            retiring.forEach {
+                forget(it)
+                it.remove()
+            }
             retiring.clear()
         }
     }
@@ -136,7 +167,7 @@ class GoogleMapRasterLayerOverlayRenderer(
                 delay(RETIRE_POLL_MS)
             }
             if (retiring.remove(old)) {
-                tileActivity.remove(old)
+                forget(old)
                 old.remove()
             }
         }
@@ -256,14 +287,18 @@ class GoogleMapRasterLayerOverlayRenderer(
                     }
                 }
             }
+        val detachable = DetachableTileProvider(provider)
         val options =
             TileOverlayOptions()
-                .tileProvider(provider)
+                .tileProvider(detachable)
                 .zIndex(resolveOverlayZIndex(state))
                 .transparency(opacityToTransparency(state.opacity))
                 .visible(state.visible)
         val overlay = holder.map.addTileOverlay(options)
-        if (overlay != null) tileActivity[overlay] = activity
+        if (overlay != null) {
+            tileActivity[overlay] = activity
+            providers[overlay] = detachable
+        }
         if (requests != null) {
             if (overlay != null) localRequests[overlay] = requests else requests.close()
         }
@@ -303,6 +338,21 @@ class GoogleMapRasterLayerOverlayRenderer(
 
     private fun opacityToTransparency(opacity: Float): Float =
         (1.0f - opacity.coerceIn(0.0f, 1.0f)).coerceIn(0.0f, 1.0f)
+
+    /** SDK に渡すのはこれ。[detach] したあとは何も返さず、元のプロバイダも掴まない。 */
+    private class DetachableTileProvider(
+        @Volatile private var delegate: TileProvider?,
+    ) : TileProvider {
+        override fun getTile(
+            x: Int,
+            y: Int,
+            zoom: Int,
+        ): Tile? = delegate?.getTile(x, y, zoom) ?: NO_TILE
+
+        fun detach() {
+            delegate = null
+        }
+    }
 
     private data class TileSpec(
         val template: String,

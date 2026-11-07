@@ -329,6 +329,10 @@ public final class com.mapconductor.googlemaps.raster.GoogleMapRasterLayerOverla
 }
 final class com.mapconductor.googlemaps.raster.GoogleMapRasterLayerOverlayRenderer$Companion {
 }
+final class com.mapconductor.googlemaps.raster.GoogleMapRasterLayerOverlayRenderer$DetachableTileProvider implements com.google.android.gms.maps.model.TileProvider {
+  public com.google.android.gms.maps.model.Tile getTile(int, int, int);
+  public final void detach();
+}
 final class com.mapconductor.googlemaps.raster.GoogleMapRasterLayerOverlayRenderer$TileSpec {
   public final java.lang.String getTemplate();
   public final int getTileSize();
