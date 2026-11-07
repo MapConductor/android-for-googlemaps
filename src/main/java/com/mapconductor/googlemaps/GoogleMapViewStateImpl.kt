@@ -9,6 +9,7 @@ import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
 import com.mapconductor.core.map.MapPaddings
 import com.mapconductor.core.map.MapViewState
+import com.mapconductor.core.map.MapViewStateBundle
 import com.mapconductor.core.map.MapViewStateInterface
 import java.util.UUID
 import android.os.Bundle
@@ -40,13 +41,17 @@ class GoogleMapViewState(
 
     internal fun setController(controller: GoogleMapViewControllerInterface) {
         this.controller = controller
-//        _mapDesignType.let {
-//            controller.setMapDesignType(it)
-//        }
+        // コントローラが覚えているデザインを state のものにしておく。既定の None のままだと、
+        // 変更リスナーを繋いだ時点で None が state へ返ってきて、復元したデザインを潰す。
+        // 地図は state の mapType で作られているので、地図の見た目は変わらない。
+        controller.setMapDesignType(_mapDesignType)
         attachController(controller)
     }
 
     internal fun onMapDesignTypeChange(value: GoogleMapDesignType) {
+        // 地図から読み戻した値は mapType（Int）から作った定義済みデザインで、attributionRules を
+        // 持たない。同じ mapType なら、アプリが渡した（あるいは復元した）デザインを残す。
+        if (value.getValue() == _mapDesignType.getValue()) return
         _mapDesignType = value
     }
 
@@ -64,25 +69,41 @@ class GoogleMapViewSaver : BaseMapViewSaver<GoogleMapViewState>() {
         state: GoogleMapViewState,
         bundle: Bundle,
     ) {
-        bundle.putInt("id", state.mapDesignType.id)
+        val design = state.mapDesignType
+        bundle.putInt("id", design.id)
+        // 定義済み（Normal など）以外は Custom として戻す。id だけだと Custom の
+        // attributionRules が落ち、定義に無い id は None になってしまう。
+        bundle.putBoolean(KEY_CUSTOM, design !== GoogleMapDesign.toMapDesignType(design.id))
+        MapViewStateBundle.putAttributionRules(bundle, design.attributionRules)
     }
 
     override fun createState(
         stateId: String,
         mapDesignBundle: Bundle?,
         cameraPosition: MapCameraPosition,
-    ): GoogleMapViewState =
-        GoogleMapViewState(
+    ): GoogleMapViewState {
+        val id = mapDesignBundle?.getInt("id", GoogleMapDesign.Normal.id) ?: GoogleMapDesign.Normal.id
+        val design =
+            if (mapDesignBundle?.getBoolean(KEY_CUSTOM) == true) {
+                GoogleMapDesign.Custom(
+                    id = id,
+                    attributionRules = MapViewStateBundle.getAttributionRules(mapDesignBundle),
+                )
+            } else {
+                GoogleMapDesign.Create(id)
+            }
+        return GoogleMapViewState(
             id = stateId,
-            mapDesignType =
-                GoogleMapDesign.Create(
-                    id = mapDesignBundle?.getInt("id") ?: GoogleMapDesign.Normal.id,
-                ),
+            mapDesignType = design,
             cameraPosition = cameraPosition,
         )
+    }
 
     override fun getStateId(state: GoogleMapViewState): String = state.id
 }
+
+// 公開 API の門番（javap）にコンパニオンの定数が載らないよう、ファイル private にする。
+private const val KEY_CUSTOM = "custom"
 
 @Composable
 fun rememberGoogleMapViewState(
