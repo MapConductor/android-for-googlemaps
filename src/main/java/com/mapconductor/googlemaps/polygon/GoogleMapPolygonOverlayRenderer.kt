@@ -6,12 +6,12 @@ import com.google.android.gms.maps.model.PolygonOptions
 import com.mapconductor.core.ResourceProvider
 import com.mapconductor.core.features.GeoPoint
 import com.mapconductor.core.features.GeoPointInterface
+import com.mapconductor.core.geometry.densifyGeodesicRing
 import com.mapconductor.core.polygon.AbstractPolygonOverlayRenderer
 import com.mapconductor.core.polygon.PolygonEntityInterface
 import com.mapconductor.core.polygon.PolygonState
 import com.mapconductor.core.polygon.unionHoles
 import com.mapconductor.core.spherical.Planar
-import com.mapconductor.core.spherical.WGS84Geodesic
 import com.mapconductor.googlemaps.AdaptiveInterpolation
 import com.mapconductor.googlemaps.GoogleMapActualPolygon
 import com.mapconductor.googlemaps.GoogleMapViewHolder
@@ -42,7 +42,9 @@ internal class GoogleMapPolygonOverlayRenderer(
         val key = AdaptiveInterpolation.cacheKey(AdaptiveInterpolation.pointsHash(statePoints), maxSegmentLength)
         interpolationCache.get(key)?.let { return it }
 
-        val geoPoints = WGS84Geodesic.createInterpolatePoints(statePoints, maxSegmentLength = maxSegmentLength)
+        // リングの閉じる辺（末尾 → 先頭）も大圏で補間する。隣り合う点の間だけを補間すると、閉じる辺が
+        // 直線の弦になり、塗りも輪郭（同じネイティブポリゴンの stroke）もそこだけ直線になる。
+        val geoPoints = densifyGeodesicRing(statePoints, maxSegmentLength = maxSegmentLength)
         val points = geoPoints.map { GeoPoint.from(it).toLatLng() }
         interpolationCache.put(key, points)
         return points
