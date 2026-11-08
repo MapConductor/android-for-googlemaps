@@ -37,10 +37,13 @@ class GoogleMapViewState(
             this.controller?.setMapDesignType(value)
         }
         get() = _mapDesignType
-    private var controller: GoogleMapViewControllerInterface? = null
+
+    // Read through the base so that letting go of the controller there (MapViewBase
+    // does it when the map is torn down) leaves nothing behind here.
+    private val controller: GoogleMapViewControllerInterface?
+        get() = attachedMapController as? GoogleMapViewControllerInterface
 
     internal fun setController(controller: GoogleMapViewControllerInterface) {
-        this.controller = controller
         // コントローラが覚えているデザインを state のものにしておく。既定の None のままだと、
         // 変更リスナーを繋いだ時点で None が state へ返ってきて、復元したデザインを潰す。
         // 地図は state の mapType で作られているので、地図の見た目は変わらない。
