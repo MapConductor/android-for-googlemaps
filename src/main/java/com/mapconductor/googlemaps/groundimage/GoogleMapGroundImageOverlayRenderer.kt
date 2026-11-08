@@ -3,6 +3,8 @@ package com.mapconductor.googlemaps.groundimage
 import androidx.core.graphics.drawable.toBitmap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.GroundOverlayOptions
+import com.mapconductor.core.controller.OverlayKind
+import com.mapconductor.core.controller.OverlayStacking
 import com.mapconductor.core.groundimage.AbstractGroundImageOverlayRenderer
 import com.mapconductor.core.groundimage.GroundImageEntityInterface
 import com.mapconductor.core.groundimage.GroundImageState
@@ -28,6 +30,8 @@ class GoogleMapGroundImageOverlayRenderer(
                     .image(image)
                     .positionFromBounds(bounds)
                     .transparency(1.0f - opacity)
+                    // GroundImage の帯（タイルの上、ポリゴンの下）。Google は種類をまたいで zIndex で重ねる。
+                    .zIndex(OverlayStacking.flatZIndex(OverlayKind.GroundImage, 0))
             holder.map.addGroundOverlay(options)?.also {
                 it.tag = state.id
             }

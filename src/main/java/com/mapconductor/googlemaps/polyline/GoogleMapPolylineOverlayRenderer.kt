@@ -5,6 +5,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import com.mapconductor.core.ResourceProvider
+import com.mapconductor.core.controller.OverlayKind
+import com.mapconductor.core.controller.OverlayStacking
 import com.mapconductor.core.features.GeoPoint
 import com.mapconductor.core.features.GeoPointInterface
 import com.mapconductor.core.polyline.AbstractPolylineOverlayRenderer
@@ -57,7 +59,7 @@ class GoogleMapPolylineOverlayRenderer(
                     .color(state.strokeColor.toArgb())
                     .width(ResourceProvider.dpToPx(state.strokeWidth).toFloat())
                     .geodesic(state.geodesic)
-                    .zIndex(state.zIndex.toFloat())
+                    .zIndex(OverlayStacking.flatZIndex(OverlayKind.Polyline, state.zIndex))
                     .clickable(false)
 
             holder.map.addPolyline(options).also {
@@ -95,7 +97,7 @@ class GoogleMapPolylineOverlayRenderer(
             }
 
             if (finger.zIndex != prevFinger.zIndex) {
-                polyline.zIndex = current.state.zIndex.toFloat()
+                polyline.zIndex = OverlayStacking.flatZIndex(OverlayKind.Polyline, current.state.zIndex)
             }
 
             polyline
