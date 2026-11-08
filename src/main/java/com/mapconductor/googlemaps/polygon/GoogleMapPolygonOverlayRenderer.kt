@@ -4,6 +4,8 @@ import androidx.compose.ui.graphics.toArgb
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolygonOptions
 import com.mapconductor.core.ResourceProvider
+import com.mapconductor.core.controller.OverlayKind
+import com.mapconductor.core.controller.OverlayStacking
 import com.mapconductor.core.features.GeoPoint
 import com.mapconductor.core.features.GeoPointInterface
 import com.mapconductor.core.geometry.densifyPolygonRing
@@ -91,7 +93,7 @@ internal class GoogleMapPolygonOverlayRenderer(
                     .strokeColor(resolved.strokeColor.toArgb())
                     .strokeWidth(ResourceProvider.dpToPx(resolved.strokeWidth).toFloat())
                     .fillColor(resolved.fillColor.toArgb())
-                    .zIndex(resolved.zIndex.toFloat())
+                    .zIndex(OverlayStacking.flatZIndex(OverlayKind.Polygon, resolved.zIndex))
                     .clickable(false)
             holder.map.addPolygon(options).also {
                 it.tag = state.id
@@ -126,7 +128,7 @@ internal class GoogleMapPolygonOverlayRenderer(
                 polygon.fillColor = current.state.fillColor.toArgb()
             }
             if (finger.zIndex != prevFinger.zIndex) {
-                polygon.zIndex = current.state.zIndex.toFloat()
+                polygon.zIndex = OverlayStacking.flatZIndex(OverlayKind.Polygon, current.state.zIndex)
             }
             polygon
         }

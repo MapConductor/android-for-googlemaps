@@ -5,6 +5,8 @@ import com.google.android.gms.maps.model.TileOverlay
 import com.google.android.gms.maps.model.TileOverlayOptions
 import com.google.android.gms.maps.model.TileProvider
 import com.google.android.gms.maps.model.TileProvider.NO_TILE
+import com.mapconductor.core.controller.OverlayKind
+import com.mapconductor.core.controller.OverlayStacking
 import com.mapconductor.core.raster.RasterLayerEntityInterface
 import com.mapconductor.core.raster.RasterLayerOverlayRendererInterface
 import com.mapconductor.core.raster.RasterLayerSource
@@ -92,12 +94,14 @@ class GoogleMapRasterLayerOverlayRenderer(
 
     private fun isMarkerTileRaster(state: RasterLayerState): Boolean = state.id.startsWith(MARKER_TILE_RASTER_ID_PREFIX)
 
+    // Google は TileOverlay・GroundOverlay・Polygon・Circle・Polyline を 1 本の zIndex で重ねる
+    // （Marker は常にその上）。帯の順（OverlayStacking）に沿って値を割り当てる。
     private fun resolveOverlayZIndex(state: RasterLayerState): Float =
         if (isMarkerTileRaster(state)) {
-            // Backward-compatible behavior: marker tiles stay above most overlays.
-            999f
+            // マーカーのタイルはマーカーの帯（ポリラインより上）。
+            OverlayStacking.flatZIndex(OverlayKind.Marker, Int.MIN_VALUE)
         } else {
-            state.zIndex.toFloat()
+            OverlayStacking.flatZIndex(OverlayKind.RasterLayer, state.zIndex)
         }
 
     override suspend fun onAdd(data: List<RasterLayerOverlayRendererInterface.AddParamsInterface>): List<TileOverlay?> =
