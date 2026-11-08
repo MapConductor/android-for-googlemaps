@@ -32,7 +32,7 @@ internal class GoogleMapRasterLayerController(
     internal fun onCameraIdle() { tileRenderer.refreshLocalTilesAfterZoom() }
 
     override fun destroy() {
-        tileRenderer.cancelLocalRequests()
+        tileRenderer.removeAllLayers()
         super.destroy()
     }
 }
