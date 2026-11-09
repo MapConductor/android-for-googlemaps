@@ -43,7 +43,6 @@ import com.mapconductor.googlemaps.polyline.GoogleMapPolylineOverlayRenderer
 import com.mapconductor.googlemaps.raster.GoogleMapRasterLayerController
 import com.mapconductor.googlemaps.raster.GoogleMapRasterLayerOverlayRenderer
 import okhttp3.OkHttpClient
-import android.view.ViewGroup
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 
@@ -142,7 +141,6 @@ fun GoogleMapView(
             // Specific Google Maps DisposableEffect logic
             val lifecycle = LocalLifecycleOwner.current.lifecycle // Get lifecycle here
             DisposableEffect(lifecycle) {
-                val stateId = state.id
                 val observer =
                     object : DefaultLifecycleObserver {
                         override fun onResume(owner: LifecycleOwner) {
@@ -152,22 +150,6 @@ fun GoogleMapView(
                         override fun onPause(owner: LifecycleOwner) {
                             holderRef.value?.mapView?.onPause()
                         }
-
-                        override fun onDestroy(owner: LifecycleOwner) {
-                            val activity = context.findActivity()
-                            if (activity?.isChangingConfigurations == true) {
-                                holderRef.value?.mapView?.let {
-                                    (it.parent as? ViewGroup)?.removeView(it)
-                                    it.onDestroy()
-                                }
-                            } else {
-                                // Real teardown (not a configuration change): free the
-                                // controller's overlay controllers (tile-server routes,
-                                // marker managers) and cancel its coroutine scope.
-                                GoogleMapViewControllerStore.get(stateId)?.destroy()
-                                GoogleMapViewControllerStore.remove(stateId)
-                            }
-                        }
                     }
                 lifecycle.addObserver(observer)
                 onDispose {
@@ -175,6 +157,10 @@ fun GoogleMapView(
                 }
             }
         },
+        // The MapView keeps an SDK thread whose listeners reach the controller,
+        // so it has to be destroyed when the map leaves -- a provider switch as
+        // much as an Activity going away.
+        onDestroyMapView = { mapView -> mapView.onDestroy() },
         sdkInitialize = {
             sdkInitialize?.invoke(context) ?: true
         },
