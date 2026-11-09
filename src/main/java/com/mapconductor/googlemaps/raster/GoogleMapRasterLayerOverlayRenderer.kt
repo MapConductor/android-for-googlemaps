@@ -7,6 +7,7 @@ import com.google.android.gms.maps.model.TileProvider
 import com.google.android.gms.maps.model.TileProvider.NO_TILE
 import com.mapconductor.core.controller.OverlayKind
 import com.mapconductor.core.controller.OverlayStacking
+import com.mapconductor.core.polygon.POLYGON_TILE_LAYER_ID
 import com.mapconductor.core.raster.RasterLayerEntityInterface
 import com.mapconductor.core.raster.RasterLayerOverlayRendererInterface
 import com.mapconductor.core.raster.RasterLayerSource
@@ -100,6 +101,9 @@ class GoogleMapRasterLayerOverlayRenderer(
         if (isMarkerTileRaster(state)) {
             // マーカーのタイルはマーカーの帯（ポリラインより上）。
             OverlayStacking.flatZIndex(OverlayKind.Marker, Int.MIN_VALUE)
+        } else if (state.id == POLYGON_TILE_LAYER_ID) {
+            // ポリゴンのタイルはポリゴンの帯の一番下（GroundImage より上、ネイティブのポリゴンより下）。
+            OverlayStacking.flatZIndex(OverlayKind.Polygon, Int.MIN_VALUE)
         } else {
             OverlayStacking.flatZIndex(OverlayKind.RasterLayer, state.zIndex)
         }
