@@ -4,7 +4,6 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.mapconductor.core.features.GeoPoint
 import com.mapconductor.core.marker.AbstractMarkerOverlayRenderer
-import com.mapconductor.core.marker.MarkerDrawOrder
 import com.mapconductor.core.marker.MarkerEntityInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
 import com.mapconductor.core.marker.MarkerState
@@ -23,9 +22,16 @@ class GoogleMapMarkerRenderer(
         holder = holder,
         coroutine = coroutine,
     ) {
-    // zIndex が第 1 キー、同じなら南（さらに西）が手前。値を小さく保つのは、
+    // zIndex が第 1 キー、同じなら画面で下（北が上なら南、さらに西）が手前。値を小さく保つのは、
     // Google が大きな値（以前の -緯度 × 10^6）を明示の小さな zIndex と正しく比べないため。
-    private fun resolveZIndex(state: MarkerState): Float = MarkerDrawOrder.of(state.zIndex, state.position).toFloat()
+    private fun resolveZIndex(state: MarkerState): Float = drawOrderOf(state).toFloat()
+
+    // 地図が回ったら、今ある全マーカーの zIndex を付け直す。
+    override suspend fun applyDrawOrder(entities: List<MarkerEntityInterface<GoogleMapActualMarker>>) {
+        withContext(coroutine.coroutineContext) {
+            entities.forEach { entity -> entity.marker?.zIndex = resolveZIndex(entity.state) }
+        }
+    }
 
     override val supportsAnimationOverlay: Boolean = true
 
