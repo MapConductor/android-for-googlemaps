@@ -8,6 +8,7 @@ import com.google.android.gms.maps.model.TileProvider.NO_TILE
 import com.mapconductor.core.controller.OverlayKind
 import com.mapconductor.core.controller.OverlayStacking
 import com.mapconductor.core.polygon.POLYGON_TILE_LAYER_ID
+import com.mapconductor.core.circle.CIRCLE_TILE_LAYER_ID
 import com.mapconductor.core.polyline.POLYLINE_TILE_LAYER_ID
 import com.mapconductor.core.raster.RasterLayerEntityInterface
 import com.mapconductor.core.raster.RasterLayerOverlayRendererInterface
@@ -105,6 +106,8 @@ class GoogleMapRasterLayerOverlayRenderer(
         } else if (state.id == POLYGON_TILE_LAYER_ID) {
             // ポリゴンのタイルはポリゴンの帯の一番下（GroundImage より上、ネイティブのポリゴンより下）。
             OverlayStacking.flatZIndex(OverlayKind.Polygon, Int.MIN_VALUE)
+        } else if (state.id == CIRCLE_TILE_LAYER_ID) {
+            OverlayStacking.flatZIndex(OverlayKind.Circle, Int.MIN_VALUE)
         } else if (state.id == POLYLINE_TILE_LAYER_ID) {
             // ポリラインのタイルはポリラインの帯の一番下（サークルより上、ネイティブのポリラインより下）。
             OverlayStacking.flatZIndex(OverlayKind.Polyline, Int.MIN_VALUE)

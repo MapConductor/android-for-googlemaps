@@ -1,5 +1,8 @@
 package com.mapconductor.googlemaps
 
+import com.mapconductor.core.circle.CIRCLE_TILE_LAYER_ID
+import com.mapconductor.core.circle.CircleTiler
+import com.mapconductor.core.circle.circleTileRasterLayerState
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnCameraIdleListener
 import com.google.android.gms.maps.GoogleMap.OnCameraMoveCanceledListener
@@ -124,6 +127,16 @@ class GoogleMapViewController internal constructor(
                         rasterLayerController.upsert(polylineTileRasterLayerState(template, tileSize))
                     } else {
                         rasterLayerController.removeById(POLYLINE_TILE_LAYER_ID)
+                    }
+                }
+            }
+        circleController.tiler =
+            CircleTiler().apply {
+                onTemplate = { template, tileSize ->
+                    if (template != null) {
+                        rasterLayerController.upsert(circleTileRasterLayerState(template, tileSize))
+                    } else {
+                        rasterLayerController.removeById(CIRCLE_TILE_LAYER_ID)
                     }
                 }
             }
