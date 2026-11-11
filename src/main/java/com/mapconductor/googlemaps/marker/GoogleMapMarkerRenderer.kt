@@ -2,11 +2,12 @@ package com.mapconductor.googlemaps.marker
 
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.mapconductor.core.calculateZIndex
 import com.mapconductor.core.features.GeoPoint
 import com.mapconductor.core.marker.AbstractMarkerOverlayRenderer
+import com.mapconductor.core.marker.MarkerDrawOrder
 import com.mapconductor.core.marker.MarkerEntityInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
+import com.mapconductor.core.marker.MarkerState
 import com.mapconductor.googlemaps.GoogleMapActualMarker
 import com.mapconductor.googlemaps.GoogleMapViewHolder
 import com.mapconductor.googlemaps.toLatLng
@@ -22,8 +23,9 @@ class GoogleMapMarkerRenderer(
         holder = holder,
         coroutine = coroutine,
     ) {
-    private fun resolveZIndex(params: MarkerOverlayRendererInterface.AddParamsInterface): Float =
-        (params.state.zIndex ?: calculateZIndex(params.state.position)).toFloat()
+    // zIndex が第 1 キー、同じなら南（さらに西）が手前。値を小さく保つのは、
+    // Google が大きな値（以前の -緯度 × 10^6）を明示の小さな zIndex と正しく比べないため。
+    private fun resolveZIndex(state: MarkerState): Float = MarkerDrawOrder.of(state.zIndex, state.position).toFloat()
 
     override val supportsAnimationOverlay: Boolean = true
 
@@ -59,7 +61,7 @@ class GoogleMapMarkerRenderer(
                             params.bitmapIcon.anchor.y,
                         ).icon(bitmapDescriptor)
                         .draggable(params.state.draggable)
-                        .zIndex(resolveZIndex(params))
+                        .zIndex(resolveZIndex(params.state))
                 val marker =
                     holder.map.addMarker(options)?.also {
                         it.tag = params.state.id
@@ -118,8 +120,7 @@ class GoogleMapMarkerRenderer(
                 marker.position =
                     GeoPoint.from(params.current.state.position).toLatLng()
                 marker.isVisible = params.current.visible
-                marker.zIndex =
-                    (params.current.state.zIndex ?: calculateZIndex(params.current.state.position)).toFloat()
+                marker.zIndex = resolveZIndex(params.current.state)
 
                 // Google Mapsはマーカーを再作成しなくてよいので、同じマーカーのインスタンスを返す
                 marker
