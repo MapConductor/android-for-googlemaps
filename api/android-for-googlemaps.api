@@ -255,6 +255,7 @@ public final class com.mapconductor.googlemaps.marker.GoogleMapMarkerControllerI
 public final class com.mapconductor.googlemaps.marker.GoogleMapMarkerRenderer extends com.mapconductor.core.marker.AbstractMarkerOverlayRenderer<com.mapconductor.googlemaps.GoogleMapViewHolder, com.google.android.gms.maps.model.Marker> {
   public com.mapconductor.googlemaps.marker.GoogleMapMarkerRenderer(com.mapconductor.googlemaps.GoogleMapViewHolder, kotlinx.coroutines.CoroutineScope);
   public com.mapconductor.googlemaps.marker.GoogleMapMarkerRenderer(com.mapconductor.googlemaps.GoogleMapViewHolder, kotlinx.coroutines.CoroutineScope, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  protected java.lang.Object applyDrawOrder(java.util.List<? extends com.mapconductor.core.marker.MarkerEntityInterface<com.google.android.gms.maps.model.Marker>>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
   public boolean getSupportsAnimationOverlay();
   public void setMarkerVisible(com.mapconductor.core.marker.MarkerEntityInterface<com.google.android.gms.maps.model.Marker>, boolean);
   public void setMarkerPosition(com.mapconductor.core.marker.MarkerEntityInterface<com.google.android.gms.maps.model.Marker>, com.mapconductor.core.features.GeoPoint);
