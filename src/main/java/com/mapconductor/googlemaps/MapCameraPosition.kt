@@ -16,6 +16,13 @@ import kotlin.math.tan
 
 private val converter = ZoomAltitudeConverter(AbstractZoomAltitudeConverter.DEFAULT_ZOOM0_ALTITUDE)
 
+/**
+ * Google Maps（Android）のカメラの縦方向の視野角（度）。SDK に取得 API は無い。
+ * 地図の大きさによらず一定で、TB520FU の縦・横・半分の大きさで 30° を実測した
+ * （焦点距離 ≈ 地図の高さ × 1.86）。web の Google Maps JS（ベクター地図）の約 25° とは違う。
+ */
+internal const val GOOGLE_VERTICAL_FOV = 30.0
+
 fun MapCameraPosition.toCameraPosition(): CameraPosition {
     if (this.tilt >= 0) {
         return CameraPosition
@@ -58,6 +65,7 @@ fun MapCameraPosition.Companion.from(position: MapCameraPositionInterface): MapC
                 tilt = position.tilt,
                 paddings = position.paddings,
                 visibleRegion = position.visibleRegion,
+                fov = position.fov,
             )
     }
 
@@ -76,5 +84,6 @@ fun CameraPosition.toMapCameraPosition(paddings: MapPaddingsInterface = MapPaddi
         tilt = tilt.toDouble(),
         paddings = paddings,
         visibleRegion = null,
+        fov = GOOGLE_VERTICAL_FOV,
     )
 }
