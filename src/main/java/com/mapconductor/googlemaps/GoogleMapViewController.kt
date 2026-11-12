@@ -21,6 +21,9 @@ import com.mapconductor.core.groundimage.GroundImageState
 import com.mapconductor.core.groundimage.OnGroundImageEventHandler
 import com.mapconductor.core.map.CameraRestriction
 import com.mapconductor.core.map.MapCameraPosition
+import com.mapconductor.core.map.CameraPaddingEmulation
+import com.mapconductor.core.map.MapPaddings
+import com.mapconductor.core.map.MapPaddingsInterface
 import com.mapconductor.core.map.MapUISettings
 import com.mapconductor.core.marker.DefaultMarkerEventController
 import com.mapconductor.core.marker.MarkerAnimationOverlayHost
@@ -75,6 +78,16 @@ class GoogleMapViewController internal constructor(
     internal val markerEventControllers = mutableListOf<DefaultMarkerEventController<GoogleMapActualMarker>>()
     private val _mapLoadedState = MutableStateFlow(false)
     val mapLoadedState: StateFlow<Boolean> = _mapLoadedState
+
+    /**
+     * 今カメラに付いているパディング（dp）。
+     *
+     * `GoogleMap.setPadding` は使わない。付けた瞬間に画面がずれてアニメーションの始まりが
+     * 跳ぶうえ、ロゴやコントロールまで動くため。代わりにカメラ中心をずらして再現し
+     * （[CameraPaddingEmulation]）、読むときに元へ戻すためにここで覚えておく。
+     */
+    internal var cameraPaddings: MapPaddingsInterface = MapPaddings.Zeros
+
     internal var markerClickListener: OnMarkerEventHandler? = null
     internal var markerDragStartListener: OnMarkerEventHandler? = null
     internal var markerDragListener: OnMarkerEventHandler? = null

@@ -3,6 +3,7 @@ package com.mapconductor.googlemaps
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap.CancelableCallback
 import com.mapconductor.core.features.GeoRectBounds
+import com.mapconductor.core.map.CameraPaddingEmulation
 import com.mapconductor.core.map.CameraRestriction
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.VisibleRegion
@@ -11,9 +12,26 @@ import kotlinx.coroutines.launch
 // カメラの適用と、Google Maps からのカメライベントの受け口。
 // Google Maps だけは範囲制限もズーム制限もネイティブ API があるので、
 // 他プロバイダのような停止時クランプは要らない。
+
+/** 地図の高さ（dp）。パディングのエミュレーションで遠近を解くのに使う。 */
+internal fun GoogleMapViewController.viewportHeightDp(): Double {
+    val density = holder.mapView.resources.displayMetrics.density
+    return holder.mapView.height / density.toDouble()
+}
+
+/** パディングを中心のずらしに置き換えたカメラ。paddings が null なら今のパディングを使い続ける。 */
+internal fun GoogleMapViewController.toNativeCamera(position: MapCameraPosition): MapCameraPosition {
+    position.paddings?.let { cameraPaddings = it }
+    return CameraPaddingEmulation.toNativeCamera(
+        position.copy(paddings = cameraPaddings),
+        GOOGLE_VERTICAL_FOV,
+        viewportHeightDp(),
+    )
+}
+
 internal fun GoogleMapViewController.handleMoveCamera(position: MapCameraPosition) {
     mainCoroutine.launch {
-        val dstCameraPosition = position.toCameraPosition()
+        val dstCameraPosition = toNativeCamera(position).toCameraPosition()
         val cameraUpdate = CameraUpdateFactory.newCameraPosition(dstCameraPosition)
         holder.map.moveCamera(cameraUpdate)
     }
@@ -23,8 +41,8 @@ internal fun GoogleMapViewController.handleAnimateCamera(
     position: MapCameraPosition,
     duration: Long,
 ) {
-    val dstCameraPosition = position.toCameraPosition()
     mainCoroutine.launch {
+        val dstCameraPosition = toNativeCamera(position).toCameraPosition()
         val cameraUpdate = CameraUpdateFactory.newCameraPosition(dstCameraPosition)
         holder.map.animateCamera(
             cameraUpdate,
@@ -89,7 +107,13 @@ internal fun GoogleMapViewController.handleCameraMoveCanceled() {
 }
 
 internal fun GoogleMapViewController.getMapCameraPosition(): MapCameraPosition {
-    val camera = holder.map.cameraPosition.toMapCameraPosition()
+    val camera =
+        CameraPaddingEmulation.fromNativeCamera(
+            holder.map.cameraPosition.toMapCameraPosition(),
+            cameraPaddings,
+            GOOGLE_VERTICAL_FOV,
+            viewportHeightDp(),
+        )
     holder.map.projection.visibleRegion.let {
         val visibleRegion =
             VisibleRegion(

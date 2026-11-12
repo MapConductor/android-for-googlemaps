@@ -99,6 +99,8 @@ public final class com.mapconductor.googlemaps.GoogleMapViewController extends c
 public final class com.mapconductor.googlemaps.GoogleMapViewController$Companion {
 }
 public final class com.mapconductor.googlemaps.GoogleMapViewControllerCameraKt {
+  public static final double viewportHeightDp(com.mapconductor.googlemaps.GoogleMapViewController);
+  public static final com.mapconductor.core.map.MapCameraPosition toNativeCamera(com.mapconductor.googlemaps.GoogleMapViewController, com.mapconductor.core.map.MapCameraPosition);
   public static final void handleMoveCamera(com.mapconductor.googlemaps.GoogleMapViewController, com.mapconductor.core.map.MapCameraPosition);
   public static final void handleAnimateCamera(com.mapconductor.googlemaps.GoogleMapViewController, com.mapconductor.core.map.MapCameraPosition, long);
   public static final void handleFitBounds(com.mapconductor.googlemaps.GoogleMapViewController, com.mapconductor.core.features.GeoRectBounds, int);
@@ -178,6 +180,7 @@ public final class com.mapconductor.googlemaps.LatLngInterpolationCache {
   public final void put(java.lang.String, java.util.List<com.google.android.gms.maps.model.LatLng>);
 }
 public final class com.mapconductor.googlemaps.MapCameraPositionKt {
+  public static final double GOOGLE_VERTICAL_FOV;
   public static final com.google.android.gms.maps.model.CameraPosition toCameraPosition(com.mapconductor.core.map.MapCameraPosition);
   public static final com.mapconductor.core.map.MapCameraPosition from(com.mapconductor.core.map.MapCameraPosition$Companion, com.mapconductor.core.map.MapCameraPositionInterface);
   public static final com.mapconductor.core.map.MapCameraPosition toMapCameraPosition(com.google.android.gms.maps.model.CameraPosition, com.mapconductor.core.map.MapPaddingsInterface);
