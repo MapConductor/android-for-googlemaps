@@ -1,5 +1,8 @@
 package com.mapconductor.googlemaps
 
+import com.mapconductor.core.circle.CIRCLE_TILE_LAYER_ID
+import com.mapconductor.core.circle.CircleTiler
+import com.mapconductor.core.circle.circleTileRasterLayerState
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnCameraIdleListener
 import com.google.android.gms.maps.GoogleMap.OnCameraMoveCanceledListener
@@ -18,6 +21,9 @@ import com.mapconductor.core.groundimage.GroundImageState
 import com.mapconductor.core.groundimage.OnGroundImageEventHandler
 import com.mapconductor.core.map.CameraRestriction
 import com.mapconductor.core.map.MapCameraPosition
+import com.mapconductor.core.map.CameraPaddingEmulation
+import com.mapconductor.core.map.MapPaddings
+import com.mapconductor.core.map.MapPaddingsInterface
 import com.mapconductor.core.map.MapUISettings
 import com.mapconductor.core.marker.DefaultMarkerEventController
 import com.mapconductor.core.marker.MarkerAnimationOverlayHost
@@ -28,8 +34,14 @@ import com.mapconductor.core.marker.StrategyMarkerController
 import com.mapconductor.core.marker.dispatchGeoMarkerClick
 import com.mapconductor.core.marker.dispatchNativeMarkerClick
 import com.mapconductor.core.polygon.OnPolygonEventHandler
+import com.mapconductor.core.polygon.POLYGON_TILE_LAYER_ID
+import com.mapconductor.core.polygon.PolygonTiler
+import com.mapconductor.core.polygon.polygonTileRasterLayerState
 import com.mapconductor.core.polyline.OnPolylineEventHandler
+import com.mapconductor.core.polyline.POLYLINE_TILE_LAYER_ID
 import com.mapconductor.core.polyline.PolylineState
+import com.mapconductor.core.polyline.PolylineTiler
+import com.mapconductor.core.polyline.polylineTileRasterLayerState
 import com.mapconductor.googlemaps.circle.GoogleMapCircleController
 import com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageController
 import com.mapconductor.googlemaps.marker.GoogleMapMarkerController
@@ -66,6 +78,16 @@ class GoogleMapViewController internal constructor(
     internal val markerEventControllers = mutableListOf<DefaultMarkerEventController<GoogleMapActualMarker>>()
     private val _mapLoadedState = MutableStateFlow(false)
     val mapLoadedState: StateFlow<Boolean> = _mapLoadedState
+
+    /**
+     * 今カメラに付いているパディング（dp）。
+     *
+     * `GoogleMap.setPadding` は使わない。付けた瞬間に画面がずれてアニメーションの始まりが
+     * 跳ぶうえ、ロゴやコントロールまで動くため。代わりにカメラ中心をずらして再現し
+     * （[CameraPaddingEmulation]）、読むときに元へ戻すためにここで覚えておく。
+     */
+    internal var cameraPaddings: MapPaddingsInterface = MapPaddings.Zeros
+
     internal var markerClickListener: OnMarkerEventHandler? = null
     internal var markerDragStartListener: OnMarkerEventHandler? = null
     internal var markerDragListener: OnMarkerEventHandler? = null
@@ -79,6 +101,7 @@ class GoogleMapViewController internal constructor(
         registerOverlayController(polygonController)
         registerOverlayController(polylineController)
         registerOverlayController(circleController)
+        registerOverlayController(groundImageController)
         registerOverlayController(rasterLayerController)
         registerMarkerEventController(DefaultMarkerEventController(markerController))
 
@@ -95,6 +118,41 @@ class GoogleMapViewController internal constructor(
                 markerTileLayers.forEach { entity -> rasterLayerController.removeById(entity.state.id) }
             }
         }
+
+        // Many polygons are drawn as raster tiles, shown through the same RasterLayer
+        // controller as the marker tiles (upsert / removeById, never the app's layers).
+        polygonController.tiler =
+            PolygonTiler().apply {
+                onTemplate = { template, tileSize ->
+                    if (template != null) {
+                        rasterLayerController.upsert(polygonTileRasterLayerState(template, tileSize))
+                    } else {
+                        rasterLayerController.removeById(POLYGON_TILE_LAYER_ID)
+                    }
+                }
+            }
+
+        // Many polylines too: the same raster layer path, in the polyline band.
+        polylineController.tiler =
+            PolylineTiler().apply {
+                onTemplate = { template, tileSize ->
+                    if (template != null) {
+                        rasterLayerController.upsert(polylineTileRasterLayerState(template, tileSize))
+                    } else {
+                        rasterLayerController.removeById(POLYLINE_TILE_LAYER_ID)
+                    }
+                }
+            }
+        circleController.tiler =
+            CircleTiler().apply {
+                onTemplate = { template, tileSize ->
+                    if (template != null) {
+                        rasterLayerController.upsert(circleTileRasterLayerState(template, tileSize))
+                    } else {
+                        rasterLayerController.removeById(CIRCLE_TILE_LAYER_ID)
+                    }
+                }
+            }
     }
 
     override fun moveCamera(position: MapCameraPosition) = handleMoveCamera(position)
@@ -178,6 +236,8 @@ class GoogleMapViewController internal constructor(
         polygonController.clear()
         circleController.clear()
         rasterLayerController.clear()
+        // 拡張モジュール（クラスタリングなど）が登録した Strategy のマーカーも消す。
+        clearStrategyMarkerControllers()
     }
 
     override fun setMarkerAnimationOverlayHost(host: MarkerAnimationOverlayHost?) {

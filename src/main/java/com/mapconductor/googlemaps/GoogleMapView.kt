@@ -20,6 +20,7 @@ import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
 import com.mapconductor.core.map.MapCapability
 import com.mapconductor.core.map.MapCapabilityStatus
+import com.mapconductor.core.map.MapViewStyle
 import com.mapconductor.core.map.MutableMapServiceRegistry
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
@@ -28,6 +29,8 @@ import com.mapconductor.core.marker.MarkerRenderingSupport
 import com.mapconductor.core.marker.MarkerRenderingSupportKey
 import com.mapconductor.core.marker.MarkerTilingOptions
 import com.mapconductor.core.marker.StrategyMarkerController
+import com.mapconductor.core.raster.RasterTilePreference
+import com.mapconductor.core.raster.RasterTilePreferenceKey
 import com.mapconductor.googlemaps.circle.GoogleMapCircleController
 import com.mapconductor.googlemaps.circle.GoogleMapCircleOverlayRenderer
 import com.mapconductor.googlemaps.groundimage.GoogleMapGroundImageController
@@ -40,7 +43,6 @@ import com.mapconductor.googlemaps.polyline.GoogleMapPolylineOverlayRenderer
 import com.mapconductor.googlemaps.raster.GoogleMapRasterLayerController
 import com.mapconductor.googlemaps.raster.GoogleMapRasterLayerOverlayRenderer
 import okhttp3.OkHttpClient
-import android.view.ViewGroup
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 
@@ -58,6 +60,15 @@ fun GoogleMapView(
     onCameraMoveStart: OnCameraMoveHandler? = null,
     onCameraMove: OnCameraMoveHandler? = null,
     onCameraMoveEnd: OnCameraMoveHandler? = null,
+    /**
+     * How the map looks, when the app states it rather than naming a design.
+     *
+     * A vector style *is* the basemap. `com.mapconductor:vectorstyle` builds
+     * one; what happens underneath depends on this backend and the app does
+     * not have to know.
+     */
+    style: MapViewStyle? = null,
+    onStyleDiagnostics: ((List<String>) -> Unit)? = null,
     content: (@Composable GoogleMapViewScope.() -> Unit)? = null,
 ) {
     val scope = remember { GoogleMapViewScope() } // Use specific scope
@@ -130,7 +141,6 @@ fun GoogleMapView(
             // Specific Google Maps DisposableEffect logic
             val lifecycle = LocalLifecycleOwner.current.lifecycle // Get lifecycle here
             DisposableEffect(lifecycle) {
-                val stateId = state.id
                 val observer =
                     object : DefaultLifecycleObserver {
                         override fun onResume(owner: LifecycleOwner) {
@@ -140,22 +150,6 @@ fun GoogleMapView(
                         override fun onPause(owner: LifecycleOwner) {
                             holderRef.value?.mapView?.onPause()
                         }
-
-                        override fun onDestroy(owner: LifecycleOwner) {
-                            val activity = context.findActivity()
-                            if (activity?.isChangingConfigurations == true) {
-                                holderRef.value?.mapView?.let {
-                                    (it.parent as? ViewGroup)?.removeView(it)
-                                    it.onDestroy()
-                                }
-                            } else {
-                                // Real teardown (not a configuration change): free the
-                                // controller's overlay controllers (tile-server routes,
-                                // marker managers) and cancel its coroutine scope.
-                                GoogleMapViewControllerStore.get(stateId)?.destroy()
-                                GoogleMapViewControllerStore.remove(stateId)
-                            }
-                        }
                     }
                 lifecycle.addObserver(observer)
                 onDispose {
@@ -163,12 +157,18 @@ fun GoogleMapView(
                 }
             }
         },
+        // The MapView keeps an SDK thread whose listeners reach the controller,
+        // so it has to be destroyed when the map leaves -- a provider switch as
+        // much as an Activity going away.
+        onDestroyMapView = { mapView -> mapView.onDestroy() },
         sdkInitialize = {
             sdkInitialize?.invoke(context) ?: true
         },
         // Pass content if it needs to be rendered within the overlay providers in MapViewBase,
         // or handle it here if it's specific to GoogleMapView structure before calling MapViewBase.
         // For now, assuming content relates to overlay definitions.
+        style = style,
+        onStyleDiagnostics = onStyleDiagnostics,
         content = content, // This might need adjustment based on how overlays are handled
     )
 }
@@ -199,6 +199,14 @@ fun createGoogleMapViewController(
         )
 
     serviceRegistry?.let { registry ->
+        // Google displays each overlay tile across 256 dp regardless of its
+        // encoded pixel dimensions. Rasterisers must size style paint for that slot.
+        registry.put(
+            RasterTilePreferenceKey,
+            object : RasterTilePreference {
+                override val preferredTileSize: Int = 256
+            },
+        )
         // オーバーレイをタップに対して透過させられるか（実測 2026-08-09）。
         // Polygon / Polyline / Circle / GroundOverlay は clickable(false) で透過し、
         // OnMapClickListener が発火するのでコアのカスケードへ寄せてある。

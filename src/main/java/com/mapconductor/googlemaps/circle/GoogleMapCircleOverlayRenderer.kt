@@ -7,6 +7,8 @@ import com.mapconductor.core.calculateZIndex
 import com.mapconductor.core.circle.AbstractCircleOverlayRenderer
 import com.mapconductor.core.circle.CircleEntityInterface
 import com.mapconductor.core.circle.CircleState
+import com.mapconductor.core.controller.OverlayKind
+import com.mapconductor.core.controller.OverlayStacking
 import com.mapconductor.core.features.GeoPoint
 import com.mapconductor.core.geometry.circleToRing
 import com.mapconductor.core.geometry.closeRing
@@ -37,7 +39,7 @@ class GoogleMapCircleOverlayRenderer(
                     .fillColor(state.fillColor.toArgb())
                     .clickable(false)
                     .geodesic(state.geodesic)
-                    .zIndex((state.zIndex ?: calculateZIndex(state.center)).toFloat())
+                    .zIndex(OverlayStacking.flatZIndex(OverlayKind.Circle, state.zIndex ?: calculateZIndex(state.center)))
             holder.map.addPolygon(options).also {
                 it.tag = state.id
             }
@@ -82,7 +84,11 @@ class GoogleMapCircleOverlayRenderer(
                 circle.fillColor = current.state.fillColor.toArgb()
             }
             if (finger.zIndex != prevFinger.zIndex) {
-                circle.zIndex = (current.state.zIndex ?: calculateZIndex(current.state.center)).toFloat()
+                circle.zIndex =
+                    OverlayStacking.flatZIndex(
+                        OverlayKind.Circle,
+                        current.state.zIndex ?: calculateZIndex(current.state.center),
+                    )
             }
             circle
         }

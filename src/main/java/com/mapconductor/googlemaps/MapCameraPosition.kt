@@ -2,6 +2,7 @@ package com.mapconductor.googlemaps
 
 import com.google.android.gms.maps.model.CameraPosition
 import com.mapconductor.core.features.GeoPoint
+import com.mapconductor.core.map.CameraBearing
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
 import com.mapconductor.core.map.MapPaddings
@@ -15,6 +16,13 @@ import kotlin.math.tan
 
 private val converter = ZoomAltitudeConverter(AbstractZoomAltitudeConverter.DEFAULT_ZOOM0_ALTITUDE)
 
+/**
+ * Google Maps（Android）のカメラの縦方向の視野角（度）。SDK に取得 API は無い。
+ * 地図の大きさによらず一定で、TB520FU の縦・横・半分の大きさで 30° を実測した
+ * （焦点距離 ≈ 地図の高さ × 1.86）。web の Google Maps JS（ベクター地図）の約 25° とは違う。
+ */
+internal const val GOOGLE_VERTICAL_FOV = 30.0
+
 fun MapCameraPosition.toCameraPosition(): CameraPosition {
     if (this.tilt >= 0) {
         return CameraPosition
@@ -22,7 +30,7 @@ fun MapCameraPosition.toCameraPosition(): CameraPosition {
             .target(GeoPoint.from(position).toLatLng())
             .zoom(zoom.toFloat())
             .tilt(tilt.coerceIn(0.0, 60.0).toFloat())
-            .bearing(bearing.toFloat())
+            .bearing(CameraBearing.toNativeHeading(bearing).toFloat())
             .build()
     } else {
         // tilt < 0: 水平線より abs(tilt) 度上方を向く（仰角ビュー）
@@ -33,7 +41,7 @@ fun MapCameraPosition.toCameraPosition(): CameraPosition {
         val tiltAbsRad = Math.toRadians(tiltAbsDeg)
         val altitude = converter.zoomLevelToAltitude(zoom, position.latitude, 0.0)
         val distanceForward = altitude * tan(tiltAbsRad)
-        val target = Spherical.computeOffset(position, distanceForward, bearing)
+        val target = Spherical.computeOffset(position, distanceForward, CameraBearing.toNativeHeading(bearing))
         val adjustedZoom = converter.altitudeToZoomLevel(altitude / cos(tiltAbsRad), target.latitude, 0.0)
 
         return CameraPosition
@@ -41,7 +49,7 @@ fun MapCameraPosition.toCameraPosition(): CameraPosition {
             .target(target.toLatLng())
             .zoom(adjustedZoom.toFloat())
             .tilt(tiltAbsDeg.toFloat())
-            .bearing(bearing.toFloat())
+            .bearing(CameraBearing.toNativeHeading(bearing).toFloat())
             .build()
     }
 }
@@ -57,6 +65,7 @@ fun MapCameraPosition.Companion.from(position: MapCameraPositionInterface): MapC
                 tilt = position.tilt,
                 paddings = position.paddings,
                 visibleRegion = position.visibleRegion,
+                fov = position.fov,
             )
     }
 
@@ -71,9 +80,10 @@ fun CameraPosition.toMapCameraPosition(paddings: MapPaddingsInterface = MapPaddi
     return MapCameraPosition(
         position = position,
         zoom = zoom.toDouble(),
-        bearing = bearing.toDouble(),
+        bearing = CameraBearing.bearingFromNativeHeading(bearing.toDouble()),
         tilt = tilt.toDouble(),
         paddings = paddings,
         visibleRegion = null,
+        fov = GOOGLE_VERTICAL_FOV,
     )
 }

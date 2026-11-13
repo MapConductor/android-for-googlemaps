@@ -22,8 +22,12 @@ import com.mapconductor.core.tileserver.TileServerRegistry
 import com.mapconductor.googlemaps.GoogleMapActualMarker
 import com.mapconductor.googlemaps.GoogleMapViewHolder
 import java.util.UUID
+import kotlin.math.floor
+import kotlin.time.Duration.Companion.milliseconds
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
@@ -56,7 +60,12 @@ internal class GoogleMapMarkerController private constructor(
     private val defaultMarkerIcon: BitmapIcon = DefaultMarkerIcon().toBitmapIcon()
     private val tiledMarkerIds = LinkedHashSet<String>()
 
+    // タイルを描くスレッドからも読む（[displayTileZoom]）。
+    @Volatile
     private var lastKnownZoom: Double = 0.0
+
+    /** 前回タイルを描き直したときの [displayTileZoom]。 */
+    private var lastDisplayTileZoom: Int? = null
 
     // Tile rendering via RasterLayer
     private val tileServer = TileServerRegistry.get()
@@ -139,11 +148,12 @@ internal class GoogleMapMarkerController private constructor(
         if (currentFinger == prevFinger) return
 
         semaphore.withPermit {
+            // 件数だけが要る。allEntities() は全件の写しを作るので、ラベルの付け替えのように
+            // 数十本が続けて変わると、そのたびに 14 万件を写すことになる。
             val tilingEnabled =
-                markerTiling.enabled && markerManager.allEntities().size >= markerManager.minMarkerCount
+                markerTiling.enabled && markerManager.getMemoryStats().entityCount >= markerManager.minMarkerCount
             val wantsTiled = tilingEnabled && !state.draggable && state.getAnimation() == null
             val wasTiled = tiledMarkerIds.contains(state.id)
-            val markerIcon = state.icon?.toBitmapIcon() ?: defaultMarkerIcon
 
             if (wantsTiled) {
                 if (!wasTiled) {
@@ -161,13 +171,15 @@ internal class GoogleMapMarkerController private constructor(
                         tiling = true,
                     ),
                 )
-                syncTiledOverlay()
+                scheduleTileRefresh()
                 return
             }
 
             if (wasTiled) {
                 tiledMarkerIds.remove(state.id)
             }
+            // ネイティブマーカーとして描くときだけ焼き込む。タイル担当なら要らない。
+            val markerIcon = state.icon?.toBitmapIcon() ?: defaultMarkerIcon
 
             val renderEntity =
                 MarkerEntity(
@@ -203,12 +215,31 @@ internal class GoogleMapMarkerController private constructor(
             renderer.onPostProcess()
 
             if (tiledMarkerIds.isNotEmpty()) {
-                syncTiledOverlay()
+                scheduleTileRefresh()
             } else {
                 removeTileOverlay()
             }
         }
         viewportSwitch.requestReapply()
+    }
+
+    private var tileRefreshJob: Job? = null
+
+    /**
+     * 1 本ずつの変更からの描き直しを 1 回にまとめる。
+     *
+     * ラベルの付け替えのように数十本が続けて変わると、1 本ごとにラスターソースを差し替え、
+     * そのたびに地図が見えているタイルを全部取り直していた（MapLibre・Pixel 5a で 45 回、
+     * 描き直したタイル 494 枚、最後のタイルまで 6 秒）。続けて来た変更は
+     * [TILE_REFRESH_COALESCE] の間に受けて、まとめて 1 回だけ差し替える。
+     */
+    private fun scheduleTileRefresh() {
+        if (tileRefreshJob?.isActive == true) return
+        tileRefreshJob =
+            (renderer as GoogleMapMarkerRenderer).coroutine.launch {
+                delay(TILE_REFRESH_COALESCE)
+                semaphore.withPermit { syncTiledOverlay() }
+            }
     }
 
     override suspend fun clear() {
@@ -230,8 +261,19 @@ internal class GoogleMapMarkerController private constructor(
         viewportSwitch.onCameraChanged(mapCameraPosition)
         lastKnownZoom = mapCameraPosition.zoom
 
-        // Also update the MarkerTileRenderer's camera zoom for fractional zoom support
+        // Google Maps は切り捨てたズームのタイルを出す。マーカーとラベルを MapLibre 系と
+        // 同じ大きさに見せるため、タイルは四捨五入したズームに合わせて描いている
+        // （[MarkerTileRenderer] の displayTileZoom）。それが変わったら、地図が持っている
+        // タイルは大きさが合わなくなるので取り直させる。
+        val displayZoom = displayTileZoom()
+        if (displayZoom != lastDisplayTileZoom) {
+            lastDisplayTileZoom = displayZoom
+            if (markerTileRenderer != null) scheduleTileRefresh()
+        }
     }
+
+    /** カメラのズームを四捨五入したズーム（MapLibre 系がタイルに使うズーム）。 */
+    private fun displayTileZoom(): Int = floor(lastKnownZoom + 0.5).toInt()
 
     /**
      * マーカータイルのラスターレイヤの表示だけを切り替える。
@@ -249,6 +291,8 @@ internal class GoogleMapMarkerController private constructor(
 
     override fun destroy() {
         viewportSwitch.destroy()
+        // 待っている描き直しが後から走ると、外したタイル経路をまた登録してしまう。
+        tileRefreshJob?.cancel()
         // Clean up tile server registration
         // Unregister this map's route only. Never stop the server here: it is
         // a process-wide singleton shared by all map controllers and overlay
@@ -338,6 +382,8 @@ internal class GoogleMapMarkerController private constructor(
                 cacheSizeBytes = markerTiling.cacheSize,
                 debugTileOverlay = markerTiling.debugTileOverlay,
                 iconScaleCallback = markerTiling.iconScaleCallback,
+                declutterPx = markerTiling.declutterPx,
+                displayTileZoom = ::displayTileZoom,
             )
         markerTileRenderer = tileRenderer
 
@@ -375,6 +421,9 @@ internal class GoogleMapMarkerController private constructor(
     }
 
     companion object {
+        /** 続けて来る変更を 1 回の描き直しにまとめる窓。1 フレーム分。 */
+        private val TILE_REFRESH_COALESCE = 16.milliseconds
+
         private const val TAG = "GoogleMapMarkerController"
 
         fun create(
